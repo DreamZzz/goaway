@@ -1,0 +1,749 @@
+{
+  "sourceOfTruth": {
+    "entities": "backend/src/main/java/**/model/*.java",
+    "dtoClasses": "backend/src/main/java/**/dto/*.java"
+  },
+  "outputs": {
+    "frontendModels": "frontend/src/shared/models/generatedContracts.js",
+    "swiftCodable": "frontend/ios/frontend/Generated/APIContractModels.swift"
+  },
+  "entityContracts": [
+    {
+      "name": "User",
+      "entity": "backend/src/main/java/com/goaway/contexts/account/domain/User.java",
+      "dto": "backend/src/main/java/com/goaway/contexts/account/api/dto/UserDTO.java",
+      "entityHash": "c674bcda0b18e6fa5ccbe38286970d5f507782e993301cf32aae06f8179845db",
+      "dtoHash": "22e22517874f190f2f6d0642ec31eb39dc15afb406a39bb3c14854d5458478f0",
+      "expectedSharedFields": [
+        {
+          "name": "id",
+          "javaType": "Long"
+        },
+        {
+          "name": "username",
+          "javaType": "String"
+        },
+        {
+          "name": "displayName",
+          "javaType": "String"
+        },
+        {
+          "name": "email",
+          "javaType": "String"
+        },
+        {
+          "name": "phone",
+          "javaType": "String"
+        },
+        {
+          "name": "appleUserId",
+          "javaType": "String"
+        },
+        {
+          "name": "avatarUrl",
+          "javaType": "String"
+        },
+        {
+          "name": "bio",
+          "javaType": "String"
+        },
+        {
+          "name": "gender",
+          "javaType": "String"
+        },
+        {
+          "name": "birthday",
+          "javaType": "LocalDate"
+        },
+        {
+          "name": "region",
+          "javaType": "String"
+        },
+        {
+          "name": "createdAt",
+          "javaType": "LocalDateTime"
+        },
+        {
+          "name": "updatedAt",
+          "javaType": "LocalDateTime"
+        }
+      ],
+      "dtoOnlyFields": [],
+      "problems": []
+    }
+  ],
+  "dtoModels": [
+    {
+      "className": "AppleLoginRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/AppleLoginRequest.java",
+      "sourceHash": "ac6b9cda01bf789db5aa33a4f5782fd99eae3c7de0971645c1acb7473946fca6",
+      "fields": [
+        {
+          "name": "identityToken",
+          "javaType": "String"
+        },
+        {
+          "name": "fullName",
+          "javaType": "String"
+        },
+        {
+          "name": "email",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "AuthErrorResponse",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/AuthErrorResponse.java",
+      "sourceHash": "ff60e48136851b468287b511f7a69e7ee41c6a0a455d7961b5767b59873d4ba4",
+      "fields": [
+        {
+          "name": "code",
+          "javaType": "String"
+        },
+        {
+          "name": "message",
+          "javaType": "String"
+        },
+        {
+          "name": "captchaRequired",
+          "javaType": "boolean"
+        },
+        {
+          "name": "remainingAttempts",
+          "javaType": "Integer"
+        }
+      ]
+    },
+    {
+      "className": "AuthRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/AuthRequest.java",
+      "sourceHash": "fb0ddccc9f6c85693caf0d45df9c116c6642400730aa80fb3c31c42474180650",
+      "fields": [
+        {
+          "name": "username",
+          "javaType": "String"
+        },
+        {
+          "name": "email",
+          "javaType": "String"
+        },
+        {
+          "name": "password",
+          "javaType": "String"
+        },
+        {
+          "name": "phone",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "AuthResponse",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/AuthResponse.java",
+      "sourceHash": "a8a8b57eef3c164cf31f20c0c882ed4b89c28c7d60b03f8896fe046899a754ec",
+      "fields": [
+        {
+          "name": "token",
+          "javaType": "String"
+        },
+        {
+          "name": "type",
+          "javaType": "String"
+        },
+        {
+          "name": "id",
+          "javaType": "Long"
+        },
+        {
+          "name": "username",
+          "javaType": "String"
+        },
+        {
+          "name": "displayName",
+          "javaType": "String"
+        },
+        {
+          "name": "email",
+          "javaType": "String"
+        },
+        {
+          "name": "phone",
+          "javaType": "String"
+        },
+        {
+          "name": "avatarUrl",
+          "javaType": "String"
+        },
+        {
+          "name": "isGuest",
+          "javaType": "Boolean"
+        },
+        {
+          "name": "guestTrialRemaining",
+          "javaType": "Integer"
+        }
+      ]
+    },
+    {
+      "className": "CaptchaResponse",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/CaptchaResponse.java",
+      "sourceHash": "7b09512fb7c1a727e68ac518a25b89a39d60a3bb225d59e3ce42a26b6aa821ec",
+      "fields": [
+        {
+          "name": "captchaId",
+          "javaType": "String"
+        },
+        {
+          "name": "imageBase64",
+          "javaType": "String"
+        },
+        {
+          "name": "expiresInSeconds",
+          "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "ChangePasswordRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/ChangePasswordRequest.java",
+      "sourceHash": "214353be11b9c8a8637c494d78104ad911ddafc2b21f519f1a5d6b4b5ebda9fc",
+      "fields": [
+        {
+          "name": "currentPassword",
+          "javaType": "String"
+        },
+        {
+          "name": "newPassword",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "ConfirmEmailChangeRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/ConfirmEmailChangeRequest.java",
+      "sourceHash": "6317bb17dc165c25e290fe20041fbeefcce7d5955529ae0aa6150cef298574f3",
+      "fields": [
+        {
+          "name": "newEmail",
+          "javaType": "String"
+        },
+        {
+          "name": "code",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "ForgotPasswordRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/ForgotPasswordRequest.java",
+      "sourceHash": "f705ee8e6dc045b5c4029254707ec09c9586bcce88173096938c3b7eecf628f5",
+      "fields": [
+        {
+          "name": "email",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "LoginRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/LoginRequest.java",
+      "sourceHash": "ccdece67a461d812fdbd7ea4678aad2c3f3c645cbaccc28549028ea169565c4f",
+      "fields": [
+        {
+          "name": "username",
+          "javaType": "String"
+        },
+        {
+          "name": "password",
+          "javaType": "String"
+        },
+        {
+          "name": "captchaId",
+          "javaType": "String"
+        },
+        {
+          "name": "captchaCode",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "ResetPasswordRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/ResetPasswordRequest.java",
+      "sourceHash": "49da878ce8f2ebaa163db7cfd6fbb8a1fd6b0cfcf78bddeb8c86567ebc1e0f92",
+      "fields": [
+        {
+          "name": "email",
+          "javaType": "String"
+        },
+        {
+          "name": "code",
+          "javaType": "String"
+        },
+        {
+          "name": "newPassword",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "SendEmailChangeCodeRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/SendEmailChangeCodeRequest.java",
+      "sourceHash": "cedaeaac59b3054ff724c84311f5184fbbda43363987c4d7880eaa1f67d31f5d",
+      "fields": [
+        {
+          "name": "newEmail",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "SmsCodeRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/SmsCodeRequest.java",
+      "sourceHash": "2fcd73397a2f4c2e515f364ef53ff05f6deb3881c8460871ace71728735ffb50",
+      "fields": [
+        {
+          "name": "phone",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "SmsLoginRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/SmsLoginRequest.java",
+      "sourceHash": "229fa4bafa5f667f6373e055cf653f3052ed068ffa7b14d8d91970e5b8f728a7",
+      "fields": [
+        {
+          "name": "phone",
+          "javaType": "String"
+        },
+        {
+          "name": "code",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "UserDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/account/api/dto/UserDTO.java",
+      "sourceHash": "22e22517874f190f2f6d0642ec31eb39dc15afb406a39bb3c14854d5458478f0",
+      "fields": [
+        {
+          "name": "id",
+          "javaType": "Long"
+        },
+        {
+          "name": "username",
+          "javaType": "String"
+        },
+        {
+          "name": "displayName",
+          "javaType": "String"
+        },
+        {
+          "name": "email",
+          "javaType": "String"
+        },
+        {
+          "name": "phone",
+          "javaType": "String"
+        },
+        {
+          "name": "avatarUrl",
+          "javaType": "String"
+        },
+        {
+          "name": "bio",
+          "javaType": "String"
+        },
+        {
+          "name": "gender",
+          "javaType": "String"
+        },
+        {
+          "name": "birthday",
+          "javaType": "LocalDate"
+        },
+        {
+          "name": "region",
+          "javaType": "String"
+        },
+        {
+          "name": "appleUserId",
+          "javaType": "String"
+        },
+        {
+          "name": "createdAt",
+          "javaType": "LocalDateTime"
+        },
+        {
+          "name": "updatedAt",
+          "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
+      "className": "AnalyticsEventBatchRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/analytics/api/dto/AnalyticsEventBatchRequest.java",
+      "sourceHash": "0813d5ab4854791b9d93063c109e34893fda85c2da26fd92ec685a5d62b7af3c",
+      "fields": [
+        {
+          "name": "events",
+          "javaType": "List<AnalyticsEventRequest>"
+        }
+      ]
+    },
+    {
+      "className": "AnalyticsEventRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/analytics/api/dto/AnalyticsEventRequest.java",
+      "sourceHash": "f3dca4ff5283a6c176f7ca17db75a92d3c5cc956ca3f7c4b6c87362d2f752bc5",
+      "fields": [
+        {
+          "name": "eventName",
+          "javaType": "String"
+        },
+        {
+          "name": "properties",
+          "javaType": "Map<String, Object>"
+        },
+        {
+          "name": "occurredAt",
+          "javaType": "Instant"
+        }
+      ]
+    },
+    {
+      "className": "CheckinSummaryDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/checkin/api/dto/CheckinSummaryDTO.java",
+      "sourceHash": "81f6125db88515e6f120fcb6d9d45e7b3f76da34e7c203914f19253078a1e9b5",
+      "fields": [
+        {
+          "name": "checkedInToday",
+          "javaType": "boolean"
+        },
+        {
+          "name": "currentStreak",
+          "javaType": "int"
+        },
+        {
+          "name": "totalDays",
+          "javaType": "long"
+        },
+        {
+          "name": "thisWeekDays",
+          "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "FishingReportRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/fishing/api/dto/FishingReportRequest.java",
+      "sourceHash": "b0b533f5d7d537f24ea1e3a7be6af68695ce6ce0f5631c3f68ccd2da035d58ca",
+      "fields": [
+        {
+          "name": "seconds",
+          "javaType": "Long"
+        }
+      ]
+    },
+    {
+      "className": "FishingSummaryDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/fishing/api/dto/FishingSummaryDTO.java",
+      "sourceHash": "54bbbf982689f9c4a5b373c99d38a709a376b73337c81ca39adc8ef0976791f2",
+      "fields": [
+        {
+          "name": "todaySeconds",
+          "javaType": "long"
+        },
+        {
+          "name": "thisWeekSeconds",
+          "javaType": "long"
+        },
+        {
+          "name": "totalSeconds",
+          "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "LeaderboardDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/leaderboard/api/dto/LeaderboardDTO.java",
+      "sourceHash": "bda824997272cbef8e36ba27e61642e7f5d54d1b2a511678231f2458d79d69dd",
+      "fields": [
+        {
+          "name": "entries",
+          "javaType": "List<LeaderboardEntryDTO>"
+        },
+        {
+          "name": "myScore",
+          "javaType": "Long"
+        }
+      ]
+    },
+    {
+      "className": "LeaderboardEntryDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/leaderboard/api/dto/LeaderboardEntryDTO.java",
+      "sourceHash": "41a2de44f22b8d344bc08acf37175fe7db1c05bd2fc683da25814e1c9c45fdd3",
+      "fields": [
+        {
+          "name": "rank",
+          "javaType": "int"
+        },
+        {
+          "name": "nickname",
+          "javaType": "String"
+        },
+        {
+          "name": "score",
+          "javaType": "long"
+        },
+        {
+          "name": "me",
+          "javaType": "boolean"
+        }
+      ]
+    },
+    {
+      "className": "FileUploadResponse",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/media/api/dto/FileUploadResponse.java",
+      "sourceHash": "2b155766013137938dd0c433b5402fa33cafabb7a76f028858d2cd5f780e96e7",
+      "fields": [
+        {
+          "name": "fileName",
+          "javaType": "String"
+        },
+        {
+          "name": "fileUrl",
+          "javaType": "String"
+        },
+        {
+          "name": "fileType",
+          "javaType": "String"
+        },
+        {
+          "name": "size",
+          "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "SoupDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/mood/api/dto/SoupDTO.java",
+      "sourceHash": "cec22492df20ebea9771c6fe13326f5715621f9e0bbd58b586dedaddf4858655",
+      "fields": [
+        {
+          "name": "text",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "RoleplayChatRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayChatRequest.java",
+      "sourceHash": "0ca85306cef9192380094eee3fc6217b30bd5af8c1a21291a12ed247f7d8bba8",
+      "fields": [
+        {
+          "name": "persona",
+          "javaType": "String"
+        },
+        {
+          "name": "messages",
+          "javaType": "List<Message>"
+        }
+      ]
+    },
+    {
+      "className": "RoleplayPersonaDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayPersonaDTO.java",
+      "sourceHash": "2b2ab5f29228087000184a0f5e9a4506b0bdef7a3d5eb170701e923923f56a89",
+      "fields": [
+        {
+          "name": "code",
+          "javaType": "String"
+        },
+        {
+          "name": "name",
+          "javaType": "String"
+        },
+        {
+          "name": "emoji",
+          "javaType": "String"
+        },
+        {
+          "name": "description",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "GenerateWeeklyRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/weekly/api/dto/GenerateWeeklyRequest.java",
+      "sourceHash": "ba35f91eb3a55fe81331c758ea775fdd86260360bf6c685fa58ab6302d45e4c1",
+      "fields": [
+        {
+          "name": "fragments",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "WeeklyReportDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/weekly/api/dto/WeeklyReportDTO.java",
+      "sourceHash": "756cd20180c69b9239b7b072253ded24b8711e68aa9ae1eb1725907343be497c",
+      "fields": [
+        {
+          "name": "id",
+          "javaType": "Long"
+        },
+        {
+          "name": "weekKey",
+          "javaType": "String"
+        },
+        {
+          "name": "inputText",
+          "javaType": "String"
+        },
+        {
+          "name": "content",
+          "javaType": "String"
+        },
+        {
+          "name": "status",
+          "javaType": "String"
+        },
+        {
+          "name": "createdAt",
+          "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
+      "className": "UpsertWorkProfileRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/workprofile/api/dto/UpsertWorkProfileRequest.java",
+      "sourceHash": "6203b8804b37e2d1440f00722fe75259a710800504cdf643e7aa4940fe83c5e4",
+      "fields": [
+        {
+          "name": "nickname",
+          "javaType": "String"
+        },
+        {
+          "name": "city",
+          "javaType": "String"
+        },
+        {
+          "name": "industry",
+          "javaType": "String"
+        },
+        {
+          "name": "jobType",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "WorkProfileDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/workprofile/api/dto/WorkProfileDTO.java",
+      "sourceHash": "c034a2fbf500f79ece8213610aa9dc4c95a5086a87f42f6d71e7166f20bf0aab",
+      "fields": [
+        {
+          "name": "userId",
+          "javaType": "Long"
+        },
+        {
+          "name": "nickname",
+          "javaType": "String"
+        },
+        {
+          "name": "city",
+          "javaType": "String"
+        },
+        {
+          "name": "industry",
+          "javaType": "String"
+        },
+        {
+          "name": "jobType",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "MessageResponse",
+      "sourcePath": "backend/src/main/java/com/goaway/shared/dto/MessageResponse.java",
+      "sourceHash": "02c07dbdbb374156f583ac1a2d81eedd83c95c1e08e1a6f93148de9160309b67",
+      "fields": [
+        {
+          "name": "message",
+          "javaType": "String"
+        },
+        {
+          "name": "service",
+          "javaType": "String"
+        },
+        {
+          "name": "provider",
+          "javaType": "String"
+        },
+        {
+          "name": "setupRequired",
+          "javaType": "Boolean"
+        }
+      ]
+    },
+    {
+      "className": "PaginationMeta",
+      "sourcePath": "backend/src/main/java/com/goaway/shared/dto/PaginationMeta.java",
+      "sourceHash": "b41c15c924bc85b79d41ae510802dd4b312491d6c15b7b4ad3e8594f3cfd94f3",
+      "fields": [
+        {
+          "name": "page",
+          "javaType": "int"
+        },
+        {
+          "name": "size",
+          "javaType": "int"
+        },
+        {
+          "name": "totalItems",
+          "javaType": "long"
+        },
+        {
+          "name": "totalPages",
+          "javaType": "int"
+        },
+        {
+          "name": "hasNext",
+          "javaType": "boolean"
+        },
+        {
+          "name": "hasPrevious",
+          "javaType": "boolean"
+        }
+      ]
+    },
+    {
+      "className": "RetrievalMeta",
+      "sourcePath": "backend/src/main/java/com/goaway/shared/dto/RetrievalMeta.java",
+      "sourceHash": "dd76ee540c2559c3fecee9382e695ce0c276ccaae20639c2ae10ee434ef1792e",
+      "fields": [
+        {
+          "name": "scene",
+          "javaType": "String"
+        },
+        {
+          "name": "keyword",
+          "javaType": "String"
+        },
+        {
+          "name": "sortStrategy",
+          "javaType": "String"
+        },
+        {
+          "name": "provider",
+          "javaType": "String"
+        }
+      ]
+    }
+  ]
+}

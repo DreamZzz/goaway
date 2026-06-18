@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>今天吃点啥 2.0 - 把一句话补成一桌菜</title>
+  <meta name="description" content="今天吃点啥 2.0 用 AI 帮你从一句想法生成菜单、菜谱步骤、食材清单和历史收藏，让每天做饭更轻松。" />
+  <meta property="og:title" content="今天吃点啥 2.0" />
+  <meta property="og:description" content="从一句想法到一桌菜，AI 帮你想好今天吃什么。" />
+  <meta property="og:image" content="/v2/app-icon.png" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: light;
+      --paper: #fffaf4;
+      --surface: #ffffff;
+      --surface-warm: #fff4ea;
+      --ink: #211914;
+      --muted: #786a5f;
+      --line: #eadbd0;
+      --brand: #ff5a18;
+      --brand-dark: #c83d10;
+      --green: #4f9d69;
+      --green-soft: #e7f4ea;
+      --blue: #2f6f8f;
+      --blue-soft: #e8f2f7;
+      --shadow: 0 18px 52px rgba(82, 46, 20, 0.13);
+      --radius: 28px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, #fffaf4 0%, #fff6ef 42%, #f5f8f3 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px clamp(18px, 4vw, 48px);
+      background: rgba(255, 250, 244, 0.86);
+      border-bottom: 1px solid rgba(234, 219, 208, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(255, 90, 24, 0.18);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav-links a {
+      text-decoration: none;
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: #2d7047;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .hero {
+      min-height: calc(100svh - 67px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+      gap: clamp(28px, 6vw, 74px);
+      align-items: center;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: clamp(34px, 6vw, 72px) clamp(18px, 4vw, 48px) 34px;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 90, 24, 0.10);
+      color: var(--brand-dark);
+      border: 1px solid rgba(255, 90, 24, 0.18);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(46px, 8vw, 84px);
+      line-height: 0.98;
+      letter-spacing: 0;
+      max-width: 670px;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      max-width: 600px;
+      color: var(--muted);
+      font-size: clamp(17px, 2.2vw, 21px);
+      line-height: 1.8;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .primary-cta,
+    .secondary-cta {
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 22px;
+      text-decoration: none;
+      font-weight: 900;
+      border: 1px solid transparent;
+    }
+
+    .primary-cta {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 16px 28px rgba(255, 90, 24, 0.24);
+    }
+
+    .secondary-cta {
+      background: rgba(255, 255, 255, 0.72);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 650px;
+    }
+
+    .metric {
+      padding: 18px;
+      border: 1px solid rgba(234, 219, 208, 0.9);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .phone {
+      justify-self: center;
+      width: min(390px, 100%);
+      border-radius: 46px;
+      padding: 16px;
+      background: #1d1713;
+      box-shadow: var(--shadow);
+    }
+
+    .screen {
+      overflow: hidden;
+      min-height: 690px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, #fffaf4 0%, #fff3e8 100%);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .screen-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 22px 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .screen-hero {
+      padding: 10px 22px 18px;
+    }
+
+    .screen-title {
+      font-size: 34px;
+      line-height: 1.08;
+      font-weight: 950;
+      margin: 12px 0 10px;
+    }
+
+    .input-card {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: var(--surface);
+      border: 1px solid rgba(234, 219, 208, 0.8);
+      box-shadow: 0 12px 30px rgba(72, 43, 24, 0.08);
+    }
+
+    .input-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .input-box {
+      min-height: 112px;
+      display: flex;
+      align-items: flex-start;
+      border-radius: 20px;
+      padding: 16px;
+      background: #f1e9df;
+      color: #3b3028;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 18px 20px;
+    }
+
+    .mood-grid img {
+      width: 100%;
+      aspect-ratio: 420 / 432;
+      object-fit: cover;
+      border-radius: 22px;
+      box-shadow: 0 8px 22px rgba(72, 43, 24, 0.08);
+    }
+
+    section {
+      padding: 82px clamp(18px, 4vw, 48px);
+    }
+
+    .section-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 680px;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .feature {
+      min-height: 220px;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(234, 219, 208, 0.9);
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 12px 34px rgba(72, 43, 24, 0.07);
+    }
+
+    .feature.alt-green {
+      background: linear-gradient(180deg, #ffffff 0%, var(--green-soft) 100%);
+    }
+
+    .feature.alt-blue {
+      background: linear-gradient(180deg, #ffffff 0%, var(--blue-soft) 100%);
+    }
+
+    .feature-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(255, 90, 24, 0.12);
+      color: var(--brand-dark);
+      font-weight: 950;
+      margin-bottom: 18px;
+    }
+
+    .feature h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 15px;
+    }
+
+    .flow {
+      background: #f5f8f3;
+      border-block: 1px solid rgba(210, 226, 208, 0.85);
+    }
+
+    .flow-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .flow-card,
+    .quote-card {
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid rgba(218, 229, 213, 0.9);
+      box-shadow: 0 14px 42px rgba(35, 79, 54, 0.08);
+      padding: 28px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .step b {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .step span {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .quote-card {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      background:
+        linear-gradient(135deg, rgba(255, 90, 24, 0.10), rgba(47, 111, 143, 0.10)),
+        #fff;
+    }
+
+    .quote-card p {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 44px);
+      line-height: 1.18;
+      font-weight: 950;
+    }
+
+    .quote-card span {
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 540px;
+    }
+
+    .moods {
+      background: var(--paper);
+    }
+
+    .moods-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .moods-grid img {
+      width: 100%;
+      aspect-ratio: 420 / 432;
+      object-fit: cover;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid rgba(234, 219, 208, 0.75);
+      box-shadow: 0 10px 24px rgba(72, 43, 24, 0.08);
+    }
+
+    .release {
+      padding-bottom: 96px;
+    }
+
+    .release-panel {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: clamp(26px, 5vw, 46px);
+      border-radius: 34px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(33, 25, 20, 0.92), rgba(37, 71, 50, 0.90)),
+        #211914;
+      box-shadow: 0 24px 64px rgba(33, 25, 20, 0.22);
+    }
+
+    .release h2 {
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .release p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.74);
+      line-height: 1.75;
+      max-width: 660px;
+    }
+
+    .store-button {
+      min-width: 178px;
+      min-height: 58px;
+      display: inline-grid;
+      align-content: center;
+      border-radius: 18px;
+      padding: 8px 18px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .store-button small {
+      display: block;
+      font-weight: 700;
+      opacity: 0.7;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    footer {
+      padding: 34px clamp(18px, 4vw, 48px) 44px;
+      border-top: 1px solid rgba(234, 219, 208, 0.84);
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .footer-inner nav {
+      display: flex;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .flow-grid,
+      .release-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        width: min(360px, 100%);
+      }
+
+      .screen {
+        min-height: auto;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .moods-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .nav {
+        position: static;
+      }
+
+      .nav-links a {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .mood-grid {
+        grid-template-columns: 1fr 1fr;
+        padding-inline: 14px;
+      }
+
+      .moods-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .release {
+        padding-bottom: 56px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="今天吃点啥首页">
+      <img src="/v2/app-icon.png" alt="" width="38" height="38" />
+      <span>今天吃点啥</span>
+    </a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#features">新能力</a>
+      <a href="#flow">体验流程</a>
+      <a href="#moods">来点灵感</a>
+      <span class="nav-badge">2.0 上线</span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">2.0 新版体验</span>
+        <h1 id="hero-title">把一句话补成一桌菜</h1>
+        <p>今天吃点啥从“我想吃点辣的”“一个人简单吃”开始，直接给你搭好菜单、步骤、热量、收藏历史和食材清单。</p>
+        <div class="cta-row">
+          <a class="primary-cta" href="#features">查看 2.0 新能力</a>
+          <a class="secondary-cta" href="#flow">了解体验流程</a>
+        </div>
+        <div class="metrics" aria-label="产品能力摘要">
+          <div class="metric">
+            <strong>6</strong>
+            <span>个首页灵感场景</span>
+          </div>
+          <div class="metric">
+            <strong>300+</strong>
+            <span>道家常菜 catalog</span>
+          </div>
+          <div class="metric">
+            <strong>5</strong>
+            <span>次每日免费推荐额度</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone" aria-label="今天吃点啥 2.0 首页预览">
+        <div class="screen">
+          <div class="screen-top">
+            <span>9:41</span>
+            <span>首页</span>
+          </div>
+          <div class="screen-hero">
+            <img src="/v2/app-icon.png" alt="今天吃点啥 App 图标" width="72" height="72" style="border-radius:18px; box-shadow:0 10px 24px rgba(255,90,24,.22)" />
+            <div class="screen-title">今天想吃什么？</div>
+            <div class="input-card">
+              <span>你想吃什么</span>
+              <div class="input-box">麻辣过瘾，川湘风味</div>
+            </div>
+          </div>
+          <div class="mood-grid">
+            <img src="/v2/moods/mood-casual.png" alt="没想法" />
+            <img src="/v2/moods/mood-spicy.png" alt="想吃辣" />
+            <img src="/v2/moods/mood-light.png" alt="清淡点" />
+            <img src="/v2/moods/mood-protein.png" alt="高蛋白" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="eyebrow">新能力</span>
+          <h2>从首页到结果页，少一步，多一点确定</h2>
+          <p>2.0 把常用场景前置，把菜谱结果做完整，把购物、历史、收藏和额度提示串起来，减少来回跳转。</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature">
+            <div class="feature-mark">01</div>
+            <h3>来点灵感直达结果</h3>
+            <p>首页场景按钮直接从 catalog 抽样生成菜单，跳过额外意图分析和偏好表单，响应更快也更稳定。</p>
+          </article>
+          <article class="feature alt-green">
+            <div class="feature-mark">02</div>
+            <h3>食材清单可以分享</h3>
+            <p>每次推荐都能汇总采购清单，iOS 端以文本文件分享，微信等目标 App 更容易正确接收。</p>
+          </article>
+          <article class="feature alt-blue">
+            <div class="feature-mark">03</div>
+            <h3>历史、收藏、详情闭环</h3>
+            <p>历史日历、收藏筛选、菜谱详情和步骤流继续沉淀，让“这道下次还做”真的找得到。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow" class="flow">
+      <div class="section-inner flow-grid">
+        <div class="flow-card">
+          <span class="eyebrow">体验流程</span>
+          <div class="steps">
+            <div class="step">
+              <b>1</b>
+              <div>
+                <strong>一句话或一个场景</strong>
+                <span>输入想法，或点“想吃辣”“清淡点”“一人食”等场景。</span>
+              </div>
+            </div>
+            <div class="step">
+              <b>2</b>
+              <div>
+                <strong>AI 补齐菜单</strong>
+                <span>自动匹配菜数、热量、主食和搭配，保留明确菜名与核心食材。</span>
+              </div>
+            </div>
+            <div class="step">
+              <b>3</b>
+              <div>
+                <strong>照着做，顺手收藏</strong>
+                <span>看步骤、查食材、分享采购清单，把喜欢的菜留到个人页。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card">
+          <p>每天最难的不是做饭，是先决定吃什么。</p>
+          <span>2.0 继续围绕这个瞬间做减法：少选项、少等待、少纠结，把注意力留给真正要吃的那一餐。</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="moods" class="moods">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="eyebrow">来点灵感</span>
+          <h2>六个入口，覆盖一天里最常见的纠结</h2>
+          <p>这些不是装饰按钮，而是会按真实 catalog 过滤和抽样的推荐入口；最近常用也会根据用户本机使用记录生成。</p>
+        </div>
+        <div class="moods-grid" aria-label="首页来点灵感六个入口">
+          <img src="/v2/moods/mood-casual.png" alt="没想法" />
+          <img src="/v2/moods/mood-spicy.png" alt="想吃辣" />
+          <img src="/v2/moods/mood-light.png" alt="清淡点" />
+          <img src="/v2/moods/mood-protein.png" alt="高蛋白" />
+          <img src="/v2/moods/mood-solo.png" alt="一人食" />
+          <img src="/v2/moods/mood-banquet.png" alt="宴客菜" />
+        </div>
+      </div>
+    </section>
+
+    <section id="release" class="release">
+      <div class="release-panel">
+        <div>
+          <h2>2.0 首页已就绪</h2>
+          <p>根域名已切换到新版介绍页，继续保留隐私政策与支持入口；`/v2/` 仍作为同版页面的兼容访问地址。</p>
+        </div>
+        <a class="store-button" href="/support" aria-label="联系支持">
+          <small>Contact</small>
+          联系支持
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2026 今天吃点啥</span>
+      <nav aria-label="页脚导航">
+        <a href="/privacy">隐私政策</a>
+        <a href="/support">联系支持</a>
+        <a href="/">2.0 首页</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

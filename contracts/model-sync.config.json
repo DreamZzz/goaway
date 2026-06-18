@@ -1,0 +1,14 @@
+{
+  "entityContracts": [
+    {
+      "name": "User",
+      "entity": "backend/src/main/java/com/goaway/contexts/account/domain/User.java",
+      "dto": "backend/src/main/java/com/goaway/contexts/account/api/dto/UserDTO.java",
+      "ignoreEntityFields": [
+        "password",
+        "failedLoginAttempts"
+      ],
+      "dtoOnlyFields": []
+    }
+  ]
+}

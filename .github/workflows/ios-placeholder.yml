@@ -1,0 +1,15 @@
+name: iOS CI Placeholder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    name: Placeholder
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Explain current scope
+        run: |
+          echo "iOS CI is intentionally not active in phase 1."
+          echo "Future phase should use a macOS runner and separate Apple signing/App Store secrets."

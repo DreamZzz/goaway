@@ -1,0 +1,294 @@
+# 接口约定
+
+## 总体原则
+
+- what-to-eat 首版以前后端共享的 DTO/生成产物为契约源，不手工维护生成文件。
+- provider 能力通过环境变量切换，不通过变更 controller 路径切换。
+- 前端统一通过 feature API facade 或 `frontend/src/shared/api/client.js` 访问后端。
+- 除 `api/auth/**` 外，`meal`、`favorites`、`GET /api/users/{id}` 默认要求 JWT；`voice` 默认要求 JWT，但允许 guest token 在审核试吃链路中调用转写接口。
+- 例外：游客模式开放 `POST /api/auth/guest`、`POST /api/meals/guest-inspirations` 与 `POST /api/voice/transcriptions`，用于免注册体验“来点灵感”和文字/语音 1 道菜试吃。
+
+## 核心首版接口
+
+- `POST /api/auth/register`
+- `GET /api/auth/captcha`
+- `POST /api/auth/login`
+- `POST /api/auth/guest`
+- `POST /api/auth/password/forgot`
+- `POST /api/auth/password/reset`
+- `GET /api/users/{id}`
+- `PUT /api/users/{id}`
+- `POST /api/voice/transcriptions`
+- `GET /api/meals/catalog`
+- `POST /api/meals/intent`
+- `POST /api/meals/recommendations`
+- `POST /api/meals/recommendations/stream`
+- `POST /api/meals/guest-inspirations`
+- `POST /api/meals/recommendations/{requestId}/feedback`
+- `GET /api/meals/history`
+- `GET /api/meals/requests/{requestId}/shopping-list`
+- `GET /api/meals/recipes/{recipeId}`
+- `POST /api/meals/recipes/{recipeId}/steps/stream`
+- `POST /api/meals/recipes/{recipeId}/image`
+- `PUT /api/meals/recipes/{recipeId}/preference`
+- `GET /api/meals/favorites`
+- `POST /api/inventory/scans`
+- `POST /api/inventory/scans/{scanId}/confirm`
+- `GET /api/inventory/items`
+- `POST /api/inventory/items`
+- `PATCH /api/inventory/items/{itemId}`
+- `DELETE /api/inventory/items/{itemId}`
+- `POST /api/inventory/items/expired/clear`
+- `POST /api/inventory/recipe-consumptions/preview`
+- `POST /api/inventory/recipe-consumptions`
+- `GET /api/subscription/status`
+- `POST /api/subscription/apple/verify`
+- `POST /api/subscription/apple/restore`
+- `/admin/console/*`
+- `/admin/meals/images/*`
+
+## 请求与响应约束
+
+- `POST /api/voice/transcriptions`
+  - `multipart/form-data`
+  - `audio` 必填，支持 iOS `m4a/aac/wav`，最长 60 秒
+  - `locale` 选填，默认 `zh-CN`
+  - 成功响应：`{ text, provider, durationMs, emptyResult }`
+  - 登录用户与 guest token 均可调用；guest 只用于把语音转成文字，后续必须走 `guest-inspirations` 的 1 道菜试吃
+  - 错误响应：`400` 参数/文件错误，`401` 未登录或游客上下文无效，`502/503` 返回 `MessageResponse` 且 `service="speech"`
+- `GET /api/meals/catalog`
+  - 无请求体，需登录
+  - 成功响应：`{ datasetVersion, total, items }`
+  - `items[]` 中每项为 `MealCatalogItemDTO`：`{ id, code, slug, name, category, subcategory, cookingMethod, rawFlavorText, flavorTags, featureTags, ingredientTags, sourceIndex }`
+  - 语义：返回当前激活的数据集快照；若库里还没有该版本数据，服务启动或首次读取时会按 `datasetVersion + sourceChecksum` 做幂等导入
+- `GET /api/users/{id}`
+  - 需登录（JWT）；未登录返回 401
+- `POST /api/auth/guest`
+  - 请求头：`X-Guest-Installation-Id`
+  - 不需要用户注册或输入个人信息；前端首次点击“来点灵感”、游客文字或游客语音入口时调用
+  - `X-Guest-Installation-Id` 必须是 UUID；服务端只保存 hash，不持久化原始安装标识
+  - 成功响应：`{ token, userId, username, displayName, email, avatarUrl, isGuest, guestTrialRemaining }`
+  - `isGuest=true`
+  - `guestTrialRemaining` 为当前游客剩余体验次数
+  - 错误响应：`400` 安装标识缺失或非法，`429` 游客认证限流
+- `POST /api/meals/recommendations`
+  - body：`{ sourceText, sourceMode, dishCount, totalCalories, staple, locale, catalogItemId, useInventory }`
+  - 注意：`preload` 字段已在服务端屏蔽（`@JsonIgnore`），客户端发送无效，配额始终按实际消耗计
+  - `sourceMode` = `TEXT | VOICE`
+  - `staple` = `RICE | NOODLES | COARSE_GRAINS | NO_STAPLE`
+  - `catalogItemId` 选填；当前端从基础菜单或“来点灵感”带入菜品时透传，用于把生成结果与基础菜关联
+  - 成功响应：`{ requestId, sourceText, form, provider, reasonSummary, items, emptyState }`
+  - `form` 包含用户本次提交的结构化参数，含 `catalogItemId`
+  - `useInventory` 选填；默认按 `false` 处理。只有 Pro 用户在完善偏好页显式勾选库存参与时，客户端才传 `useInventory: true`；服务端只把未过期库存作为弱推荐上下文，临期食材优先级更高。显式请求库存参与但无可用库存时返回业务错误；guest 与非 Pro 不参与库存推荐
+  - `reasonSummary` 是第一段推荐完成后展示的“为什么推荐这几道菜”的简短总结；命中数据库缓存时允许由服务端本地兜底生成，不强制再次调用 LLM。若显式勾选库存参与并命中库存食材，应包含“您的冰箱里有 XX”或等价用户可感知表达
+  - `items[]` 中每项为 `RecipeDTO`：`{ id, title, summary, estimatedCalories, ingredients, seasonings, steps, imageUrl, imageStatus, stepsStatus, preference, catalogItemId, inventoryMatches }`
+  - `inventoryMatches[]`：`{ inventoryItemId, name, quantityLevel, expiresAt, expiryStatus }`，仅返回本菜谱命中的未过期库存食材
+  - 当前用户前台版本统一执行每日额度控制：免费用户每天 5 次、一次最多 3 道菜，Pro 用户每天 15 次、一次最多 5 道菜；超额时前端会展示付费墙或次数包入口
+  - 当大模型成功但没有可用结果时，返回 `200` 且 `items=[]`
+  - 若 `catalogItemId` 不存在或不属于当前激活菜单，返回 `400`
+  - guest token 不允许调用该接口；返回 `403`，`error="GUEST_RESTRICTED"`
+  - 对 ingredient-intent 多菜请求（如 `鸡排 / 2道菜`），服务端会跳过旧缓存并优先约束成“1 道主菜 + N 道搭配菜”，避免两道同核心食材菜同时出现
+  - 对多信息食材请求（如 `鸡蛋，番茄，土豆，想吃热乎的，别太复杂`），服务端会先解析内部 intent profile：显式食材、偏好词、道数与主食约束；catalog 快路径必须按整桌菜单覆盖多个关键词并通过质量门禁，不能命中单个关键词后丢弃其他关键信息
+  - `triggerScenario=QUOTA_DEDUCT_ONLY` 仅用于确认已展示预加载结果并扣除额度，服务端不再生成另一套菜谱；响应使用 `displayedRequestId` 作为 `requestId`，`items=[]`
+- `POST /api/meals/guest-inspirations`
+  - 请求头：`Authorization: Bearer <guest-token>`、`X-Guest-Installation-Id`
+  - body：`{ locale, sourceText, sourceMode, dishCount, totalCalories, staple }`
+  - `sourceText/sourceMode` 仅用于游客文字/语音试吃；`sourceText` 最长 120 字符，`sourceMode = TEXT | VOICE`
+  - `dishCount` 只允许 `1`；不传时保持“来点灵感”默认 3 道，不允许游客请求多道文字/语音推荐
+  - `totalCalories` 与 `staple` 用于 1 道菜试吃请求；强 catalog 命中时仅作为轻量偏好，弱命中或无命中时随请求传给 LLM
+  - 只面向游客模式；注册用户不走该接口
+  - 服务端从当前基础菜单中选取菜品：无 `sourceText` 时随机 3 道；有 `sourceText` 时先按菜名、分类、口味和食材标签强匹配 1 道 catalog 菜品
+  - 有 `sourceText` 但只形成弱匹配或无法匹配时，服务端按用户实际输入意图直接调用 LLM 生成 1 道试吃菜谱；不会回退到“龙虾 -> 虾”这类别名弱匹配
+  - 不走 SSE、满意度反馈、RabbitMQ 推荐记录、收藏写入，也不开放登录用户完整多菜推荐链路
+  - 成功响应复用 `MealRecommendationResponseDTO`：`{ requestId, sourceText, form, provider, reasonSummary, items, emptyState, guestTrialRemaining }`
+  - `provider = "catalog-random"`、`"catalog-guest-input"` 或当前 LLM provider 名称
+  - `guestTrialRemaining` 在每次成功返回后递减
+  - 第 4 次请求返回 `403`，`{ error: "GUEST_TRIAL_EXHAUSTED", message, guestTrialRemaining: 0 }`
+  - `X-Guest-Installation-Id` 与 token 绑定不匹配时返回 `401`，`error="INVALID_GUEST_CONTEXT"`
+- `POST /api/meals/intent`
+  - body：`{ sourceText, locale }`
+  - 用于在首页提交前做一层输入理解，区分“可直接推荐”与“需要先澄清”
+  - 成功响应：`{ decision, normalizedSourceText, clarificationQuestion, catalogFirst, catalogItemId }`
+  - `decision = PROCEED | CLARIFY`
+  - `normalizedSourceText` 是后续真正用于推荐的标准化方向；例如用户输入 `家` 时，可返回 `家常菜`
+  - `clarificationQuestion` 仅在 `decision=CLARIFY` 时返回，用于前端先向用户确认“你是想吃 XXX 吗？”
+  - `catalogFirst=true` 表示该输入属于“泛但与菜相关”的方向，应优先从基础菜单选出真实菜名，再调用 LLM 生成菜谱内容
+- `POST /api/meals/recommendations/stream`
+  - `Content-Type: application/json`
+  - SSE 响应，事件名包含 `summary`、`recipe`、`done`
+  - `summary` 事件体：`{ requestId, reasonSummary }`
+  - `recipe` 事件体：单个 `RecipeDTO`
+  - `done` 事件体：`{ complete: true }`
+  - 结束前可能只返回部分菜谱；客户端应按流式增量展示
+  - `dishCount >= 2` 时当前统一走分阶段流式：先返回 `summary`，再按卡片逐道返回 `recipe`
+  - 请求体同普通推荐接口支持 `useInventory`；默认不使用库存，显式传 `true` 才会尝试库存参与。`summary` 和 `recipe` 事件同样会带库存推荐理由与 `inventoryMatches`
+  - 预加载 SSE 会在服务端做质量门禁；若多食材/偏好请求被 catalog 快路径命中但菜单覆盖不足、出现多道同类菜或引入未提及主料，服务端会丢弃该预加载批次且不发送 `recipe` 事件，客户端继续等待正式流式推荐
+- `POST /api/meals/recommendations/{requestId}/feedback`
+  - body：`{ feedbackStatus }`
+  - `feedbackStatus = SATISFIED | UNSATISFIED`
+  - 成功响应：`202 Accepted`，`{ requestId, feedbackStatus, accepted }`
+  - 说明：该接口只负责异步投递反馈事件；RabbitMQ 不可用时会降级为本地日志，不阻塞当前页面体验
+  - guest token 不允许调用该接口；返回 `403`
+- `POST /api/meals/recipes/{recipeId}/steps/stream`
+  - SSE 响应，事件名包含 `token` 与 `step`
+  - `token` 事件体：`{ index, contentDelta }`，用于前端把当前步骤做增量追加展示
+  - `step` 事件体：`RecipeStepDTO`，表示该步骤已完整生成，可用于最终落定与缓存
+  - 若步骤已存在，服务端直接重放缓存步骤，不重复调用模型
+- `GET /api/meals/recipes/{recipeId}`
+  - 返回单个 `RecipeDTO`
+  - 用途：结果页在收藏后刷新最新详情；“收藏”页面点击卡片进入详情页时，统一以该接口作为详情真值源
+  - 若该菜谱此前仍处于极简态，客户端可继续配合 `image` / `steps` 接口做自愈补齐
+- `POST /api/meals/recipes/{recipeId}/image`
+  - 触发单道菜的异步补图
+  - 成功响应：`{ recipeId, imageUrl, imageStatus }`
+  - 服务端优先查 `meal_image_assets`，未命中时才搜索公网图片并落本地/OSS
+  - 客户端超时设定 90 秒（对齐 Jimeng 最长 60 秒生成窗口 + 余量）
+  - 客户端在失败时做指数退避重试：立即 → 5s → 15s，共 3 次；三次全失败后标记 `imageStatus: FAILED`
+- `PUT /api/meals/recipes/{recipeId}/preference`
+  - body：`{ preference: LIKE | DISLIKE }`
+  - 幂等 upsert，同一用户同一道菜后写覆盖前写
+  - 当 `preference=LIKE` 时，服务端会先尝试补齐该菜谱缺失的图片和详细做法，再写入收藏偏好
+  - 若补图或补做法失败，本次请求返回 `502/503`，且不会把该条收藏写成成功状态
+- `GET /api/meals/favorites`
+  - 返回 `items + pagination + retrieval`
+  - `retrieval.scene = "favorites"`
+  - 空列表返回 `200`
+  - guest token 不允许调用；返回 `403`
+- `GET /api/meals/history`
+  - 返回按 `requestId` 聚合的推荐历史分页结果
+  - 当前已在前端底部 Tab 接入，但不属于 guest 能力
+  - 非 Pro 用户访问时会被付费墙引导；再次生成、搜索/筛选仍是后续优化，不属于 2.0 承诺能力
+  - guest token 不允许调用；返回 `403`
+- `GET /api/meals/requests/{requestId}/shopping-list`
+  - 返回某次推荐结果聚合后的食材采购清单
+  - 响应结构：`{ requestId, categories, totalItemCount, categoryCount, purchaseNote }`
+  - `categories[]` 按一级采购区域聚合：肉禽蛋、海鲜水产、蔬菜豆制品、佐料调味品；无法识别的食材进入“其他”
+  - `categories[].groups[]` 按二级类别聚合：例如猪肉、牛肉、叶菜、根茎菜、调味汁等
+  - `groups[].items[]` 是已去重合并后的食材项，包含 `name`、`totalAmount`、`suggestedPurchaseAmount`、`inventoryStatus`、`sourceDishTitles`
+  - `inventoryStatus = IN_STOCK | LOW_STOCK | NOT_IN_STOCK | EXPIRED | UNKNOWN`；过期库存视为需购买，不抵扣采购建议
+  - 服务端会尽量解析克 / 斤 / 公斤 / 两等重量单位和常见个数单位，合计同类项后按约 15% 余量给出建议购买量
+  - 当前已在前端结果页弹窗接入，前端按一级类别 + 二级类别展示，不再按菜谱逐条罗列
+  - 非 Pro 用户访问时会被付费墙引导
+  - guest token 不允许调用；返回 `403`
+
+## 食材库存接口约束
+
+- 食材库存是账号型 Pro 能力；guest token 不允许调用，返回 `403 GUEST_RESTRICTED`；非 Pro 用户调用扫描接口返回 `403 PRO_REQUIRED`。
+- `POST /api/inventory/scans`
+  - `multipart/form-data`，字段名 `image`
+  - 需登录且为 ACTIVE 会员；7 天体验会员也按 ACTIVE 处理
+  - 服务端保存压缩图片，调用 `APP_INVENTORY_VISION_PROVIDER=mock|bailian-qwen-vl` 识别图片中可见食材
+  - 每个 Pro 用户每天最多 `APP_INVENTORY_SCAN_DAILY_QUOTA` 次，默认 10；该次数不计入菜谱生成额度
+  - 成功响应：`{ scanId, status, imageUrl, provider, model, imageExpiresAt, items, error }`
+  - `items[]`：`{ id, name, normalizedName, category, quantityLevel, amountText, confidence, locationHint, needsReview, selected }`
+  - `quantityLevel = LOW | MEDIUM | HIGH | UNKNOWN`，只代表粗略余量；`amountText` 是可编辑补充文案
+  - 识别失败时会落 scan 记录并返回 `status=FAILED` 与 `error`，前端展示可重试状态
+- `POST /api/inventory/scans/{scanId}/confirm`
+  - body：`{ items: [{ name, normalizedName, category, quantityLevel, amountText, expiresAt, selected }] }`
+  - 只保存 `selected=true` 且有名称的项
+  - 按 `userId + normalizedName` upsert 到当前库存；本次照片未出现的旧库存不会被自动删除
+  - `expiresAt` 可由用户传入；不传时服务端按分类给默认保质期：肉禽蛋/海鲜水产 2 天、蔬菜豆制品 5 天、乳制品/半成品/其他 7 天、饮品 14 天、主食豆谷 30 天、调味品 180 天
+  - 成功响应：`{ items }`，items 为保存后的当前库存项
+- `GET /api/inventory/items`
+  - 返回 `{ items }`，按更新时间倒序；库存项包含 `expiresAt` 与计算态 `expiryStatus = FRESH | EXPIRING_SOON | EXPIRED | UNKNOWN`
+- `POST /api/inventory/items` / `PATCH /api/inventory/items/{itemId}` / `DELETE /api/inventory/items/{itemId}`
+  - 用于手动补充、修改、删除我的食材库存
+  - 创建时同样按 `userId + normalizedName` upsert
+- `POST /api/inventory/items/expired/clear`
+  - 清理当前用户已过期库存，返回 `{ items }`
+- `POST /api/inventory/recipe-consumptions/preview`
+  - body：`{ recipeId, items }`，其中 `items` 是本菜谱命中的 `inventoryItemId[]`
+  - 返回建议扣减项：`{ recipeId, items: [{ inventoryItemId, name, currentQuantityLevel, proposedQuantityLevel, expiresAt, expiryStatus, selected, deleteWhenEmpty }] }`
+  - 默认扣减：`HIGH -> MEDIUM`、`MEDIUM -> LOW`、`LOW -> 删除/用完`、`UNKNOWN -> 不自动扣减`；过期项默认不参与扣减，可选择清理
+- `POST /api/inventory/recipe-consumptions`
+  - body：`{ recipeId, clientActionId, items: [{ inventoryItemId, selected, nextQuantityLevel, deleteWhenEmpty }] }`
+  - `clientActionId` 用于幂等；相同用户重复提交同一 action 不会重复扣减
+  - 成功响应：`{ applied, items }`，`items` 为更新后的当前库存
+
+## 订阅与额度接口约束
+
+- 订阅与购买能力属于账号型能力：新用户引导页可以展示 Pro 价值与首月优惠，但必须先完成登录/注册，再调用订阅状态、购买验证或恢复接口；guest token 不作为购买归属。
+- `GET /api/subscription/status`
+  - 需登录（JWT）；guest token 不允许调用
+  - 返回当前订阅、额度、次数包余额与最大菜数：`{ subscriptionStatus, expiresAt, todayUsed, dailyFreeQuota, canGenerate, maxDishCount, dailyQuota, subscribed, creditBalance }`
+  - `subscribed=true` 仅在订阅状态为 `ACTIVE` 且 `expiresAt` 未过期时成立
+- `POST /api/subscription/apple/verify`
+  - 需登录（JWT）
+  - body：`{ receiptData, productId, transactionId }`
+  - 用于 Apple IAP 月订阅与 10 次生成包 receipt 校验
+  - 服务端会先请求 Apple production verifyReceipt，遇到 sandbox receipt 再回退 sandbox
+  - 月订阅产品：`com.868299.eat.subscription.monthly`
+  - 次数包产品：`com.868299.eat.credits.10`
+- `POST /api/subscription/apple/restore`
+  - 需登录（JWT）
+  - body：`{ receiptData }`
+  - 用于恢复月订阅权益；恢复成功后返回最新 `SubscriptionStatusDTO`
+- `POST /api/subscription/review-reward/claim`
+  - 需登录（JWT）；guest token 不允许调用
+  - 内部体验会员奖励闭环：每个账号最多领取一次 7 天体验会员，服务端直接写入订阅权益，不走 Apple 订阅免费试用流程
+  - 权益领取不以提交 App Store 评分或评价为条件；前端可在领取后用系统评分 API 做弱提示
+  - 接口幂等；已领取时返回当前 `SubscriptionStatusDTO`
+## 运营接口约束
+
+- `/admin/console/*`
+  - 仅供内部调试和运营使用，不属于客户端公开契约
+  - 通过 `X-Admin-Secret` 和 `APP_ADMIN_SECRET` 保护（常数时间比较，防时序攻击）
+  - 速率限制：10 次/60 秒/IP（`AdminRateLimitFilter`），超限返回 429；admin console 前端会对后台请求做轻量排队，避免页面操作触发并发请求突刺
+  - `POST /admin/console/recommend` 同样受每日配额约束，不可绕过
+  - 菜谱运营模块包含已生成菜谱查询、推荐记录查询、菜谱备选扩容清单与基础库版本管理
+  - `GET /admin/console/catalog/datasets` 返回中文主菜单版本列表：`{ count, items[] }`，`items[]` 包含 `version/title/totalItems/active/importedAt/updatedAt`
+  - `POST /admin/console/catalog/datasets/{version}/activate` 将指定 `cn-home-menu-vN` 切为唯一 active；只切指针，不删除版本，不回写历史 `meal_recipes`
+  - `POST /admin/console/catalog-expansion/runs` 按近 N 天 `meal_recipes.catalog_item_id IS NULL` 的 LLM 新菜品生成扩容候选；默认 `days=30`，不进入用户侧产品功能
+  - `GET /admin/console/catalog-expansion/candidates` 支持按 `status/q/category/ingredientTag/flavorTag/minConfidence/minSampleCount/baseDatasetVersion/limit` 筛选候选
+  - `POST /admin/console/catalog-expansion/candidates/{candidateId}/status` 支持 `PENDING / APPROVED / REJECTED / DUPLICATE`
+  - `POST /admin/console/catalog-expansion/candidates/ingest` 请求体：`{ candidateIds, triggerImageBatch }`；服务端复制当前 active dataset 的 enabled items 与 tags，追加候选，生成 `cn-home-menu-v{next}` 并切为 active，返回 `baseDatasetVersion/newDatasetVersion/ingestedCount/duplicateCount/totalItems/imageBatchTriggered`
+  - 批量收录成功后会异步触发 catalog 图片批处理；补图失败只记录日志，不回滚数据集发布
+  - 当前包含：
+    - `GET /admin/console/recipes/search?q=&limit=`：按标题模糊搜索历史菜谱
+    - `GET /admin/console/recipes`：按标题、provider、图片状态、步骤状态、视频状态、偏好、userId 组合筛选内容记录
+    - `POST /admin/console/recipes/{id}/image`：对单条菜谱补图
+    - `POST /admin/console/recipes/{id}/steps`：对单条菜谱补做法
+    - `POST /admin/console/recipes/{id}/video`：对单条菜谱生成视频
+    - `POST /admin/console/recipes/{id}/rerun`：按原始输入回放一次推荐
+    - `GET /admin/console/recommendations`：按 requestId、sourceText、provider、status、feedbackStatus、cacheHit、userId 查询推荐记录
+    - `POST /admin/console/recommend`：运营视角直接构造一次推荐请求
+    - `GET /admin/console/catalog`：读取基础菜单，给“来点灵感”和运营抽样使用
+    - `GET /admin/console/users/search?q=&limit=`：按 userId / 用户名 / 邮箱查用户
+    - `GET /admin/console/users/{id}`：查看用户基础资料、最近生成、收藏统计
+    - `GET /admin/console/users/{id}/subscription`：查看订阅、配额、次数余额、最近 receipt 摘要
+    - `POST /admin/console/users/{id}/subscription/refresh`：刷新订阅状态，修正过期状态
+    - `POST /admin/console/users/{id}/quota/recalculate`：按今日 distinct requestId 重算已用配额
+    - `POST /admin/console/users/{id}/credits/grant`：补发或修正次数余额，body=`{ delta }`
+  - 说明：视频生成能力目前仅保留在内部/运营面，不在用户前台入口展示；订阅与次数包已在 iOS 2.0 前台接入，运营台保留查询、刷新、重算与补发能力
+- `/admin/meals/images/*`
+  - 仅供内部素材运营使用，不属于客户端公开契约
+  - 当前包含按 provider 清理图片资产、批量生成 catalog 图片、查看 batch 状态等能力
+
+## Provider 相关约束
+
+- `APP_MEDIA_STORAGE_PROVIDER=local` 时，上传结果返回相对路径 `/uploads/images/...`。
+- `APP_MEDIA_STORAGE_PROVIDER=oss` 时，上传结果返回 OSS 或 CDN 绝对地址。
+- `APP_SPEECH_PROVIDER=mock` 时，语音接口返回可预期转写占位结果，不访问第三方。
+- `APP_SPEECH_PROVIDER=aliyun` 时，通过平台 provider 调用阿里云语音识别。
+- `APP_LLM_PROVIDER=mock` 时，菜谱接口返回稳定 mock 菜谱，便于本地联调。
+- `APP_LLM_PROVIDER=openai-compatible` 时，通过统一 provider 调用兼容 OpenAI Chat/Responses 的文本模型。
+- `APP_LLM_IMAGE_PROVIDER=jimeng` 时，通过吉梦异步图片生成接口产出菜谱图；服务端会把生成结果缓存到图片资产表。
+- `APP_MEAL_VIDEO_PROVIDER=jimeng` 时，通过吉梦视频生成接口基于图片生成烹饪短视频。
+- 当前前台用户版本不会暴露视频生成按钮；如需生成视频，仅通过内部运营接口触发。
+- iOS 2.0 前台会暴露 Pro 订阅与次数包入口；`QuotaService` 按免费/Pro 分层控制每日额度，额度用尽后可使用次数包抵扣。
+- 推荐记录与满意度反馈属于非核心弱依赖能力：
+  - 优先通过 RabbitMQ 异步投递推荐完成/反馈事件
+  - 若 RabbitMQ 连接或发送失败，服务端直接降级为本地日志记录，不做同步写库，也不影响推荐主链路返回
+- 当输入属于”泛方向但与菜相关”（如 `辣`、`汤`、`家常菜`）时，服务端应优先从 `meal_catalog_items` 中挑选真实菜名，再调用 LLM 生成摘要、食材、佐料和做法；不允许把非真实菜名直接透传成结果卡片标题。
+- “来点灵感”（`pickInspirationBundle`）按菜系加权随机：中餐池 75%、非中餐（日料/西餐）25%；菜系识别基于 name/category/subcategory 关键词，中餐为默认兜底。DB 中可能同时存在多版本 catalog 数据（中/日/西），该策略确保推荐以中餐为主。
+- 图片生成失败不应导致整次菜谱生成失败；`imageStatus` 反映 `PENDING | GENERATED | OMITTED | FAILED`。
+- `stepsStatus` 反映 `PENDING | GENERATED | OMITTED | FAILED`。
+- 视频生成失败不应影响菜谱图文主链路；`videoStatus` 反映 `PENDING | GENERATED | OMITTED | FAILED`。
+- 基础菜单通过 `APP_MEAL_CATALOG_*` 配置控制：
+  - `APP_MEAL_CATALOG_BOOTSTRAP_ENABLED` 控制是否在启动时尝试导入
+  - `APP_MEAL_CATALOG_DATASET_VERSION` 是数据集版本号，线上切换新菜单时应提升该值
+  - `APP_MEAL_CATALOG_SOURCE_FILE` 指向随包发布的 classpath 资源，避免依赖线上手工拷贝文件
+- 数据迁移策略：
+  - SQL `bootstrap.sql` 只负责表结构和索引
+  - 实际菜单内容在应用启动后按版本幂等导入数据库
+  - 如果同一版本的源文件内容变更，服务会拒绝覆盖并要求提升版本号，避免线上静默污染旧数据

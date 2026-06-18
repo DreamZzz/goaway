@@ -1,0 +1,171 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+# Personal-team device builds have shown unstable runtime behaviour with the
+# RN 0.84 prebuilt iOS frameworks (duplicate React SwiftUI classes embedded in
+# both React.framework and the app binary). Force source builds for RN core and
+# its native dependencies so Release/device builds use one consistent set of
+# symbols.
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+ENV['RCT_USE_RN_DEP'] = '0'
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'frontend' do
+  config = use_native_modules!
+
+  # 友盟 U-App 移动统计 SDK (v7.5.10+) — vendored to avoid Chinese CDN in Xcode Cloud
+  # UmengBootstrap.m 在应用启动时读 Info.plist 里的 UmengAppKey 调用 initWithAppkey。
+  pod 'UMDevice',      :path => 'vendor/UMDevice'
+  pod 'UMCommon',      :path => 'vendor/UMCommon'
+  pod 'UMCCommonLog',  :path => 'vendor/UMCCommonLog'
+
+  # Manually add RNWorklets pod since it's not being auto-detected
+  # pod 'RNWorklets', :path => '../node_modules/react-native-worklets'  # Removed along with react-native-reanimated
+  
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  split_umeng_xcconfig_by_sdk = lambda do |xcconfig_path|
+    next unless File.exist?(xcconfig_path)
+
+    content = File.read(xcconfig_path)
+    rules = {
+      'FRAMEWORK_SEARCH_PATHS' => [
+        '"${PODS_ROOT}/UMCCommonLog/UMCommonLog"',
+        '"${PODS_ROOT}/UMCommon/UMCommon_7.5.10"',
+        '"${PODS_ROOT}/UMDevice/UMDevice_3.5.0"',
+        '"${PODS_XCFRAMEWORKS_BUILD_DIR}/UMCommon"',
+        '"${PODS_XCFRAMEWORKS_BUILD_DIR}/UMDevice"',
+      ],
+      'OTHER_LDFLAGS' => [
+        '-framework "UMCommon"',
+        '-framework "UMCommonLog"',
+        '-framework "UMDevice"',
+      ],
+      'OTHER_MODULE_VERIFIER_FLAGS' => [
+        '"-F${PODS_CONFIGURATION_BUILD_DIR}/UMCCommonLog"',
+        '"-F${PODS_CONFIGURATION_BUILD_DIR}/UMCommon"',
+        '"-F${PODS_CONFIGURATION_BUILD_DIR}/UMDevice"',
+      ],
+    }
+
+    updated_lines = []
+    device_overrides = []
+
+    content.lines.each do |line|
+      matching_rule = rules.find { |setting, _snippets| line.start_with?("#{setting} = ") }
+
+      if matching_rule.nil?
+        updated_lines << line
+        next
+      end
+
+      setting, snippets = matching_rule
+      stripped_line = line.dup
+      snippets.each do |snippet|
+        stripped_line = stripped_line.gsub(" #{snippet}", '')
+        stripped_line = stripped_line.gsub("#{snippet} ", '')
+      end
+      updated_lines << "#{stripped_line.rstrip}\n"
+      device_overrides << "#{setting}[sdk=iphoneos*] = #{line.split(' = ', 2).last.rstrip}\n"
+    end
+
+    updated_content = updated_lines.join
+    unless device_overrides.empty?
+      updated_content = "#{updated_content.rstrip}\n\n#{device_overrides.join}"
+    end
+
+    File.write(xcconfig_path, updated_content)
+  end
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    codegen_header_paths_by_target = {
+      'RNVectorIcons' => ['$(PODS_ROOT)/Headers/Public/ReactCodegen/RNVectorIconsSpec'],
+    }
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_configuration|
+        build_configuration.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        build_configuration.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
+
+        extra_header_paths = codegen_header_paths_by_target[target.name]
+        next if extra_header_paths.nil? || extra_header_paths.empty?
+
+        header_search_paths = build_configuration.build_settings['HEADER_SEARCH_PATHS'] || '$(inherited)'
+        header_search_paths = [header_search_paths] unless header_search_paths.is_a?(Array)
+        build_configuration.build_settings['HEADER_SEARCH_PATHS'] = (header_search_paths + extra_header_paths).uniq
+      end
+    end
+
+    # fmt 11.0.2 currently trips a consteval code path under Xcode 26.4's
+    # clang when it compiles the pod source file itself. Keep the compile-time
+    # format checking for app code, but downgrade the pod target to the runtime
+    # path so the native build remains stable.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'fmt'
+
+      target.build_configurations.each do |build_configuration|
+        build_configuration.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        definitions = build_configuration.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || '$(inherited)'
+        definitions = [definitions] unless definitions.is_a?(Array)
+
+        unless definitions.any? { |definition| definition.include?('FMT_USE_CONSTEVAL=0') }
+          definitions << 'FMT_USE_CONSTEVAL=0'
+        end
+
+        build_configuration.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = definitions.uniq
+      end
+    end
+
+    %w[
+      Pods-frontend.debug.xcconfig
+      Pods-frontend.release.xcconfig
+    ].each do |xcconfig_file|
+      split_umeng_xcconfig_by_sdk.call(
+        File.join(
+          Pod::Config.instance.installation_root,
+          'Pods',
+          'Target Support Files',
+          'Pods-frontend',
+          xcconfig_file
+        )
+      )
+    end
+
+    (installer.aggregate_targets.map(&:user_project).uniq + [installer.pods_project]).uniq.each do |project|
+      project.build_configurations.each do |build_configuration|
+        build_configuration.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
+      end
+
+      project.targets.each do |target|
+        target.build_configurations.each do |build_configuration|
+          build_configuration.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
+        end
+      end
+
+      project.save
+    end
+  end
+end
