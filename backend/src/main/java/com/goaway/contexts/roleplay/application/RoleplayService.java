@@ -1,6 +1,7 @@
 package com.goaway.contexts.roleplay.application;
 
 import com.goaway.contexts.roleplay.api.dto.RoleplayChatRequest;
+import com.goaway.contexts.roleplay.api.dto.RoleplayMessage;
 import com.goaway.contexts.roleplay.domain.RoleplayPersona;
 import com.goaway.platform.llm.LlmScene;
 import com.goaway.platform.provider.llm.ChatMessage;
@@ -39,7 +40,7 @@ public class RoleplayService {
 
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(ChatMessage.system(persona.systemPrompt()));
-        for (RoleplayChatRequest.Message m : request.getMessages()) {
+        for (RoleplayMessage m : request.getMessages()) {
             String role = "assistant".equalsIgnoreCase(m.getRole()) ? "assistant" : "user";
             messages.add(new ChatMessage(role, m.getContent()));
         }

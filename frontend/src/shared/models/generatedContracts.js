@@ -622,7 +622,7 @@ export function createSoupDTO(overrides = {}) {
 /**
  * @typedef {Object} RoleplayChatRequest
  * @property {string|null} persona
- * @property {Array<Message>} messages
+ * @property {Array<RoleplayMessage>} messages
  */
 
 export const ROLEPLAY_CHAT_REQUEST_FIELDS = Object.freeze([
@@ -638,6 +638,29 @@ export function createRoleplayChatRequest(overrides = {}) {
   return {
     persona: null,
     messages: [],
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} RoleplayMessage
+ * @property {string|null} role
+ * @property {string|null} content
+ */
+
+export const ROLEPLAY_MESSAGE_FIELDS = Object.freeze([
+  'role',
+  'content',
+]);
+
+/**
+ * @param {Partial<RoleplayMessage>} [overrides={}]
+ * @returns {RoleplayMessage}
+ */
+export function createRoleplayMessage(overrides = {}) {
+  return {
+    role: null,
+    content: null,
     ...overrides,
   };
 }
@@ -905,6 +928,7 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'FileUploadResponse',
   'SoupDTO',
   'RoleplayChatRequest',
+  'RoleplayMessage',
   'RoleplayPersonaDTO',
   'GenerateWeeklyRequest',
   'WeeklyReportDTO',
@@ -940,6 +964,7 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   FileUploadResponse: createFileUploadResponse,
   SoupDTO: createSoupDTO,
   RoleplayChatRequest: createRoleplayChatRequest,
+  RoleplayMessage: createRoleplayMessage,
   RoleplayPersonaDTO: createRoleplayPersonaDTO,
   GenerateWeeklyRequest: createGenerateWeeklyRequest,
   WeeklyReportDTO: createWeeklyReportDTO,

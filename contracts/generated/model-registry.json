@@ -541,7 +541,7 @@
     {
       "className": "RoleplayChatRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayChatRequest.java",
-      "sourceHash": "0ca85306cef9192380094eee3fc6217b30bd5af8c1a21291a12ed247f7d8bba8",
+      "sourceHash": "d0118d1217fb5f2079c23a8caa769f054565703c162c318a0477f41bb22f4e76",
       "fields": [
         {
           "name": "persona",
@@ -549,7 +549,22 @@
         },
         {
           "name": "messages",
-          "javaType": "List<Message>"
+          "javaType": "List<RoleplayMessage>"
+        }
+      ]
+    },
+    {
+      "className": "RoleplayMessage",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayMessage.java",
+      "sourceHash": "171d46a5f9bddd99e71161b1b196d9fa7640b3e433061782cd14ccedee4e9021",
+      "fields": [
+        {
+          "name": "role",
+          "javaType": "String"
+        },
+        {
+          "name": "content",
+          "javaType": "String"
         }
       ]
     },
