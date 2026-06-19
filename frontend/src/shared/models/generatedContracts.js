@@ -622,11 +622,13 @@ export function createSoupDTO(overrides = {}) {
 /**
  * @typedef {Object} RoleplayChatRequest
  * @property {string|null} persona
+ * @property {string|null} customPersona
  * @property {Array<RoleplayMessage>} messages
  */
 
 export const ROLEPLAY_CHAT_REQUEST_FIELDS = Object.freeze([
   'persona',
+  'customPersona',
   'messages',
 ]);
 
@@ -637,6 +639,7 @@ export const ROLEPLAY_CHAT_REQUEST_FIELDS = Object.freeze([
 export function createRoleplayChatRequest(overrides = {}) {
   return {
     persona: null,
+    customPersona: null,
     messages: [],
     ...overrides,
   };

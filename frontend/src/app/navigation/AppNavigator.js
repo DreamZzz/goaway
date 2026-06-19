@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, DefaultTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,8 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../providers/AuthContext';
 import HomeScreen from '../../features/home/screens/HomeScreen';
-import CheckinScreen from '../../features/checkin/screens/CheckinScreen';
-import FishingScreen from '../../features/fishing/screens/FishingScreen';
 import WeeklyScreen from '../../features/weekly/screens/WeeklyScreen';
 import RoleplayScreen from '../../features/roleplay/screens/RoleplayScreen';
 import LeaderboardScreen from '../../features/leaderboard/screens/LeaderboardScreen';
@@ -22,6 +20,8 @@ import ChangeEmailScreen from '../../features/profile/screens/ChangeEmailScreen'
 import ChangePasswordScreen from '../../features/profile/screens/ChangePasswordScreen';
 import WorkProfileScreen from '../../features/profile/screens/WorkProfileScreen';
 import ReminderScreen from '../../features/reminders/screens/ReminderScreen';
+import OnboardingScreen from '../../features/onboarding/screens/OnboardingScreen';
+import { isOnboarded } from '../../features/onboarding/storage';
 import { colors } from '../../shared/theme';
 
 const RootStack = createStackNavigator();
@@ -116,15 +116,24 @@ const LoadingGate = () => (
 export default function AppNavigator() {
   const { loading } = useAuth();
   const insets = useSafeAreaInsets();
+  const [onboardChecked, setOnboardChecked] = useState(false);
+  const [needOnboarding, setNeedOnboarding] = useState(false);
 
-  if (loading) {
+  useEffect(() => {
+    isOnboarded().then((done) => {
+      setNeedOnboarding(!done);
+      setOnboardChecked(true);
+    });
+  }, []);
+
+  if (loading || !onboardChecked) {
     return <LoadingGate />;
   }
 
   return (
     <NavigationContainer ref={navigationRef} theme={navigationTheme}>
       <RootStack.Navigator
-        initialRouteName="HomeTabs"
+        initialRouteName={needOnboarding ? 'Onboarding' : 'HomeTabs'}
         screenOptions={{
           headerStyle: { backgroundColor: colors.bgElev },
           headerTintColor: colors.ink900,
@@ -135,18 +144,13 @@ export default function AppNavigator() {
         }}
       >
         <RootStack.Screen
+          name="Onboarding"
+          component={OnboardingScreen}
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
+        <RootStack.Screen
           name="HomeTabs"
           component={TabsNavigator}
-          options={{ headerShown: false }}
-        />
-        <RootStack.Screen
-          name="Checkin"
-          component={CheckinScreen}
-          options={{ headerShown: false }}
-        />
-        <RootStack.Screen
-          name="Fishing"
-          component={FishingScreen}
           options={{ headerShown: false }}
         />
         <RootStack.Screen

@@ -35,11 +35,10 @@ public class RoleplayService {
     }
 
     public SseEmitter streamReply(RoleplayChatRequest request) {
-        RoleplayPersona persona = RoleplayPersona.fromCode(request.getPersona())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "未知角色"));
+        String systemPrompt = resolveSystemPrompt(request);
 
         List<ChatMessage> messages = new ArrayList<>();
-        messages.add(ChatMessage.system(persona.systemPrompt()));
+        messages.add(ChatMessage.system(systemPrompt));
         for (RoleplayMessage m : request.getMessages()) {
             String role = "assistant".equalsIgnoreCase(m.getRole()) ? "assistant" : "user";
             messages.add(new ChatMessage(role, m.getContent()));
@@ -53,12 +52,25 @@ public class RoleplayService {
                 sendQuietly(emitter, "done", "");
                 emitter.complete();
             } catch (Exception e) {
-                log.warn("Roleplay chat failed persona={}: {}", persona.code(), e.toString());
+                log.warn("Roleplay chat failed persona={}: {}", request.getPersona(), e.toString());
                 sendQuietly(emitter, "error", "对方暂时无法回应，请稍后再试");
                 emitter.complete();
             }
         });
         return emitter;
+    }
+
+    private String resolveSystemPrompt(RoleplayChatRequest request) {
+        String custom = request.getCustomPersona();
+        if ("custom".equalsIgnoreCase(request.getPersona()) && custom != null && !custom.isBlank()) {
+            return "你在一个解压聊天 App 里扮演「用户最讨厌的一个人」。这个人的身份与特征："
+                    + custom.trim()
+                    + "。请逼真还原 TA 的说话风格、口吻与让人来气的点。"
+                    + RoleplayPersona.COMMON_CONSTRAINTS;
+        }
+        return RoleplayPersona.fromCode(request.getPersona())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "未知角色"))
+                .systemPrompt();
     }
 
     private void sendQuietly(SseEmitter emitter, String event, String data) {

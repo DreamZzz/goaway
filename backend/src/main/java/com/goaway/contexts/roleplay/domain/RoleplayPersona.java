@@ -47,11 +47,15 @@ public enum RoleplayPersona {
     public String emoji() { return emoji; }
     public String description() { return description; }
 
+    /** 通用对话与安全约束，预设角色与自定义角色共用。 */
+    public static final String COMMON_CONSTRAINTS =
+            " 对话要求：每次回复简短（1-3 句），有戏剧张力、可以欠揍；"
+            + "但禁止辱骂、人身攻击、歧视及任何违法或不当内容。当用户的反驳有理有据时，"
+            + "你要适当破防、心虚或认怂，让用户获得解压和『怼赢了』的爽感。始终保持角色，不要跳出戏。";
+
     /** 完整的 system prompt：角色设定 + 通用对话与安全约束。 */
     public String systemPrompt() {
-        return roleSetup + " 对话要求：每次回复简短（1-3 句），有戏剧张力、可以欠揍；"
-                + "但禁止辱骂、人身攻击、歧视及任何违法或不当内容。当用户的反驳有理有据时，"
-                + "你要适当破防、心虚或认怂，让用户获得解压和『怼赢了』的爽感。始终保持角色，不要跳出戏。";
+        return roleSetup + COMMON_CONSTRAINTS;
     }
 
     public static Optional<RoleplayPersona> fromCode(String code) {

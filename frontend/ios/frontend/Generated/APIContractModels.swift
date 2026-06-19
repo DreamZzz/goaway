@@ -392,13 +392,16 @@ public struct SoupDTO: Codable, Equatable, Sendable {
 
 public struct RoleplayChatRequest: Codable, Equatable, Sendable {
     public var persona: String?
+    public var customPersona: String?
     public var messages: [RoleplayMessage]?
 
     public init(
         persona: String? = nil,
+        customPersona: String? = nil,
         messages: [RoleplayMessage]? = nil
     ) {
         self.persona = persona
+        self.customPersona = customPersona
         self.messages = messages
     }
 }

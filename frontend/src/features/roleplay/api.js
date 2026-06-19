@@ -11,7 +11,7 @@ export const roleplayAPI = {
  * @param messages 历史消息 [{role:'user'|'assistant', content}]（含本轮用户最新消息）
  * @returns {() => void} 取消函数
  */
-export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onError } = {}) => {
+export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onError, customPersona } = {}) => {
   let cancelled = false;
   const xhr = new XMLHttpRequest();
   let seenLength = 0;
@@ -68,7 +68,7 @@ export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onErro
     xhr.open('POST', `${API_BASE_URL}/roleplay/chat/stream`);
     xhr.setRequestHeader('Content-Type', 'application/json');
     if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-    xhr.send(JSON.stringify({ persona, messages }));
+    xhr.send(JSON.stringify({ persona, messages, customPersona }));
   })();
 
   return () => {

@@ -117,6 +117,12 @@ const ProfileScreen = ({ navigation }) => {
         title="工具"
         items={[
           {
+            icon: 'person-outline',
+            label: '我的信息',
+            detail: '行业 / 职业 / 最讨厌的人',
+            onPress: () => navigation.navigate('Onboarding', { edit: true }),
+          },
+          {
             icon: 'notifications-outline',
             label: '提醒设置',
             detail: '喝水 / 久坐 / 下班',

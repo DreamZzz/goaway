@@ -541,10 +541,14 @@
     {
       "className": "RoleplayChatRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayChatRequest.java",
-      "sourceHash": "d0118d1217fb5f2079c23a8caa769f054565703c162c318a0477f41bb22f4e76",
+      "sourceHash": "86dbf2846bb26e5604ba5ff34d398580e6385df81a984ba57faee56d3e74ada4",
       "fields": [
         {
           "name": "persona",
+          "javaType": "String"
+        },
+        {
+          "name": "customPersona",
           "javaType": "String"
         },
         {

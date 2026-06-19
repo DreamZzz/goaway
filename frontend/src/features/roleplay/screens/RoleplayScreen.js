@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { roleplayAPI, streamRoleplayReply } from '../api';
+import { readOnboardingProfile, buildHatedPersona } from '../../onboarding/storage';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
 const RoleplayScreen = ({ navigation }) => {
@@ -29,7 +30,23 @@ const RoleplayScreen = ({ navigation }) => {
   const cancelRef = useRef(null);
 
   useEffect(() => {
-    roleplayAPI.personas().then((r) => setPersonas(r.data || [])).catch(() => {});
+    Promise.all([
+      roleplayAPI.personas().then((r) => r.data || []).catch(() => []),
+      readOnboardingProfile().then(buildHatedPersona).catch(() => null),
+    ]).then(([preset, hated]) => {
+      const list = [...preset];
+      if (hated) {
+        // 把「我最讨厌的人」置顶为自定义角色
+        list.unshift({
+          code: 'custom',
+          name: hated.nickname,
+          emoji: '😤',
+          description: hated.description,
+          customPersona: hated.description,
+        });
+      }
+      setPersonas(list);
+    });
   }, []);
 
   useEffect(() => () => { if (cancelRef.current) cancelRef.current(); }, []);
@@ -56,6 +73,7 @@ const RoleplayScreen = ({ navigation }) => {
     scrollToEnd();
 
     cancelRef.current = streamRoleplayReply(persona.code, history, {
+      customPersona: persona.customPersona,
       onDelta: (d) => {
         setMessages((prev) => {
           const next = [...prev];
