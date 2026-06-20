@@ -758,6 +758,12 @@ export function createWeeklyReportDTO(overrides = {}) {
  * @property {string|null} city
  * @property {string|null} industry
  * @property {string|null} jobType
+ * @property {string|null} gender
+ * @property {string|null} workStart
+ * @property {string|null} workEnd
+ * @property {string|null} hatedRelation
+ * @property {string|null} hatedNickname
+ * @property {string|null} hatedTraits
  */
 
 export const UPSERT_WORK_PROFILE_REQUEST_FIELDS = Object.freeze([
@@ -765,6 +771,12 @@ export const UPSERT_WORK_PROFILE_REQUEST_FIELDS = Object.freeze([
   'city',
   'industry',
   'jobType',
+  'gender',
+  'workStart',
+  'workEnd',
+  'hatedRelation',
+  'hatedNickname',
+  'hatedTraits',
 ]);
 
 /**
@@ -777,6 +789,12 @@ export function createUpsertWorkProfileRequest(overrides = {}) {
     city: null,
     industry: null,
     jobType: null,
+    gender: null,
+    workStart: null,
+    workEnd: null,
+    hatedRelation: null,
+    hatedNickname: null,
+    hatedTraits: null,
     ...overrides,
   };
 }
@@ -788,6 +806,12 @@ export function createUpsertWorkProfileRequest(overrides = {}) {
  * @property {string|null} city
  * @property {string|null} industry
  * @property {string|null} jobType
+ * @property {string|null} gender
+ * @property {string|null} workStart
+ * @property {string|null} workEnd
+ * @property {string|null} hatedRelation
+ * @property {string|null} hatedNickname
+ * @property {string|null} hatedTraits
  */
 
 export const WORK_PROFILE_DTO_FIELDS = Object.freeze([
@@ -796,6 +820,12 @@ export const WORK_PROFILE_DTO_FIELDS = Object.freeze([
   'city',
   'industry',
   'jobType',
+  'gender',
+  'workStart',
+  'workEnd',
+  'hatedRelation',
+  'hatedNickname',
+  'hatedTraits',
 ]);
 
 /**
@@ -809,6 +839,12 @@ export function createWorkProfileDTO(overrides = {}) {
     city: null,
     industry: null,
     jobType: null,
+    gender: null,
+    workStart: null,
+    workEnd: null,
+    hatedRelation: null,
+    hatedNickname: null,
+    hatedTraits: null,
     ...overrides,
   };
 }

@@ -38,6 +38,24 @@ public class WorkProfile {
     @Column(name = "job_type", length = 40)
     private String jobType;
 
+    @Column(length = 16)
+    private String gender;
+
+    @Column(name = "work_start", length = 8)
+    private String workStart;
+
+    @Column(name = "work_end", length = 8)
+    private String workEnd;
+
+    @Column(name = "hated_relation", length = 40)
+    private String hatedRelation;
+
+    @Column(name = "hated_nickname", length = 40)
+    private String hatedNickname;
+
+    @Column(name = "hated_traits", length = 300)
+    private String hatedTraits;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -69,6 +87,24 @@ public class WorkProfile {
 
     public String getJobType() { return jobType; }
     public void setJobType(String jobType) { this.jobType = jobType; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getWorkStart() { return workStart; }
+    public void setWorkStart(String workStart) { this.workStart = workStart; }
+
+    public String getWorkEnd() { return workEnd; }
+    public void setWorkEnd(String workEnd) { this.workEnd = workEnd; }
+
+    public String getHatedRelation() { return hatedRelation; }
+    public void setHatedRelation(String hatedRelation) { this.hatedRelation = hatedRelation; }
+
+    public String getHatedNickname() { return hatedNickname; }
+    public void setHatedNickname(String hatedNickname) { this.hatedNickname = hatedNickname; }
+
+    public String getHatedTraits() { return hatedTraits; }
+    public void setHatedTraits(String hatedTraits) { this.hatedTraits = hatedTraits; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

@@ -16,6 +16,24 @@ public class UpsertWorkProfileRequest {
     @Size(max = 40)
     private String jobType;
 
+    @Size(max = 16)
+    private String gender;
+
+    @Size(max = 8)
+    private String workStart;
+
+    @Size(max = 8)
+    private String workEnd;
+
+    @Size(max = 40)
+    private String hatedRelation;
+
+    @Size(max = 40)
+    private String hatedNickname;
+
+    @Size(max = 300)
+    private String hatedTraits;
+
     public String getNickname() { return nickname; }
     public void setNickname(String nickname) { this.nickname = nickname; }
 
@@ -27,4 +45,22 @@ public class UpsertWorkProfileRequest {
 
     public String getJobType() { return jobType; }
     public void setJobType(String jobType) { this.jobType = jobType; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getWorkStart() { return workStart; }
+    public void setWorkStart(String workStart) { this.workStart = workStart; }
+
+    public String getWorkEnd() { return workEnd; }
+    public void setWorkEnd(String workEnd) { this.workEnd = workEnd; }
+
+    public String getHatedRelation() { return hatedRelation; }
+    public void setHatedRelation(String hatedRelation) { this.hatedRelation = hatedRelation; }
+
+    public String getHatedNickname() { return hatedNickname; }
+    public void setHatedNickname(String hatedNickname) { this.hatedNickname = hatedNickname; }
+
+    public String getHatedTraits() { return hatedTraits; }
+    public void setHatedTraits(String hatedTraits) { this.hatedTraits = hatedTraits; }
 }

@@ -27,6 +27,12 @@ public class WorkProfileService {
         profile.setCity(trim(request.getCity()));
         profile.setIndustry(trim(request.getIndustry()));
         profile.setJobType(trim(request.getJobType()));
+        profile.setGender(trim(request.getGender()));
+        profile.setWorkStart(trim(request.getWorkStart()));
+        profile.setWorkEnd(trim(request.getWorkEnd()));
+        profile.setHatedRelation(trim(request.getHatedRelation()));
+        profile.setHatedNickname(trim(request.getHatedNickname()));
+        profile.setHatedTraits(trim(request.getHatedTraits()));
         return repository.save(profile);
     }
 

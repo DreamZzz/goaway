@@ -478,17 +478,35 @@ public struct UpsertWorkProfileRequest: Codable, Equatable, Sendable {
     public var city: String?
     public var industry: String?
     public var jobType: String?
+    public var gender: String?
+    public var workStart: String?
+    public var workEnd: String?
+    public var hatedRelation: String?
+    public var hatedNickname: String?
+    public var hatedTraits: String?
 
     public init(
         nickname: String? = nil,
         city: String? = nil,
         industry: String? = nil,
-        jobType: String? = nil
+        jobType: String? = nil,
+        gender: String? = nil,
+        workStart: String? = nil,
+        workEnd: String? = nil,
+        hatedRelation: String? = nil,
+        hatedNickname: String? = nil,
+        hatedTraits: String? = nil
     ) {
         self.nickname = nickname
         self.city = city
         self.industry = industry
         self.jobType = jobType
+        self.gender = gender
+        self.workStart = workStart
+        self.workEnd = workEnd
+        self.hatedRelation = hatedRelation
+        self.hatedNickname = hatedNickname
+        self.hatedTraits = hatedTraits
     }
 }
 
@@ -498,19 +516,37 @@ public struct WorkProfileDTO: Codable, Equatable, Sendable {
     public var city: String?
     public var industry: String?
     public var jobType: String?
+    public var gender: String?
+    public var workStart: String?
+    public var workEnd: String?
+    public var hatedRelation: String?
+    public var hatedNickname: String?
+    public var hatedTraits: String?
 
     public init(
         userId: Int64? = nil,
         nickname: String? = nil,
         city: String? = nil,
         industry: String? = nil,
-        jobType: String? = nil
+        jobType: String? = nil,
+        gender: String? = nil,
+        workStart: String? = nil,
+        workEnd: String? = nil,
+        hatedRelation: String? = nil,
+        hatedNickname: String? = nil,
+        hatedTraits: String? = nil
     ) {
         self.userId = userId
         self.nickname = nickname
         self.city = city
         self.industry = industry
         self.jobType = jobType
+        self.gender = gender
+        self.workStart = workStart
+        self.workEnd = workEnd
+        self.hatedRelation = hatedRelation
+        self.hatedNickname = hatedNickname
+        self.hatedTraits = hatedTraits
     }
 }
 

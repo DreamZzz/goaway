@@ -23,6 +23,7 @@ import WorkProfileScreen from '../../features/profile/screens/WorkProfileScreen'
 import ReminderScreen from '../../features/reminders/screens/ReminderScreen';
 import OnboardingScreen from '../../features/onboarding/screens/OnboardingScreen';
 import { isOnboarded } from '../../features/onboarding/storage';
+import { hydrateWorkProfile } from '../../features/onboarding/sync';
 import { colors } from '../../shared/theme';
 
 const RootStack = createStackNavigator();
@@ -113,17 +114,23 @@ const LoadingGate = () => (
 );
 
 export default function AppNavigator() {
-  const { loading } = useAuth();
+  const { loading, isAuthenticated } = useAuth();
   const insets = useSafeAreaInsets();
   const [onboardChecked, setOnboardChecked] = useState(false);
   const [needOnboarding, setNeedOnboarding] = useState(false);
 
   useEffect(() => {
-    isOnboarded().then((done) => {
+    if (loading) return; // 等鉴权状态就绪
+    (async () => {
+      let done = await isOnboarded();
+      // 已登录但本地无引导标记时，尝试从账号拉回画像（避免重装/换设备后重复填写）
+      if (!done && isAuthenticated) {
+        done = await hydrateWorkProfile();
+      }
       setNeedOnboarding(!done);
       setOnboardChecked(true);
-    });
-  }, []);
+    })();
+  }, [loading, isAuthenticated]);
 
   if (loading || !onboardChecked) {
     return <LoadingGate />;

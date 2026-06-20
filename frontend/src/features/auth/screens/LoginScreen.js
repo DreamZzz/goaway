@@ -21,6 +21,7 @@ import { API_BASE_URL } from '../../../app/config/api';
 import { getRequestErrorMessage, getResponseErrorMessage } from '../../../utils/apiError';
 import { useAnalytics, EVENTS } from '../../../shared/analytics';
 import { resetToRoute } from '../../../shared/utils';
+import { hydrateWorkProfile } from '../../onboarding/sync';
 import { colors, radius, shadows } from '../../../shared/theme';
 
 const LoginScreen = ({ navigation, route }) => {
@@ -57,6 +58,7 @@ const LoginScreen = ({ navigation, route }) => {
       },
       token
     );
+    await hydrateWorkProfile(); // 拉回账号画像，避免重复填写
     resetToRoute(navigation, 'HomeTabs');
   };
 

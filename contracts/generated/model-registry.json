@@ -640,7 +640,7 @@
     {
       "className": "UpsertWorkProfileRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/workprofile/api/dto/UpsertWorkProfileRequest.java",
-      "sourceHash": "6203b8804b37e2d1440f00722fe75259a710800504cdf643e7aa4940fe83c5e4",
+      "sourceHash": "ec35848ea3070800902b6bdb88b987685d5a0d1f14c308cb60b99ab5d9cdbe03",
       "fields": [
         {
           "name": "nickname",
@@ -657,13 +657,37 @@
         {
           "name": "jobType",
           "javaType": "String"
+        },
+        {
+          "name": "gender",
+          "javaType": "String"
+        },
+        {
+          "name": "workStart",
+          "javaType": "String"
+        },
+        {
+          "name": "workEnd",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedRelation",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedNickname",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedTraits",
+          "javaType": "String"
         }
       ]
     },
     {
       "className": "WorkProfileDTO",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/workprofile/api/dto/WorkProfileDTO.java",
-      "sourceHash": "c034a2fbf500f79ece8213610aa9dc4c95a5086a87f42f6d71e7166f20bf0aab",
+      "sourceHash": "28cd8cf13b37427238f941f6e66d427c5ab3214260fb59af7b4c63e31e89fe56",
       "fields": [
         {
           "name": "userId",
@@ -683,6 +707,30 @@
         },
         {
           "name": "jobType",
+          "javaType": "String"
+        },
+        {
+          "name": "gender",
+          "javaType": "String"
+        },
+        {
+          "name": "workStart",
+          "javaType": "String"
+        },
+        {
+          "name": "workEnd",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedRelation",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedNickname",
+          "javaType": "String"
+        },
+        {
+          "name": "hatedTraits",
           "javaType": "String"
         }
       ]
