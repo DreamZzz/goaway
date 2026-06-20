@@ -1,24 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import GIcon from '../../../shared/components/Icon';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
 const ENTRIES = [
   {
     key: 'weekly',
-    icon: 'document-text-outline',
+    glyph: 'doc',
     title: 'AI 周报',
     desc: '碎片成果一键成稿',
     route: 'Weekly',
-    accent: colors.brand500,
+    tint: colors.skySoft,
   },
   {
     key: 'roleplay',
-    icon: 'flame-outline',
+    glyph: 'roast',
     title: '找 AI 对线',
     desc: '老板 / 同事 / 甲方，怼回去解压',
     route: 'Roleplay',
-    accent: '#E06A4E',
+    tint: colors.sakuraSoft,
   },
 ];
 
@@ -27,8 +28,8 @@ const AfterWorkScene = ({ navigation }) => (
     <Text style={styles.lead}>下班了，给情绪找个出口 👇</Text>
     {ENTRIES.map((e) => (
       <TouchableOpacity key={e.key} style={styles.card} onPress={() => navigation.navigate(e.route)} activeOpacity={0.85}>
-        <View style={[styles.iconWrap, { backgroundColor: e.accent }]}>
-          <Icon name={e.icon} size={22} color="#fff" />
+        <View style={[styles.iconWrap, { backgroundColor: e.tint }]}>
+          <GIcon name={e.glyph} size={26} />
         </View>
         <View style={styles.info}>
           <Text style={styles.title}>{e.title}</Text>
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bgElev, borderRadius: radius.lg,
     borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm,
   },
-  iconWrap: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  iconWrap: { width: 48, height: 48, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1, gap: 3 },
   title: { fontSize: 16.5, fontWeight: '700', color: colors.ink900 },
   desc: { fontSize: 12.5, color: colors.ink500 },

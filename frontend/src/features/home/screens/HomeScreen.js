@@ -7,6 +7,7 @@ import { useAuth } from '../../../app/providers/AuthContext';
 import { readCheckinSettings, DEFAULT_CHECKIN_SETTINGS } from '../../checkin/storage';
 import { syncWorkProfileFromLocal } from '../../onboarding/sync';
 import { soupAPI } from '../../mood/api';
+import GIcon, { Mascot } from '../../../shared/components/Icon';
 import { computeScene, SCENES } from '../scene';
 import BeforeWorkScene from '../scenes/BeforeWorkScene';
 import AtWorkScene from '../scenes/AtWorkScene';
@@ -53,12 +54,21 @@ const HomeScreen = ({ navigation }) => {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 100 }]}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.brand}>goaway</Text>
+      <View style={styles.brandRow}>
+        <View>
+          <Text style={styles.brand}>goaway</Text>
+          <Text style={styles.brandCn}>狗啊喂 · 把时间还给生活</Text>
+        </View>
+        <Mascot size={46} />
+      </View>
 
       {soup ? (
         <TouchableOpacity style={styles.soupCard} onPress={refreshSoup} activeOpacity={0.85}>
           <View style={styles.soupHeader}>
-            <Text style={styles.soupLabel}>每日毒鸡汤</Text>
+            <View style={styles.soupLabelRow}>
+              <GIcon name="soup" size={15} />
+              <Text style={styles.soupLabel}>每日毒鸡汤</Text>
+            </View>
             <View style={styles.soupRefresh}>
               <Icon name="refresh-outline" size={13} color={colors.gold300} />
               <Text style={styles.soupRefreshText}>换一句</Text>
@@ -102,7 +112,10 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { paddingHorizontal: spacing.md, gap: spacing.md },
-  brand: { fontSize: 30, fontWeight: '800', color: colors.ink900, letterSpacing: -0.5 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  brand: { fontSize: 30, fontWeight: '800', color: colors.brand500, letterSpacing: -0.5 },
+  brandCn: { fontSize: 12, color: colors.ink500, marginTop: 2 },
+  soupLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   soupCard: { backgroundColor: '#2A1F0E', borderRadius: radius.lg, padding: 14, gap: 6, ...shadows.sm },
   soupHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   soupLabel: { fontSize: 12, fontWeight: '700', color: colors.gold300, letterSpacing: 0.5 },

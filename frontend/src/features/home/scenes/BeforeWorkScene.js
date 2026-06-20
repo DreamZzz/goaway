@@ -126,7 +126,7 @@ const EditRow = ({ label, value, onChange, placeholder, keyboardType }) => (
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
-  heroCard: { backgroundColor: '#2A1F0E', borderRadius: radius.lg, padding: 20, gap: 6, ...shadows.sm },
+  heroCard: { backgroundColor: colors.heroDark, borderRadius: radius.lg, padding: 20, gap: 6, ...shadows.sm },
   heroTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   heroLabel: { color: colors.gold300, fontSize: 13, fontWeight: '600' },
   heroEarned: { color: colors.gold50, fontSize: 40, fontWeight: '800', letterSpacing: -1 },

@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
+import GIcon from '../../shared/components/Icon';
 import { useAuth } from '../providers/AuthContext';
 import HomeScreen from '../../features/home/screens/HomeScreen';
 import WeeklyScreen from '../../features/weekly/screens/WeeklyScreen';
@@ -41,11 +42,7 @@ const navigationTheme = {
   },
 };
 
-const TAB_ICONS = {
-  HomeTab:        { active: 'home',          inactive: 'home-outline' },
-  LeaderboardTab: { active: 'trophy',        inactive: 'trophy-outline' },
-  ProfileTab:     { active: 'person-circle', inactive: 'person-circle-outline' },
-};
+const TAB_GLYPH = { HomeTab: 'home', LeaderboardTab: 'trophy', ProfileTab: 'mascot' };
 
 const TAB_LABELS = {
   HomeTab: '首页',
@@ -53,10 +50,12 @@ const TAB_LABELS = {
   ProfileTab: '我的',
 };
 
-const createTabBarIcon = (routeName) => ({ focused, color }) => {
-  const icons = TAB_ICONS[routeName];
-  const name = focused ? icons.active : icons.inactive;
-  return <Icon name={name} size={24} color={color} />;
+const createTabBarIcon = (routeName) => ({ focused }) => {
+  const glyph = TAB_GLYPH[routeName];
+  if (glyph === 'home') {
+    return <GIcon name="home" size={26} color={focused ? colors.brand500 : colors.ink300} />;
+  }
+  return <GIcon name={glyph} size={glyph === 'mascot' ? 30 : 26} style={focused ? styles.tabIconOn : styles.tabIconDim} />;
 };
 
 const TAB_BAR_ICON_RENDERERS = {
@@ -228,4 +227,6 @@ const styles = StyleSheet.create({
   headerBackIcon: {
     marginLeft: 2,
   },
+  tabIconOn: { opacity: 1 },
+  tabIconDim: { opacity: 0.5 },
 });

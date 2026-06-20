@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import GIcon, { Mascot } from '../../../shared/components/Icon';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { fishingAPI } from '../../fishing/api';
 import { readSideTools, bumpSideTool, addPoopSession } from '../../fishing/sideTools';
@@ -94,14 +95,18 @@ const AtWorkScene = ({ navigation, settings }) => {
     <View style={styles.wrap}>
       {/* 主摸鱼秒表 */}
       <View style={styles.timerCard}>
-        <Text style={styles.timerLabel}>本次摸鱼（自动计时中）</Text>
+        <View style={styles.mascotWrap}><Mascot size={56} /></View>
+        <View style={styles.timerPill}>
+          <View style={styles.timerDot} />
+          <Text style={styles.timerLabel}>本次摸鱼 · 自动计时中</Text>
+        </View>
         <Text style={styles.timerValue}>{formatStopwatch(elapsed)}</Text>
         <Text style={styles.timerSub}>离开页面自动结算 · 今日 {formatDuration(todaySeconds)}</Text>
       </View>
 
       {/* 带薪拉屎 */}
       <TouchableOpacity style={[styles.poopCard, pooping && styles.poopCardActive]} onPress={togglePoop} activeOpacity={0.85}>
-        <Text style={styles.poopEmoji}>🚽</Text>
+        <View style={styles.poopEmo}><GIcon name="toilet" size={28} /></View>
         <View style={styles.poopInfo}>
           <Text style={styles.poopTitle}>{pooping ? '带薪拉屎中…' : '带薪拉屎'}</Text>
           {pooping ? (
@@ -118,19 +123,19 @@ const AtWorkScene = ({ navigation, settings }) => {
       {/* 喝水 / 抽烟 计数 */}
       <View style={styles.counterRow}>
         <TouchableOpacity style={styles.counterCard} onPress={bump('water')} activeOpacity={0.8}>
-          <Text style={styles.counterEmoji}>💧</Text>
+          <GIcon name="water" size={26} />
           <Text style={styles.counterValue}>{side.water}</Text>
           <Text style={styles.counterLabel}>喝水 +1 杯</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.counterCard} onPress={bump('smoke')} activeOpacity={0.8}>
-          <Text style={styles.counterEmoji}>🚬</Text>
+          <GIcon name="smoke" size={26} />
           <Text style={styles.counterValue}>{side.smoke}</Text>
           <Text style={styles.counterLabel}>抽烟 +1 根</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.rankLink} onPress={() => navigation.navigate('HomeTabs', { screen: 'LeaderboardTab' })} activeOpacity={0.8}>
-        <Icon name="trophy-outline" size={16} color={colors.brand500} />
+        <GIcon name="trophy" size={20} />
         <Text style={styles.rankLinkText}>看看今日摸鱼排行榜</Text>
         <Icon name="chevron-forward" size={16} color={colors.ink300} />
       </TouchableOpacity>
@@ -141,13 +146,16 @@ const AtWorkScene = ({ navigation, settings }) => {
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
-  timerCard: { backgroundColor: colors.bgElev, borderRadius: radius.lg, padding: 24, gap: 8, alignItems: 'center', borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm },
-  timerLabel: { fontSize: 13, color: colors.ink500, fontWeight: '600' },
-  timerValue: { fontSize: 46, fontWeight: '800', color: colors.ink900, letterSpacing: -1, fontVariant: ['tabular-nums'] },
+  timerCard: { backgroundColor: colors.mintSoft, borderRadius: radius.lg, padding: 22, paddingTop: 18, gap: 6, alignItems: 'center', borderWidth: 0.5, borderColor: colors.ink100, overflow: 'hidden', ...shadows.sm },
+  mascotWrap: { position: 'absolute', left: 6, top: 6 },
+  timerPill: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.bgElev, paddingHorizontal: 12, paddingVertical: 5, borderRadius: radius.pill, ...shadows.sm },
+  timerDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.mint },
+  timerLabel: { fontSize: 12, color: colors.mint, fontWeight: '700' },
+  timerValue: { fontSize: 52, fontWeight: '800', color: colors.ink900, letterSpacing: -1, fontVariant: ['tabular-nums'], marginTop: 4 },
   timerSub: { fontSize: 12, color: colors.ink400 },
   poopCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, backgroundColor: colors.bgElev, borderRadius: radius.lg, borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm },
   poopCardActive: { borderColor: colors.brand500, borderWidth: 1.5 },
-  poopEmoji: { fontSize: 28 },
+  poopEmo: { width: 46, height: 46, borderRadius: 15, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', ...shadows.sm },
   poopInfo: { flex: 1, gap: 3 },
   poopTitle: { fontSize: 16, fontWeight: '700', color: colors.ink900 },
   poopDesc: { fontSize: 12.5, color: colors.ink500 },

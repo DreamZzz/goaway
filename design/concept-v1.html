@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>goaway · 视觉概念 v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* 马卡龙原创色板 */
+    --sakura:#FF8FB1; --sakura-soft:#FFD3E0;
+    --mint:#7FD8BE; --mint-soft:#CFF3E7;
+    --lav:#B7A6F0; --lav-soft:#E4DCFB;
+    --butter:#FFD98A; --butter-soft:#FFEFC6;
+    --peach:#FFB592; --peach-soft:#FFE0CE;
+    --sky:#9AD0FF; --sky-soft:#D6ECFF;
+
+    --ink:#5A4E63;        /* 柔李灰，替代死黑 */
+    --ink-soft:#9A90A6;
+    --ink-faint:#C8C0D2;
+    --bg:#FFF7FB;         /* 奶白带粉 */
+    --card:#FFFFFF;
+    --line:#F1E9F3;
+
+    --r-lg:26px; --r-md:18px; --r-sm:13px; --r-pill:999px;
+    --shadow-pink:0 14px 30px -12px rgba(255,143,177,.45);
+    --shadow-lav:0 14px 30px -12px rgba(183,166,240,.45);
+    --shadow-soft:0 10px 26px -14px rgba(120,90,140,.32);
+    --font-disp:'ZCOOL KuaiLe', system-ui, sans-serif;
+    --font-num:'Fredoka', system-ui, sans-serif;
+    --font-body:'Noto Sans SC', system-ui, sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:var(--font-body); color:var(--ink);
+    min-height:100vh; padding:54px 24px 80px;
+    background:
+      radial-gradient(60% 40% at 12% 8%, var(--sakura-soft) 0%, transparent 55%),
+      radial-gradient(50% 38% at 92% 4%, var(--lav-soft) 0%, transparent 55%),
+      radial-gradient(55% 45% at 85% 88%, var(--mint-soft) 0%, transparent 55%),
+      radial-gradient(50% 40% at 8% 95%, var(--butter-soft) 0%, transparent 55%),
+      #FDF6FB;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ── 顶部说明 ── */
+  .head{max-width:1180px; margin:0 auto 38px; text-align:center;}
+  .head .logo{
+    font-family:var(--font-disp); font-size:54px; line-height:1;
+    background:linear-gradient(120deg,var(--sakura),var(--lav) 60%,var(--sky));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    letter-spacing:1px;
+  }
+  .head .tag{margin-top:8px; color:var(--ink-soft); font-size:15px; font-weight:500;}
+  .palette{display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+  .sw{display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11px; color:var(--ink-soft);}
+  .sw i{width:40px; height:40px; border-radius:13px; display:block; box-shadow:var(--shadow-soft);}
+
+  /* ── 手机排布 ── */
+  .stage{display:flex; gap:48px; justify-content:center; align-items:flex-start; flex-wrap:wrap; max-width:1180px; margin:0 auto;}
+  .device-wrap{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .device-label{font-family:var(--font-disp); font-size:17px; color:var(--ink); opacity:.7;}
+  .phone{
+    width:324px; height:702px; border-radius:52px; padding:13px;
+    background:linear-gradient(160deg,#fff,#f6eefb);
+    box-shadow:0 40px 80px -30px rgba(150,110,160,.55), 0 0 0 1px rgba(255,255,255,.7) inset;
+    position:relative;
+  }
+  .screen{
+    width:100%; height:100%; border-radius:40px; overflow:hidden; position:relative;
+    background:var(--bg); display:flex; flex-direction:column;
+  }
+  .island{position:absolute; top:11px; left:50%; transform:translateX(-50%); width:96px; height:30px; background:#2A2330; border-radius:18px; z-index:40;}
+  .statusbar{height:50px; flex:0 0 50px; display:flex; align-items:center; justify-content:space-between; padding:16px 26px 0; font-family:var(--font-num); font-weight:600; font-size:15px; color:var(--ink);}
+  .statusbar .r{display:flex; gap:6px; align-items:center; font-size:13px;}
+
+  .scroll{flex:1; overflow:hidden; padding:6px 16px 0;}
+  .tabbar{
+    flex:0 0 64px; display:flex; justify-content:space-around; align-items:center;
+    background:rgba(255,255,255,.86); backdrop-filter:blur(12px); border-top:1px solid var(--line);
+    padding-bottom:10px;
+  }
+  .tab{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10.5px; color:var(--ink-faint); font-weight:500;}
+  .tab.on{color:var(--sakura);}
+  .tab .ic{width:26px; height:26px; display:grid; place-items:center; font-size:20px;}
+
+  /* ── 通用零件 ── */
+  .brandrow{display:flex; align-items:flex-end; justify-content:space-between; padding:4px 2px 0;}
+  .brand{font-family:var(--font-disp); font-size:30px; line-height:1;
+    background:linear-gradient(115deg,var(--sakura),var(--lav));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .slogan{font-size:11.5px; color:var(--ink-soft); margin-top:3px;}
+  .bell{width:34px; height:34px; border-radius:12px; background:#fff; box-shadow:var(--shadow-soft); display:grid; place-items:center; font-size:16px;}
+
+  .card{background:var(--card); border-radius:var(--r-lg); box-shadow:var(--shadow-soft);}
+
+  /* 毒鸡汤 */
+  .soup{margin-top:14px; padding:15px 16px; border-radius:var(--r-md); position:relative; overflow:hidden;
+    background:linear-gradient(135deg,var(--lav) 0%,var(--sakura) 100%); color:#fff; box-shadow:var(--shadow-lav);}
+  .soup .lbl{font-size:11px; font-weight:700; opacity:.92; letter-spacing:.5px; display:flex; align-items:center; gap:5px;}
+  .soup .txt{font-family:var(--font-disp); font-size:16.5px; line-height:1.5; margin-top:7px; text-shadow:0 1px 0 rgba(0,0,0,.06);}
+  .soup .reroll{position:absolute; top:13px; right:13px; font-size:10.5px; background:rgba(255,255,255,.28); padding:4px 9px; border-radius:var(--r-pill); display:flex; gap:3px; align-items:center;}
+  .soup .deco{position:absolute; right:-14px; bottom:-18px; font-size:62px; opacity:.22; transform:rotate(-12deg);}
+
+  /* 分段 */
+  .seg{display:flex; gap:5px; background:#F3ECF7; border-radius:var(--r-md); padding:5px; margin-top:14px;}
+  .seg button{flex:1; border:0; background:transparent; font-family:var(--font-body); font-weight:700; font-size:13px; color:var(--ink-soft); padding:9px 0; border-radius:13px; cursor:pointer;}
+  .seg button.on{background:#fff; color:var(--sakura); box-shadow:0 6px 14px -8px rgba(255,143,177,.7);}
+
+  /* 摸鱼秒表 */
+  .moyu{margin-top:14px; padding:22px 18px 20px; border-radius:var(--r-lg); text-align:center; position:relative; overflow:hidden;
+    background:linear-gradient(160deg,#fff 0%,var(--mint-soft) 120%); box-shadow:0 16px 34px -16px rgba(127,216,190,.6);}
+  .moyu .pill{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--mint); background:#fff; padding:5px 12px; border-radius:var(--r-pill); box-shadow:var(--shadow-soft);}
+  .moyu .pill .dot{width:7px; height:7px; border-radius:50%; background:var(--mint); animation:blink 1.4s infinite;}
+  .moyu .time{font-family:var(--font-num); font-weight:600; font-size:62px; line-height:1; color:var(--ink); letter-spacing:1px; margin:12px 0 4px; font-variant-numeric:tabular-nums;}
+  .moyu .time small{font-size:34px; color:var(--mint);}
+  .moyu .sub{font-size:11.5px; color:var(--ink-soft);}
+  .moyu .fish{position:absolute; left:-10px; top:8px; font-size:34px; animation:float 3.4s ease-in-out infinite;}
+  .moyu .fish2{position:absolute; right:-6px; bottom:6px; font-size:26px; opacity:.85; animation:float 3.4s ease-in-out .8s infinite;}
+
+  /* 带薪拉屎 */
+  .poop{margin-top:12px; padding:15px 16px; display:flex; align-items:center; gap:13px; border-radius:var(--r-lg);
+    background:linear-gradient(150deg,#fff,var(--butter-soft)); box-shadow:0 14px 30px -16px rgba(255,217,138,.85);}
+  .poop .emo{width:46px; height:46px; border-radius:15px; background:#fff; display:grid; place-items:center; font-size:26px; box-shadow:var(--shadow-soft);}
+  .poop .mid{flex:1;}
+  .poop .t{font-weight:700; font-size:15.5px;}
+  .poop .d{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+  .poop .money{font-family:var(--font-num); font-weight:600; color:var(--peach); font-size:12px; margin-top:3px;}
+  .poop .go{width:38px; height:38px; border-radius:50%; background:linear-gradient(140deg,var(--peach),var(--sakura)); display:grid; place-items:center; color:#fff; font-size:15px; box-shadow:var(--shadow-pink);}
+
+  .counters{display:flex; gap:11px; margin-top:12px;}
+  .counter{flex:1; padding:15px 0; border-radius:var(--r-md); text-align:center; box-shadow:var(--shadow-soft); background:#fff;}
+  .counter .e{font-size:25px;}
+  .counter .n{font-family:var(--font-num); font-weight:700; font-size:24px; color:var(--ink); margin-top:2px;}
+  .counter .c{font-size:11px; color:var(--ink-soft); margin-top:1px;}
+  .counter.w{background:linear-gradient(160deg,#fff,var(--sky-soft));}
+  .counter.s{background:linear-gradient(160deg,#fff,var(--lav-soft));}
+
+  .rank{margin-top:12px; padding:14px 16px; display:flex; align-items:center; gap:10px; border-radius:var(--r-md); background:#fff; box-shadow:var(--shadow-soft); font-size:13.5px; font-weight:600;}
+  .rank .arrow{margin-left:auto; color:var(--ink-faint);}
+
+  /* 下班后 入口卡 */
+  .lead{font-family:var(--font-disp); font-size:16px; margin:16px 2px 12px; color:var(--ink);}
+  .entry{display:flex; align-items:center; gap:14px; padding:17px 16px; border-radius:var(--r-lg); box-shadow:var(--shadow-soft); margin-bottom:12px; background:#fff;}
+  .entry .ic{width:48px; height:48px; border-radius:16px; display:grid; place-items:center; font-size:24px; color:#fff;}
+  .entry .t{font-weight:700; font-size:16px;}
+  .entry .d{font-size:11.5px; color:var(--ink-soft); margin-top:3px;}
+  .entry .arrow{margin-left:auto; color:var(--ink-faint);}
+  .ic-weekly{background:linear-gradient(145deg,var(--sky),var(--lav));}
+  .ic-roast{background:linear-gradient(145deg,var(--sakura),var(--peach));}
+  .ic-mood{background:linear-gradient(145deg,var(--mint),var(--sky));}
+
+  /* 我的 */
+  .me-head{display:flex; align-items:center; gap:14px; padding:18px 16px; border-radius:var(--r-lg); margin-top:14px;
+    background:linear-gradient(140deg,var(--lav-soft),var(--sakura-soft)); box-shadow:var(--shadow-soft);}
+  .avatar{width:60px; height:60px; border-radius:50%; background:linear-gradient(140deg,var(--lav),var(--sakura)); display:grid; place-items:center; font-size:30px; box-shadow:var(--shadow-lav); border:3px solid #fff;}
+  .me-head .nm{font-family:var(--font-disp); font-size:20px;}
+  .me-head .uid{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+  .chips{display:flex; gap:7px; margin-top:7px;}
+  .chip{font-size:10.5px; background:rgba(255,255,255,.7); color:var(--ink); padding:3px 10px; border-radius:var(--r-pill); font-weight:600;}
+  .me-stats{display:flex; gap:11px; margin-top:12px;}
+  .stat{flex:1; padding:15px 0; text-align:center; border-radius:var(--r-md); background:#fff; box-shadow:var(--shadow-soft);}
+  .stat .v{font-family:var(--font-num); font-weight:700; font-size:23px; color:var(--sakura);}
+  .stat .k{font-size:11px; color:var(--ink-soft); margin-top:2px;}
+  .menu{margin-top:12px; border-radius:var(--r-lg); background:#fff; box-shadow:var(--shadow-soft); overflow:hidden;}
+  .mrow{display:flex; align-items:center; gap:12px; padding:15px 16px; font-size:14px; font-weight:600;}
+  .mrow + .mrow{border-top:1px solid var(--line);}
+  .mrow .mi{width:30px; height:30px; border-radius:10px; display:grid; place-items:center; font-size:16px;}
+  .mrow .arrow{margin-left:auto; color:var(--ink-faint); font-weight:400;}
+
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(6deg)}}
+  .scroll > *{animation:rise .6s cubic-bezier(.2,.8,.25,1) both;}
+  .scroll > *:nth-child(2){animation-delay:.05s}
+  .scroll > *:nth-child(3){animation-delay:.1s}
+  .scroll > *:nth-child(4){animation-delay:.15s}
+  .scroll > *:nth-child(5){animation-delay:.2s}
+  .scroll > *:nth-child(6){animation-delay:.25s}
+  @keyframes rise{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="logo">goaway</div>
+    <div class="tag">视觉概念 v1 · 二次元马卡龙 · 把时间还给生活</div>
+    <div class="palette">
+      <div class="sw"><i style="background:var(--sakura)"></i>樱花粉</div>
+      <div class="sw"><i style="background:var(--mint)"></i>薄荷</div>
+      <div class="sw"><i style="background:var(--lav)"></i>薰衣草</div>
+      <div class="sw"><i style="background:var(--butter)"></i>奶油</div>
+      <div class="sw"><i style="background:var(--peach)"></i>蜜桃</div>
+      <div class="sw"><i style="background:var(--sky)"></i>晴空</div>
+    </div>
+  </div>
+
+  <div class="stage">
+
+    <!-- 屏 1：上班中 / 摸鱼 -->
+    <div class="device-wrap">
+      <div class="device-label">上班中 · 摸鱼</div>
+      <div class="phone"><div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>14:30</span><span class="r">📶 🔋</span></div>
+        <div class="scroll">
+          <div class="brandrow">
+            <div><div class="brand">goaway</div><div class="slogan">把时间还给生活 ☁️</div></div>
+            <div class="bell">🔔</div>
+          </div>
+
+          <div class="soup">
+            <div class="lbl">🍵 每日毒鸡汤</div>
+            <div class="txt">钱包扁扁，梦想圆圆，<br/>可惜两者不能兑换。</div>
+            <div class="reroll">🔄 换一句</div>
+            <div class="deco">🥲</div>
+          </div>
+
+          <div class="seg">
+            <button>上班前</button>
+            <button class="on">上班中</button>
+            <button>下班后</button>
+          </div>
+
+          <div class="moyu">
+            <span class="fish">🐟</span><span class="fish2">🫧</span>
+            <span class="pill"><span class="dot"></span>本次摸鱼 · 自动计时中</span>
+            <div class="time">0:49<small>.33</small></div>
+            <div class="sub">离开页面自动结算 · 今日已摸 1 时 12 分</div>
+          </div>
+
+          <div class="poop">
+            <div class="emo">🚽</div>
+            <div class="mid">
+              <div class="t">带薪拉屎</div>
+              <div class="d">今日 2 次 · 累计带薪 18 分</div>
+              <div class="money">这趟已赚 ¥3.74 …</div>
+            </div>
+            <div class="go">▶</div>
+          </div>
+
+          <div class="counters">
+            <div class="counter w"><div class="e">💧</div><div class="n">5</div><div class="c">喝水 +1 杯</div></div>
+            <div class="counter s"><div class="e">🚬</div><div class="n">3</div><div class="c">抽烟 +1 根</div></div>
+          </div>
+
+          <div class="rank">🏆 看看今日摸鱼排行榜 <span class="arrow">›</span></div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><div class="ic">🏠</div>首页</div>
+          <div class="tab"><div class="ic">🏆</div>排行榜</div>
+          <div class="tab"><div class="ic">🐱</div>我的</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 屏 2：下班后 -->
+    <div class="device-wrap">
+      <div class="device-label">下班后 · 解压</div>
+      <div class="phone"><div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>19:42</span><span class="r">📶 🔋</span></div>
+        <div class="scroll">
+          <div class="brandrow">
+            <div><div class="brand">goaway</div><div class="slogan">下班啦，辛苦一天 🌙</div></div>
+            <div class="bell">🔔</div>
+          </div>
+
+          <div class="soup" style="background:linear-gradient(135deg,var(--sky),var(--mint));box-shadow:0 14px 30px -12px rgba(154,208,255,.55)">
+            <div class="lbl">🍵 每日毒鸡汤</div>
+            <div class="txt">今天的苦，是为了<br/>明天更苦做的彩排。</div>
+            <div class="reroll">🔄 换一句</div>
+            <div class="deco">😮‍💨</div>
+          </div>
+
+          <div class="seg">
+            <button>上班前</button>
+            <button>上班中</button>
+            <button class="on">下班后</button>
+          </div>
+
+          <div class="lead">给情绪找个出口 👇</div>
+
+          <div class="entry">
+            <div class="ic ic-weekly">📝</div>
+            <div><div class="t">AI 周报</div><div class="d">碎片成果一键成稿</div></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="entry">
+            <div class="ic ic-roast">😤</div>
+            <div><div class="t">找 AI 对线</div><div class="d">老板 / 同事 / 甲方，怼回去解压</div></div>
+            <div class="arrow">›</div>
+          </div>
+          <div class="entry">
+            <div class="ic ic-mood">🔮</div>
+            <div><div class="t">今日运势 · 宜忌</div><div class="d">宜摸鱼 · 忌开会</div></div>
+            <div class="arrow">›</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab on"><div class="ic">🏠</div>首页</div>
+          <div class="tab"><div class="ic">🏆</div>排行榜</div>
+          <div class="tab"><div class="ic">🐱</div>我的</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 屏 3：我的 -->
+    <div class="device-wrap">
+      <div class="device-label">我的</div>
+      <div class="phone"><div class="screen">
+        <div class="island"></div>
+        <div class="statusbar"><span>21:08</span><span class="r">📶 🔋</span></div>
+        <div class="scroll">
+          <div class="brandrow"><div class="brand" style="font-size:26px">我的</div><div class="bell">⚙️</div></div>
+
+          <div class="me-head">
+            <div class="avatar">🐱</div>
+            <div>
+              <div class="nm">摸鱼小王</div>
+              <div class="uid">@miyu · 互联网 / 后端</div>
+              <div class="chips"><span class="chip">🏙 北京</span><span class="chip">😤 我最讨厌的组长</span></div>
+            </div>
+          </div>
+
+          <div class="me-stats">
+            <div class="stat"><div class="v">12</div><div class="k">连续打卡</div></div>
+            <div class="stat"><div class="v">37h</div><div class="k">累计摸鱼</div></div>
+            <div class="stat"><div class="v">#3</div><div class="k">同城排名</div></div>
+          </div>
+
+          <div class="menu">
+            <div class="mrow"><span class="mi" style="background:var(--sakura-soft)">🧑</span>我的信息 <span class="arrow">行业·最讨厌的人 ›</span></div>
+            <div class="mrow"><span class="mi" style="background:var(--mint-soft)">🔔</span>提醒设置 <span class="arrow">喝水·久坐·下班 ›</span></div>
+            <div class="mrow"><span class="mi" style="background:var(--butter-soft)">💰</span>薪资与工时 <span class="arrow">›</span></div>
+            <div class="mrow"><span class="mi" style="background:var(--lav-soft)">⚙️</span>设置 <span class="arrow">›</span></div>
+          </div>
+
+          <div class="soup" style="margin-top:14px;background:linear-gradient(135deg,var(--peach),var(--sakura))">
+            <div class="lbl">✨ 今日成就</div>
+            <div class="txt" style="font-size:15px">带薪拉屎 ¥18.6，<br/>已回本一杯奶茶 🧋</div>
+            <div class="deco">🏅</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tab"><div class="ic">🏠</div>首页</div>
+          <div class="tab"><div class="ic">🏆</div>排行榜</div>
+          <div class="tab on"><div class="ic">🐱</div>我的</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</body>
+</html>
