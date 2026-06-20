@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Mascot } from '../../../shared/components/Icon';
 import { useProfileViewModel } from '../viewModels/useProfileViewModel';
 import { navigateToRoute } from '../../../shared/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
@@ -30,9 +31,7 @@ const ProfileScreen = ({ navigation }) => {
         <Text style={styles.pageTitle}>我的</Text>
 
         <View style={styles.userCard}>
-          <View style={styles.avatarGuest}>
-            <Icon name="person-outline" size={24} color="#fff" />
-          </View>
+          <View style={styles.avatar}><Mascot size={50} /></View>
           <View style={styles.userInfo}>
             <Text style={styles.userName}>{vm.displayName}</Text>
             <Text style={styles.userSub}>游客 · {vm.usernameDisplay}</Text>
@@ -60,8 +59,6 @@ const ProfileScreen = ({ navigation }) => {
   }
 
   // ── Authenticated view ──
-  const initial = (vm.displayName || '?').charAt(0).toUpperCase();
-
   return (
     <ScrollView
       style={styles.container}
@@ -84,9 +81,7 @@ const ProfileScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.userCard}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{initial}</Text>
-        </View>
+        <View style={styles.avatar}><Mascot size={50} /></View>
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{vm.displayName}</Text>
           <Text style={styles.userSub}>{vm.usernameDisplay}</Text>
@@ -147,7 +142,7 @@ const ProfileScreen = ({ navigation }) => {
         ]}
       />
 
-      <Text style={styles.versionText}>goaway · 把时间还给生活</Text>
+      <Text style={styles.versionText}>狗啊喂 goaway · 把时间还给生活</Text>
     </ScrollView>
   );
 };
@@ -223,9 +218,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.brand500,
+    backgroundColor: colors.sakuraSoft,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   avatarGuest: {
     width: 56,

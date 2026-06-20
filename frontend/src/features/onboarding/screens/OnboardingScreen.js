@@ -67,7 +67,7 @@ const OnboardingScreen = ({ navigation, route }) => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>{editMode ? '编辑我的信息' : '欢迎来到 goaway 👋'}</Text>
+        <Text style={styles.title}>{editMode ? '编辑我的信息' : '欢迎来到狗啊喂 👋'}</Text>
         <Text style={styles.subtitle}>填一点基础信息，帮你算薪资、匹配排行榜分组、定制 AI 对线</Text>
 
         <View style={styles.card}>

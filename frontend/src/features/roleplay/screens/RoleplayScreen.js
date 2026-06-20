@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { roleplayAPI, streamRoleplayReply } from '../api';
 import { readOnboardingProfile, buildHatedPersona } from '../../onboarding/storage';
+import { Mascot } from '../../../shared/components/Icon';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
 const RoleplayScreen = ({ navigation }) => {
@@ -151,7 +152,10 @@ const RoleplayScreen = ({ navigation }) => {
         onContentSizeChange={scrollToEnd}
       >
         {messages.length === 0 && (
-          <Text style={styles.chatHint}>对它说点什么，开始今天的对线…</Text>
+          <View style={styles.emptyState}>
+            <Mascot size={88} />
+            <Text style={styles.chatHint}>对它说点什么，开始今天的对线…</Text>
+          </View>
         )}
         {messages.map((m, i) => (
           <View key={i} style={[styles.bubbleRow, m.role === 'user' ? styles.rowRight : styles.rowLeft]}>
@@ -211,7 +215,8 @@ const styles = StyleSheet.create({
   headerSpacer: { width: 24 },
   chatList: { flex: 1 },
   chatListContent: { padding: spacing.md, gap: 10 },
-  chatHint: { textAlign: 'center', color: colors.ink400, fontSize: 13, marginTop: 40 },
+  emptyState: { alignItems: 'center', marginTop: 50, gap: 10 },
+  chatHint: { textAlign: 'center', color: colors.ink400, fontSize: 13 },
   bubbleRow: { flexDirection: 'row' },
   rowLeft: { justifyContent: 'flex-start' },
   rowRight: { justifyContent: 'flex-end' },

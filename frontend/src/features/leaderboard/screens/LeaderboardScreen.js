@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { leaderboardAPI } from '../api';
+import GIcon from '../../../shared/components/Icon';
 import { workProfileAPI } from '../../profile/workProfileApi';
 import { formatDuration } from '../../checkin/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
@@ -122,7 +123,10 @@ const LeaderboardScreen = ({ navigation }) => {
       ) : (
         <View style={styles.listCard}>
           {(data?.entries || []).length === 0 ? (
-            <Text style={styles.empty}>还没有人上榜，快来争第一 🏆</Text>
+            <View style={styles.emptyState}>
+              <GIcon name="trophy" size={48} />
+              <Text style={styles.empty}>还没有人上榜，快来争第一</Text>
+            </View>
           ) : (
             data.entries.map((e, i) => (
               <View key={`${e.rank}-${e.nickname}-${i}`} style={[styles.row, e.me && styles.rowMe]}>
@@ -175,7 +179,8 @@ const styles = StyleSheet.create({
   rankTop: { color: colors.brand500 },
   nickname: { flex: 1, fontSize: 15, fontWeight: '500', color: colors.ink900 },
   score: { fontSize: 14, fontWeight: '700', color: colors.ink700 },
-  empty: { textAlign: 'center', color: colors.ink400, fontSize: 14, padding: 28 },
+  emptyState: { alignItems: 'center', gap: 10, padding: 28 },
+  empty: { textAlign: 'center', color: colors.ink400, fontSize: 14 },
   loader: { marginTop: 24 },
 });
 

@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { weeklyAPI, streamWeeklyReport } from '../api';
+import GIcon from '../../../shared/components/Icon';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
 const WeeklyScreen = ({ navigation }) => {
@@ -101,7 +102,7 @@ const WeeklyScreen = ({ navigation }) => {
             <Text style={styles.historyTitle}>历史周报</Text>
             {history.map((r) => (
               <View key={r.id} style={styles.historyRow}>
-                <Icon name="document-text-outline" size={16} color={colors.brand500} />
+                <GIcon name="doc" size={18} />
                 <Text style={styles.historyWeek}>{r.weekKey || '周报'}</Text>
                 <Text style={styles.historyPreview} numberOfLines={1}>
                   {(r.content || '').replace(/[#\n]/g, ' ').trim()}
