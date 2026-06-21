@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -22,7 +19,6 @@ const WeeklyScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const { isAuthenticated } = useAuth();
 
-  const [fragments, setFragments] = useState('');
   const [content, setContent] = useState('');
   const [generating, setGenerating] = useState(false);
   const [history, setHistory] = useState([]);
@@ -48,13 +44,9 @@ const WeeklyScreen = ({ navigation }) => {
       ]);
       return;
     }
-    if (!fragments.trim()) {
-      Alert.alert('提示', '先写几条本周的工作碎片吧');
-      return;
-    }
     setContent('');
     setGenerating(true);
-    cancelRef.current = streamWeeklyReport(fragments, {
+    cancelRef.current = streamWeeklyReport({
       onDelta: (d) => setContent((prev) => prev + d),
       onDone: () => { setGenerating(false); loadHistory(); },
       onError: (msg) => { setGenerating(false); Alert.alert('生成失败', msg || '请稍后再试'); },
@@ -62,61 +54,56 @@ const WeeklyScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView
-        contentContainerStyle={[styles.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 40 }]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[styles.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 40 }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.pageTitle}>AI 周报</Text>
+      <Text style={styles.subtitle}>根据你这周的摸鱼 / 喝水 / 打卡 / 上榜 / 勋章，自动生成本周周报 + 一段阴阳怪气毒鸡汤</Text>
+
+      <TouchableOpacity
+        style={[styles.genBtn, generating && styles.genBtnDisabled]}
+        onPress={generate}
+        disabled={generating}
+        activeOpacity={0.85}
       >
-        <Text style={styles.pageTitle}>AI 周报</Text>
-        <Text style={styles.subtitle}>把本周的零散成果丢进来，一键生成正式周报</Text>
+        <Icon name={generating ? 'sparkles' : 'sparkles-outline'} size={18} color="#fff" />
+        <Text style={styles.genBtnText}>{generating ? '生成中…' : '生成本周周报'}</Text>
+      </TouchableOpacity>
 
-        <TextInput
-          style={styles.input}
-          value={fragments}
-          onChangeText={setFragments}
-          placeholder={'例如：\n完成了登录模块\n修复了 3 个线上 bug\n对接了支付接口'}
-          placeholderTextColor={colors.ink300}
-          multiline
-          textAlignVertical="top"
-        />
-
-        <TouchableOpacity
-          style={[styles.genBtn, generating && styles.genBtnDisabled]}
-          onPress={generate}
-          disabled={generating}
-          activeOpacity={0.85}
-        >
-          <Icon name={generating ? 'sparkles' : 'sparkles-outline'} size={18} color="#fff" />
-          <Text style={styles.genBtnText}>{generating ? '生成中…' : '生成周报'}</Text>
-        </TouchableOpacity>
-
-        {content ? (
-          <View style={styles.resultCard}>
-            <Text style={styles.resultText} selectable>{content}</Text>
+      {content ? (
+        <View style={styles.resultCard}>
+          <Text style={styles.resultText} selectable>{content}</Text>
+        </View>
+      ) : (
+        !generating && (
+          <View style={styles.emptyCard}>
+            <GIcon name="doc" size={34} />
+            <Text style={styles.emptyText}>点上面的按钮，看看这周你到底在公司干了啥</Text>
           </View>
-        ) : null}
+        )
+      )}
 
-        {history.length > 0 && (
-          <View style={styles.historySection}>
-            <Text style={styles.historyTitle}>历史周报</Text>
-            {history.map((r) => (
-              <View key={r.id} style={styles.historyRow}>
-                <GIcon name="doc" size={18} />
-                <Text style={styles.historyWeek}>{r.weekKey || '周报'}</Text>
-                <Text style={styles.historyPreview} numberOfLines={1}>
-                  {(r.content || '').replace(/[#\n]/g, ' ').trim()}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+      {history.length > 0 && (
+        <View style={styles.historySection}>
+          <Text style={styles.historyTitle}>历史周报</Text>
+          {history.map((r) => (
+            <View key={r.id} style={styles.historyRow}>
+              <GIcon name="doc" size={18} />
+              <Text style={styles.historyWeek}>{r.weekKey || '周报'}</Text>
+              <Text style={styles.historyPreview} numberOfLines={1}>
+                {(r.content || '').replace(/[#*\n]/g, ' ').trim()}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
 
-        {!isAuthenticated && (
-          <Text style={styles.hint}>登录后即可生成并保存 AI 周报</Text>
-        )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+      {!isAuthenticated && (
+        <Text style={styles.hint}>登录后即可生成并保存 AI 周报</Text>
+      )}
+    </ScrollView>
   );
 };
 
@@ -124,11 +111,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { paddingHorizontal: spacing.md, gap: spacing.sm },
   pageTitle: { fontSize: 28, fontWeight: '800', color: colors.ink900, letterSpacing: -0.3 },
-  subtitle: { fontSize: 13, color: colors.ink500, marginBottom: 4 },
-  input: {
-    minHeight: 130, backgroundColor: colors.bgElev, borderRadius: radius.lg, padding: 16,
-    fontSize: 15, color: colors.ink900, borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm,
-  },
+  subtitle: { fontSize: 13, color: colors.ink500, marginBottom: 4, lineHeight: 19 },
   genBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, height: 50,
     borderRadius: radius.md, backgroundColor: colors.brand500, marginTop: 4, ...shadows.pop,
@@ -140,6 +123,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm,
   },
   resultText: { fontSize: 14.5, color: colors.ink900, lineHeight: 23 },
+  emptyCard: {
+    backgroundColor: colors.bgElev, borderRadius: radius.lg, padding: 28, marginTop: 8,
+    alignItems: 'center', gap: 10, borderWidth: 0.5, borderColor: colors.ink100, ...shadows.sm,
+  },
+  emptyText: { fontSize: 13, color: colors.ink400, textAlign: 'center' },
   historySection: { marginTop: 16, gap: 8 },
   historyTitle: {
     fontSize: 11, fontWeight: '700', color: colors.ink400, letterSpacing: 1,

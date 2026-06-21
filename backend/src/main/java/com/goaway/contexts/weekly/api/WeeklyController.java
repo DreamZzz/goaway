@@ -1,10 +1,8 @@
 package com.goaway.contexts.weekly.api;
 
-import com.goaway.contexts.weekly.api.dto.GenerateWeeklyRequest;
 import com.goaway.contexts.weekly.api.dto.WeeklyReportDTO;
 import com.goaway.contexts.weekly.application.WeeklyService;
 import com.goaway.platform.security.CurrentUserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +24,11 @@ public class WeeklyController {
         this.currentUserService = currentUserService;
     }
 
+    /** 基于本周真实使用数据流式生成周报（无需输入，数据来自 App 使用记录）。 */
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter generateStream(@Valid @RequestBody GenerateWeeklyRequest request) {
+    public SseEmitter generateStream() {
         Long userId = currentUserService.requireRealUserId();
-        return weeklyService.streamGenerate(userId, request.getFragments());
+        return weeklyService.streamGenerate(userId);
     }
 
     @GetMapping

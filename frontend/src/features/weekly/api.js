@@ -11,7 +11,7 @@ export const weeklyAPI = {
  * 增量解析 text/event-stream。
  * @returns {() => void} 取消函数
  */
-export const streamWeeklyReport = (fragments, { onDelta, onDone, onError } = {}) => {
+export const streamWeeklyReport = ({ onDelta, onDone, onError } = {}) => {
   let cancelled = false;
   const xhr = new XMLHttpRequest();
   let seenLength = 0;
@@ -78,7 +78,7 @@ export const streamWeeklyReport = (fragments, { onDelta, onDone, onError } = {})
     if (token) {
       xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     }
-    xhr.send(JSON.stringify({ fragments }));
+    xhr.send(JSON.stringify({}));
   })();
 
   return () => {

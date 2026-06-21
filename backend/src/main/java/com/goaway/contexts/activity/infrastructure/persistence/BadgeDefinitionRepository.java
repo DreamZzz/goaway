@@ -12,4 +12,6 @@ public interface BadgeDefinitionRepository extends JpaRepository<BadgeDefinition
     List<BadgeDefinition> findAllByOrderBySortOrderAscIdAsc();
 
     boolean existsByKey(String key);
+
+    java.util.Optional<BadgeDefinition> findByKey(String key);
 }

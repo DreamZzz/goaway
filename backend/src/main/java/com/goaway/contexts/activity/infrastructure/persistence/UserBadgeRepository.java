@@ -9,5 +9,9 @@ public interface UserBadgeRepository extends JpaRepository<UserBadge, Long> {
 
     List<UserBadge> findByUserId(Long userId);
 
+    List<UserBadge> findByUserIdAndEarnedAtBetween(Long userId,
+                                                   java.time.LocalDateTime start,
+                                                   java.time.LocalDateTime end);
+
     boolean existsByUserIdAndBadgeKey(Long userId, String badgeKey);
 }

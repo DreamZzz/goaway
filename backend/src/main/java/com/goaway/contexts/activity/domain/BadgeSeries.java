@@ -35,6 +35,11 @@ public enum BadgeSeries {
         this.thresholds = thresholds;
     }
 
+    public static java.util.Optional<BadgeSeries> byKey(String key) {
+        for (BadgeSeries s : values()) if (s.key.equals(key)) return java.util.Optional.of(s);
+        return java.util.Optional.empty();
+    }
+
     public String getKey() { return key; }
     public String getTitle() { return title; }
     public String getIcon() { return icon; }
