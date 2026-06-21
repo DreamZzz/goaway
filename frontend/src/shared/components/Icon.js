@@ -96,6 +96,15 @@ const GLYPHS = {
       <Circle cx={16} cy={16} r={4} fill={P.w} />
     </>
   ),
+  medal: (
+    <>
+      <Path d="M11.5 3l4 11-2.6.9L8.5 3.6 11.5 3Z" fill={P.sky} />
+      <Path d="M20.5 3l-4 11 2.6.9 4.4-11.3L20.5 3Z" fill={P.lav} />
+      <Circle cx={16} cy={20} r={8.5} fill={P.butter} />
+      <Circle cx={16} cy={20} r={5.6} fill={P.w} opacity={0.5} />
+      <Path d="M16 15.6l1.4 2.9 3.1.4-2.3 2.2.6 3.1L16 22.6l-2.8 1.6.6-3.1-2.3-2.2 3.1-.4 1.4-2.9Z" fill={P.peach} />
+    </>
+  ),
 };
 
 // 边牧吉祥物（独立 viewBox 120）

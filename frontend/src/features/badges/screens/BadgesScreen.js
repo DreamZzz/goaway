@@ -60,9 +60,10 @@ const BadgesScreen = () => {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 40 }]}
+      contentContainerStyle={[styles.content, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 40 }]}
       showsVerticalScrollIndicator={false}
     >
+      <Text style={styles.pageTitle}>荣誉徽章</Text>
       <View style={styles.summary}>
         <GIcon name="trophy" size={26} />
         <Text style={styles.summaryText}>已点亮 {earnedCount} / {badges.length} 枚</Text>
@@ -86,7 +87,8 @@ const BadgesScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: spacing.md, gap: spacing.lg },
+  content: { paddingHorizontal: spacing.md, paddingBottom: spacing.lg, gap: spacing.lg },
+  pageTitle: { fontSize: 28, fontWeight: '800', color: colors.ink900, letterSpacing: -0.3, marginBottom: -4 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.bg, padding: 24 },
   hint: { color: colors.ink400, fontSize: 14 },
   summary: {

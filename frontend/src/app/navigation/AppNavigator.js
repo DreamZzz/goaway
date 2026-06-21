@@ -44,11 +44,12 @@ const navigationTheme = {
   },
 };
 
-const TAB_GLYPH = { HomeTab: 'home', LeaderboardTab: 'trophy', ProfileTab: 'mascot' };
+const TAB_GLYPH = { HomeTab: 'home', LeaderboardTab: 'trophy', BadgesTab: 'medal', ProfileTab: 'mascot' };
 
 const TAB_LABELS = {
   HomeTab: '首页',
   LeaderboardTab: '排行榜',
+  BadgesTab: '勋章',
   ProfileTab: '我的',
 };
 
@@ -63,6 +64,7 @@ const createTabBarIcon = (routeName) => ({ focused }) => {
 const TAB_BAR_ICON_RENDERERS = {
   HomeTab: createTabBarIcon('HomeTab'),
   LeaderboardTab: createTabBarIcon('LeaderboardTab'),
+  BadgesTab: createTabBarIcon('BadgesTab'),
   ProfileTab: createTabBarIcon('ProfileTab'),
 };
 
@@ -102,6 +104,7 @@ function TabsNavigator() {
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} />
       <Tab.Screen name="LeaderboardTab" component={LeaderboardScreen} />
+      <Tab.Screen name="BadgesTab" component={BadgesScreen} />
       <Tab.Screen name="ProfileTab" component={ProfileScreen} />
     </Tab.Navigator>
   );
@@ -174,11 +177,6 @@ export default function AppNavigator() {
           name="WorkProfile"
           component={WorkProfileScreen}
           options={{ title: '我的画像' }}
-        />
-        <RootStack.Screen
-          name="Badges"
-          component={BadgesScreen}
-          options={{ title: '荣誉徽章' }}
         />
         <RootStack.Screen
           name="Reminders"
