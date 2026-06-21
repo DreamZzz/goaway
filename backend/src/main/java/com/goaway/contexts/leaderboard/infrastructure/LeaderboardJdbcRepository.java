@@ -77,6 +77,73 @@ public class LeaderboardJdbcRepository {
         return result.get(0);
     }
 
+    // ── 配置榜（基于 activity_events，scoreExpr/having 由 RuleSqlCompiler 从白名单编译，安全）──
+
+    public List<ScoreRow> topEntriesConfig(String scoreExpr, String having, Dimension dimension,
+                                           String slice, LocalDate start, LocalDate end, int limit) {
+        StringBuilder sql = new StringBuilder()
+                .append("SELECT w.user_id, w.nickname, ").append(scoreExpr).append(" AS score ")
+                .append("FROM activity_events t JOIN work_profiles w ON w.user_id = t.user_id ")
+                .append("WHERE t.occurred_at::date BETWEEN ? AND ? ");
+        List<Object> args = new ArrayList<>();
+        args.add(start);
+        args.add(end);
+        if (dimension.column != null) {
+            sql.append("AND w.").append(dimension.column).append(" = ? ");
+            args.add(slice);
+        }
+        sql.append("GROUP BY w.user_id, w.nickname ");
+        if (having != null && !having.isBlank()) {
+            sql.append("HAVING ").append(having).append(" ");
+        }
+        sql.append("ORDER BY score DESC, w.user_id ASC LIMIT ?");
+        args.add(limit);
+        return jdbcTemplate.query(sql.toString(), (rs, rowNum) ->
+                        new ScoreRow(rs.getLong("user_id"), rs.getString("nickname"), rs.getLong("score")),
+                args.toArray());
+    }
+
+    public Long myScoreConfig(String scoreExpr, String having, LocalDate start, LocalDate end, long userId) {
+        StringBuilder sql = new StringBuilder()
+                .append("SELECT score FROM (SELECT ").append(scoreExpr).append(" AS score ")
+                .append("FROM activity_events t WHERE t.user_id = ? AND t.occurred_at::date BETWEEN ? AND ? ")
+                .append("GROUP BY t.user_id ");
+        if (having != null && !having.isBlank()) {
+            sql.append("HAVING ").append(having).append(" ");
+        }
+        sql.append(") q");
+        List<Long> result = jdbcTemplate.query(sql.toString(),
+                (rs, rowNum) -> rs.getObject("score") == null ? null : rs.getLong("score"),
+                userId, start, end);
+        if (result.isEmpty() || result.get(0) == null || result.get(0) == 0L) {
+            return null;
+        }
+        return result.get(0);
+    }
+
+    public int rankForScoreConfig(String scoreExpr, String having, Dimension dimension, String slice,
+                                  LocalDate start, LocalDate end, long myScore) {
+        StringBuilder sql = new StringBuilder()
+                .append("SELECT COUNT(*) FROM (SELECT ").append(scoreExpr).append(" AS score ")
+                .append("FROM activity_events t JOIN work_profiles w ON w.user_id = t.user_id ")
+                .append("WHERE t.occurred_at::date BETWEEN ? AND ? ");
+        List<Object> args = new ArrayList<>();
+        args.add(start);
+        args.add(end);
+        if (dimension.column != null) {
+            sql.append("AND w.").append(dimension.column).append(" = ? ");
+            args.add(slice);
+        }
+        sql.append("GROUP BY w.user_id HAVING ");
+        if (having != null && !having.isBlank()) {
+            sql.append("(").append(having).append(") AND ");
+        }
+        sql.append(scoreExpr).append(" > ?) ranked");
+        args.add(myScore);
+        Integer higher = jdbcTemplate.queryForObject(sql.toString(), Integer.class, args.toArray());
+        return (higher == null ? 0 : higher) + 1;
+    }
+
     /** 在该切片下分数严格高于 myScore 的用户数 + 1 即为排名。 */
     public int rankForScore(Board board, Dimension dimension, String slice,
                             LocalDate start, LocalDate end, long myScore) {

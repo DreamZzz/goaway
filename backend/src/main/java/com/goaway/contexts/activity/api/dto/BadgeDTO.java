@@ -20,6 +20,22 @@ public class BadgeDTO {
 
     public BadgeDTO() {}
 
+    public BadgeDTO(String key, String title, String description, String kind, String icon,
+                    String unit, long threshold, long current, boolean earned,
+                    LocalDateTime earnedAt, double progress) {
+        this.key = key;
+        this.title = title;
+        this.description = description;
+        this.kind = kind;
+        this.icon = icon;
+        this.unit = unit;
+        this.threshold = threshold;
+        this.current = current;
+        this.earned = earned;
+        this.earnedAt = earnedAt;
+        this.progress = progress;
+    }
+
     public BadgeDTO(Badge badge, long current, boolean earned, LocalDateTime earnedAt, double progress) {
         this.key = badge.getKey();
         this.title = badge.getTitle();

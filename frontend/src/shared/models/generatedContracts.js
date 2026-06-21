@@ -609,6 +609,29 @@ export function createFishingSummaryDTO(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} BoardInfoDTO
+ * @property {string|null} key
+ * @property {string|null} label
+ */
+
+export const BOARD_INFO_DTO_FIELDS = Object.freeze([
+  'key',
+  'label',
+]);
+
+/**
+ * @param {Partial<BoardInfoDTO>} [overrides={}]
+ * @returns {BoardInfoDTO}
+ */
+export function createBoardInfoDTO(overrides = {}) {
+  return {
+    key: null,
+    label: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} LeaderboardDTO
  * @property {Array<LeaderboardEntryDTO>} entries
  * @property {number|null} myScore
@@ -1055,6 +1078,7 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'CheckinSummaryDTO',
   'FishingReportRequest',
   'FishingSummaryDTO',
+  'BoardInfoDTO',
   'LeaderboardDTO',
   'LeaderboardEntryDTO',
   'FileUploadResponse',
@@ -1094,6 +1118,7 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   CheckinSummaryDTO: createCheckinSummaryDTO,
   FishingReportRequest: createFishingReportRequest,
   FishingSummaryDTO: createFishingSummaryDTO,
+  BoardInfoDTO: createBoardInfoDTO,
   LeaderboardDTO: createLeaderboardDTO,
   LeaderboardEntryDTO: createLeaderboardEntryDTO,
   FileUploadResponse: createFileUploadResponse,

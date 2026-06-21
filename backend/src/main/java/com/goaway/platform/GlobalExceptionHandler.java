@@ -66,6 +66,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Explicit ResponseStatusException — honour its status code (e.g. 401/404 from admin guard).
+     */
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<MessageResponse> handleResponseStatus(
+            org.springframework.web.server.ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(new MessageResponse(ex.getReason() != null ? ex.getReason() : "请求被拒绝"));
+    }
+
+    /**
      * Catch-all — prevents HTML error pages leaking to API clients.
      */
     @ExceptionHandler(Exception.class)

@@ -361,8 +361,12 @@ function writeFileIfChanged(filePath, nextContent, changedFiles) {
 
 function main() {
   const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+  // 后台专用 DTO（运营后台 console.html 消费，App 不消费）不进客户端契约：
+  // 它们含嵌套类 / JsonNode，生成的 Swift 无法编译。
+  const EXCLUDE_DTO_DIRS = [`${path.sep}contexts${path.sep}admin${path.sep}`];
   const dtoFiles = walkFiles(BACKEND_SRC_DIR)
     .filter((filePath) => filePath.endsWith('.java') && filePath.includes(`${path.sep}dto${path.sep}`))
+    .filter((filePath) => !EXCLUDE_DTO_DIRS.some((dir) => filePath.includes(dir)))
     .sort();
 
   const dtoModels = dtoFiles.map((filePath) => {

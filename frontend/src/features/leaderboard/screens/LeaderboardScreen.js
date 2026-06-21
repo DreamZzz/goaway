@@ -16,16 +16,8 @@ import { workProfileAPI } from '../../profile/workProfileApi';
 import { formatDuration } from '../../checkin/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
-const BOARDS = [
-  { key: 'fishing', label: '摸鱼时长', unit: 'seconds' },
-  { key: 'fish_single', label: '单次最长摸鱼', unit: 'seconds' },
-  { key: 'fish_total', label: '累计摸鱼', unit: 'seconds' },
-  { key: 'poop_single', label: '单次最长带薪', unit: 'seconds' },
-  { key: 'poop_total', label: '带薪拉屎次数', unit: 'count', suffix: '次' },
-  { key: 'water_total', label: '喝水', unit: 'count', suffix: '杯' },
-  { key: 'smoke_total', label: '抽烟', unit: 'count', suffix: '根' },
-  { key: 'checkin', label: '连续打卡', unit: 'count', suffix: '天' },
-];
+// 次数类榜单的展示后缀（按 key），未列出的 count 榜默认「次」
+const SUFFIX = { checkin: '天', water_total: '杯', smoke_total: '根', poop_total: '次' };
 const PERIODS = [
   { key: 'day', label: '今日' },
   { key: 'week', label: '本周' },
@@ -55,13 +47,13 @@ const Segmented = ({ items, value, onChange }) => (
   </View>
 );
 
-const BoardChips = ({ value, onChange }) => (
+const BoardChips = ({ boards, value, onChange }) => (
   <ScrollView
     horizontal
     showsHorizontalScrollIndicator={false}
     contentContainerStyle={styles.chipRow}
   >
-    {BOARDS.map((b) => {
+    {boards.map((b) => {
       const active = b.key === value;
       return (
         <TouchableOpacity
@@ -81,12 +73,27 @@ const LeaderboardScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const { isAuthenticated } = useAuth();
 
+  const [boards, setBoards] = useState([]);
   const [board, setBoard] = useState('fishing');
   const [period, setPeriod] = useState('day');
   const [dimension, setDimension] = useState('all');
   const [profile, setProfile] = useState(null);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // 拉取榜单列表（内置 + 配置），动态渲染
+  useEffect(() => {
+    leaderboardAPI.boards()
+      .then((r) => {
+        const list = r.data || [];
+        setBoards(list);
+        if (list.length && !list.some((b) => b.key === board)) {
+          setBoard(list[0].key);
+        }
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -114,9 +121,9 @@ const LeaderboardScreen = ({ navigation }) => {
   const dim = DIMENSIONS.find((d) => d.key === dimension);
   const missingSlice = dim?.field && !profile?.[dim.field];
 
-  const currentBoard = BOARDS.find((b) => b.key === board) || BOARDS[0];
+  const currentBoard = boards.find((b) => b.key === board);
   const formatScore = (score) =>
-    currentBoard.unit === 'seconds' ? formatDuration(score) : `${score} ${currentBoard.suffix || ''}`;
+    currentBoard?.unit === 'seconds' ? formatDuration(score) : `${score} ${SUFFIX[board] || '次'}`;
 
   return (
     <ScrollView
@@ -126,7 +133,7 @@ const LeaderboardScreen = ({ navigation }) => {
     >
       <Text style={styles.pageTitle}>排行榜</Text>
 
-      <BoardChips value={board} onChange={setBoard} />
+      <BoardChips boards={boards} value={board} onChange={setBoard} />
       <Segmented items={PERIODS} value={period} onChange={setPeriod} />
       <Segmented items={DIMENSIONS} value={dimension} onChange={setDimension} />
 

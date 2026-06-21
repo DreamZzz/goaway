@@ -409,7 +409,7 @@
     {
       "className": "BadgeDTO",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeDTO.java",
-      "sourceHash": "459b699f2ad51c558f29743a10218cc90892794e337b352d461f516dd505efaf",
+      "sourceHash": "4938efca28ae9b7f5c3425e94196295ca9941829ec45a6a6b26448aba1cb10d9",
       "fields": [
         {
           "name": "key",
@@ -536,6 +536,21 @@
         {
           "name": "totalSeconds",
           "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "BoardInfoDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/leaderboard/api/dto/BoardInfoDTO.java",
+      "sourceHash": "3caa5e4c275a993de3cd9373368230cac035701eaf7ed3a63325a1e2f92099d8",
+      "fields": [
+        {
+          "name": "key",
+          "javaType": "String"
+        },
+        {
+          "name": "label",
+          "javaType": "String"
         }
       ]
     },

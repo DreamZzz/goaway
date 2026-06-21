@@ -389,6 +389,19 @@ public struct FishingSummaryDTO: Codable, Equatable, Sendable {
     }
 }
 
+public struct BoardInfoDTO: Codable, Equatable, Sendable {
+    public var key: String?
+    public var label: String?
+
+    public init(
+        key: String? = nil,
+        label: String? = nil
+    ) {
+        self.key = key
+        self.label = label
+    }
+}
+
 public struct LeaderboardDTO: Codable, Equatable, Sendable {
     public var entries: [LeaderboardEntryDTO]?
     public var myScore: Int64?

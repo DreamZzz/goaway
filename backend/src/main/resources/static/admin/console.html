@@ -3,2247 +3,364 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>吃点啥 · 运营后台</title>
+<title>狗啊喂 · 运营后台</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f6f6f7;--surface:#fff;--surface-soft:#fff8f3;--border:#e6d9cf;--text:#201711;--muted:#7c6f67;
-  --accent:#b85c38;--accent-strong:#9f4728;--accent-soft:#fdf0eb;--green:#15803d;--yellow:#b7791f;
-  --red:#dc2626;--blue:#2563eb;--radius:14px;--shadow:0 10px 30px rgba(36,25,18,.06),0 2px 8px rgba(36,25,18,.05)
+  --bg:#FFF7FB;--surface:#fff;--soft:#F4EDF7;--border:#EFE3F2;--text:#5A4E63;--muted:#9A90A6;
+  --brand:#FF8FB1;--brand-soft:#FFE3EF;--mint:#7FD8BE;--mint-soft:#E3F7F0;--lav:#B7A6F0;
+  --red:#E66A8A;--radius:16px;--shadow:0 10px 30px rgba(154,122,184,.10),0 2px 8px rgba(154,122,184,.06)
 }
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#fff9f5,#f7f4f1);color:var(--text);font-size:14px;line-height:1.5}
-header{position:sticky;top:0;z-index:20;padding:18px 24px;border-bottom:1px solid var(--border);background:rgba(255,250,246,.96);backdrop-filter:blur(14px)}
-header h1{font-size:18px;font-weight:800;color:var(--accent)}
-header p{margin-top:4px;font-size:12px;color:var(--muted)}
-.shell{max-width:1320px;margin:0 auto;padding:24px}
-.overview{display:grid;grid-template-columns:2fr 1.2fr;gap:16px;margin-bottom:18px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-.card h2{font-size:15px;font-weight:800;margin-bottom:14px}
-.subtle{font-size:12px;color:var(--muted)}
-.secret-grid{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.secret-grid input,.field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text);font-family:inherit}
-.secret-grid input{width:280px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-.btn{padding:9px 16px;border-radius:10px;border:none;background:var(--surface);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;transition:.15s;border:1px solid var(--border)}
-.btn:hover{opacity:.92}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-danger{background:#fff1f2;color:#b91c1c;border-color:#fecdd3}
-.btn-warning{background:#fffbeb;color:#92400e;border-color:#fde68a}
-.btn-ghost{background:#fff}
-.btn-small{padding:7px 12px;font-size:12px}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700}
-.risk-list{display:grid;gap:8px}
-.risk-item{font-size:12px;color:var(--muted)}
-.risk-item strong{color:var(--text)}
-.status-ok{color:var(--green);font-weight:700}
-.status-empty{color:var(--muted);font-weight:700}
-.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-bottom:20px}
-.tab-btn{padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
-.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
-.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:12px;font-weight:700;color:var(--muted)}
-.field textarea{min-height:80px;resize:vertical}
-.field.wide{grid-column:1/-1}
-.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
-.loading-text{font-size:12px;color:var(--muted)}
-.message-box{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;font-size:13px;border:1px solid transparent}
-.message-box.error{display:block;background:#fef2f2;border-color:#fecaca;color:#b91c1c}
-.message-box.success{display:block;background:#ecfdf5;border-color:#bbf7d0;color:#166534}
-.message-box.info{display:block;background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
-.results-count{font-size:12px;color:var(--muted);font-weight:700}
-.recipe-list{display:grid;gap:12px}
-.recipe-card{border:1px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;box-shadow:var(--shadow)}
-.recipe-body{padding:14px 16px}
-.recipe-head{display:flex;gap:14px}
-.recipe-thumb,.recipe-thumb-placeholder{width:96px;height:96px;border-radius:12px;flex-shrink:0;border:1px solid var(--border);background:#f4efea}
-.recipe-thumb{object-fit:cover;cursor:zoom-in}
-.recipe-thumb-placeholder{display:flex;align-items:center;justify-content:center;font-size:26px;color:#d0b7a8}
-.recipe-title{font-size:16px;font-weight:800;margin-bottom:4px}
-.recipe-summary{font-size:12px;color:var(--muted);margin-bottom:10px}
-.badge-row,.chip-list,.action-chip-row{display:flex;gap:6px;flex-wrap:wrap}
-.badge{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
-.badge-neutral{background:#f5f5f5;color:#57534e}
-.badge-accent{background:var(--accent-soft);color:var(--accent)}
-.badge-ok{background:#dcfce7;color:#166534}
-.badge-warn{background:#fef3c7;color:#92400e}
-.badge-danger{background:#fee2e2;color:#991b1b}
-.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #f2e8e0}
-.meta-item{font-size:12px;color:var(--muted)}
-.meta-item strong{color:var(--text)}
-.expand-toggle{margin-top:10px;border:none;background:none;color:var(--accent);font-size:12px;font-weight:700;cursor:pointer}
-.collapsible{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #f2e8e0}
-.collapsible.open{display:block}
-.steps-list{list-style:none;display:grid;gap:8px}
-.steps-list li{display:flex;gap:8px;font-size:12px}
-.steps-list li::before{content:counter(step);counter-increment:step;font-weight:800;color:var(--accent);min-width:18px}
-.steps-list{counter-reset:step}
-.ops-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
-.ops-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:18px}
-.stack{display:grid;gap:12px}
-.inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.batch-grid{display:grid;gap:10px}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.stat-card{padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--surface-soft)}
-.stat-card .label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.stat-card .value{font-size:20px;font-weight:800}
-.user-layout{display:grid;grid-template-columns:320px 1fr;gap:18px}
-.user-list{display:grid;gap:10px;max-height:720px;overflow:auto}
-.user-list-item{padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer}
-.user-list-item.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(184,92,56,.12)}
-.user-list-item strong{display:block;font-size:14px}
-.user-list-item span{display:block;font-size:12px;color:var(--muted)}
-.detail-panel{display:grid;gap:14px}
-.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.detail-item{padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff}
-.detail-item .label{font-size:11px;color:var(--muted);margin-bottom:6px}
-.detail-item .value{font-size:13px;font-weight:700;color:var(--text);word-break:break-word}
-.table-lite{width:100%;border-collapse:collapse}
-.table-lite th,.table-lite td{padding:10px 8px;border-bottom:1px solid #f2e8e0;text-align:left;font-size:12px}
-.table-lite th{color:var(--muted);font-weight:800}
-.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
-#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100}
-#lightbox.open{display:flex}
-#lightbox img{max-width:92vw;max-height:92vh;border-radius:18px}
-#lightbox button{position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer}
-@media (max-width: 980px){
-  .overview,.grid-2,.ops-grid,.user-layout{grid-template-columns:1fr}
-}
-.tx-node{cursor:pointer;user-select:none;padding:6px 8px;border-radius:8px;display:flex;align-items:center;gap:6px;font-size:13px;transition:.12s}
-.tx-node:hover{background:var(--accent-soft)}
-.tx-node.active{background:var(--accent-soft);font-weight:700;color:var(--accent)}
-.tx-node.highlighted{background:#fef9c3}
-.tx-node .tx-arrow{font-size:11px;color:var(--muted);min-width:12px;transition:transform .15s}
-.tx-node .tx-arrow.open{transform:rotate(90deg)}
-.tx-node .tx-label{flex:1}
-.tx-node .tx-count{font-size:11px;color:var(--muted);background:#f5f5f4;padding:2px 7px;border-radius:999px}
-.tx-children{padding-left:16px;display:none}
-.tx-children.open{display:block}
-.tx-item-card{padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:#fff}
-.tx-item-card .name{font-size:14px;font-weight:700}
-.tx-item-card .meta{font-size:12px;color:var(--muted);margin-top:3px}
-.tx-item-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
-.tx-tag{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
-.tx-dim{opacity:.35}
-.tx-snap-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f2e8e0;font-size:13px}
-.tx-snap-row:last-child{border-bottom:none}
-.tx-snap-time{color:var(--muted);min-width:150px;font-size:12px}
-.tx-snap-note{flex:1;font-weight:700}
-.tx-snap-meta{font-size:12px;color:var(--muted)}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI",sans-serif;background:linear-gradient(180deg,#FFF7FB,#F4EDF7);color:var(--text);font-size:14px;line-height:1.55;min-height:100vh}
+header{position:sticky;top:0;z-index:20;padding:16px 24px;border-bottom:1px solid var(--border);background:rgba(255,247,251,.95);backdrop-filter:blur(14px);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:18px;font-weight:800;color:var(--brand)}
+header .sub{font-size:12px;color:var(--muted)}
+.shell{max-width:1100px;margin:0 auto;padding:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input,select{padding:9px 11px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:13px;color:var(--text);font-family:inherit}
+input[type=number]{width:110px}
+label.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.btn{padding:9px 15px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--text);font-size:13px;font-weight:700;cursor:pointer}
+.btn:hover{opacity:.9}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-mint{background:var(--mint);color:#fff;border-color:var(--mint)}
+.btn-danger{background:#fff0f4;color:var(--red);border-color:#ffd6e2}
+.btn-sm{padding:6px 10px;font-size:12px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{padding:9px 18px;border-radius:999px;background:#fff;border:1px solid var(--border);cursor:pointer;font-weight:700;font-size:13px}
+.tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:#fff}
+.item .grow{flex:1;min-width:0}
+.item .t{font-weight:700}
+.item .d{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.on{background:var(--mint-soft);color:#2a9d7f}
+.pill.off{background:var(--soft);color:var(--muted)}
+.cond{border:1px dashed var(--border);border-radius:12px;padding:12px;margin-bottom:8px;background:var(--bg)}
+.muted{color:var(--muted);font-size:12px}
+.sql{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--soft);padding:8px 10px;border-radius:8px;color:#6b5b78;word-break:break-all}
+.hidden{display:none}
+h2{font-size:15px;font-weight:800;margin-bottom:12px}
+.sep{height:1px;background:var(--border);margin:14px 0}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:.96}
 </style>
 </head>
 <body>
 <header>
-  <h1>吃点啥 · 运营后台</h1>
-  <p>覆盖内容运营、推荐调试、用户订阅与配额修复。所有操作都需要有效的 <code>X-Admin-Secret</code>。</p>
+  <h1>狗啊喂 · 运营后台</h1>
+  <span class="sub">勋章 / 榜单 规则配置</span>
+  <span style="flex:1"></span>
+  <input id="secret" type="password" placeholder="X-Admin-Secret" style="width:200px">
+  <button class="btn btn-primary" onclick="connect()">连接</button>
+  <span id="conn" class="sub"></span>
 </header>
 
 <div class="shell">
-  <section class="overview">
+  <div class="tabs">
+    <div class="tab active" id="tab-badge" onclick="switchTab('badge')">勋章</div>
+    <div class="tab" id="tab-board" onclick="switchTab('board')">榜单</div>
+  </div>
+
+  <!-- 勋章 -->
+  <div id="panel-badge">
     <div class="card">
-      <h2>后台入口与环境信息</h2>
-      <div class="secret-grid">
-        <input type="password" id="secret-input" placeholder="输入 X-Admin-Secret…" autocomplete="off">
-        <button class="btn btn-primary" onclick="saveSecret()">保存密钥</button>
-        <span id="secret-status" class="status-empty">未设置</span>
-        <span class="pill" id="env-pill">环境：—</span>
+      <h2 id="badgeFormTitle">新建勋章</h2>
+      <div class="row">
+        <label class="fld">key（英文唯一）<input id="b_key" placeholder="water_master"></label>
+        <label class="fld">名称<input id="b_title" placeholder="水逆体质"></label>
+        <label class="fld">类别<select id="b_kind"></select></label>
+        <label class="fld">图标<select id="b_icon"></select></label>
       </div>
-      <div class="grid-3" style="margin-top:14px">
-        <div class="stat-card">
-          <div class="label">运营模块</div>
-          <div class="value">8</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">主要视角</div>
-          <div class="value" style="font-size:16px">内容运营 / 用户订阅</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">鉴权模型</div>
-          <div class="value" style="font-size:16px">X-Admin-Secret</div>
-        </div>
+      <label class="fld" style="margin-top:8px">描述<input id="b_desc" placeholder="累计喝水满 200 杯" style="width:360px"></label>
+      <div class="sep"></div>
+      <div class="row"><strong>达成条件</strong>
+        <select id="b_logic"><option value="AND">且(AND)</option><option value="OR">或(OR)</option></select>
+        <button class="btn btn-sm" onclick="addCond('b_conds')">+ 条件</button>
+        <span class="muted">1–3 个条件</span>
+      </div>
+      <div id="b_conds" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-mint btn-sm" onclick="validateBadge()">校验</button>
+        <span id="b_sql" class="sql" style="flex:1"></span>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-primary" onclick="saveBadge()">保存勋章</button>
+        <button class="btn btn-sm" onclick="resetBadgeForm()">清空</button>
+        <input type="hidden" id="b_id">
       </div>
     </div>
+    <div class="card"><h2>已配置勋章</h2><div id="badgeList"></div></div>
+  </div>
+
+  <!-- 榜单 -->
+  <div id="panel-board" class="hidden">
     <div class="card">
-      <h2>操作风险提示</h2>
-      <div class="risk-list">
-        <div class="risk-item"><strong>允许：</strong> 补图、补做法、生成视频、重试推荐、重算配额、补发次数。</div>
-        <div class="risk-item"><strong>不做：</strong> 修改密码、伪造 Apple receipt、任意 SQL / JSON 编辑。</div>
-        <div class="risk-item"><strong>危险动作：</strong> 清理图片资产、修正次数余额会二次确认。</div>
-        <div class="risk-item"><strong>建议：</strong> 先查再修，优先用测试用户验证。</div>
+      <h2 id="boardFormTitle">新建榜单</h2>
+      <div class="row">
+        <label class="fld">key（英文唯一）<input id="l_key" placeholder="hydration_board"></label>
+        <label class="fld">名称<input id="l_title" placeholder="喝水榜"></label>
+        <label class="fld">单位<select id="l_unit"><option value="count">次数</option><option value="seconds">时长</option></select></label>
+        <label class="fld">默认周期<select id="l_period"><option value="week">本周</option><option value="day">今日</option></select></label>
+      </div>
+      <div class="sep"></div>
+      <div class="row"><strong>打分公式</strong><span class="muted">指标 [运算 指标/常量]，按从左到右</span></div>
+      <div id="l_terms" style="margin-top:8px"></div>
+      <button class="btn btn-sm" onclick="addTerm()">+ 项</button>
+      <div class="sep"></div>
+      <div class="row"><strong>可选过滤（HAVING）</strong>
+        <select id="l_logic"><option value="AND">且(AND)</option><option value="OR">或(OR)</option></select>
+        <button class="btn btn-sm" onclick="addCond('l_conds')">+ 条件</button>
+        <span class="muted">不加则全员上榜</span>
+      </div>
+      <div id="l_conds" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-mint btn-sm" onclick="validateBoard()">校验</button>
+        <span id="l_sql" class="sql" style="flex:1"></span>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-primary" onclick="saveBoard()">保存榜单</button>
+        <button class="btn btn-sm" onclick="resetBoardForm()">清空</button>
+        <input type="hidden" id="l_id">
       </div>
     </div>
-  </section>
-
-  <nav class="tabs">
-    <button class="tab-btn active" data-tab="search" onclick="switchTab('search', this)">菜谱查询</button>
-    <button class="tab-btn" data-tab="recommend" onclick="switchTab('recommend', this)">推荐测试</button>
-    <button class="tab-btn" data-tab="inspire" onclick="switchTab('inspire', this)">来点灵感</button>
-    <button class="tab-btn" data-tab="ops" onclick="switchTab('ops', this)">菜谱运营</button>
-    <button class="tab-btn" data-tab="users" onclick="switchTab('users', this)">用户与订阅</button>
-    <button class="tab-btn" data-tab="recommendations" onclick="switchTab('recommendations', this)">推荐记录</button>
-    <button class="tab-btn" data-tab="stats" onclick="switchTab('stats', this)">数据统计</button>
-    <button class="tab-btn" data-tab="llm" onclick="switchTab('llm', this)">LLM 配置</button>
-    <button class="tab-btn" data-tab="taxonomy" onclick="switchTab('taxonomy', this)">食材分类</button>
-  </nav>
-
-  <div id="tab-search" class="tab-panel active">
-    <div class="card">
-      <div class="section-head">
-        <h2>按菜名查数据库记录</h2>
-        <span class="results-count">用于快速核对图片 / 步骤 / 视频 / 收藏状态</span>
-      </div>
-      <div class="form-grid">
-        <div class="field wide">
-          <label>菜名（模糊搜索）</label>
-          <input id="search-q" placeholder="例如：椒盐虾、宫保鸡丁…" onkeydown="if(event.key==='Enter')doSearch()">
-        </div>
-        <div class="field">
-          <label>返回条数</label>
-          <select id="search-limit">
-            <option value="10">10</option>
-            <option value="30" selected>30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-      </div>
-      <div class="action-row">
-        <button id="search-btn" class="btn btn-primary" onclick="doSearch()">搜索</button>
-        <span id="search-loading" class="loading-text" style="display:none">查询中…</span>
-      </div>
-    </div>
-    <div id="search-error" class="message-box error"></div>
-    <div class="section-head" id="search-results-header" style="display:none">
-      <span id="search-count" class="results-count"></span>
-    </div>
-    <div id="search-results" class="recipe-list"></div>
-  </div>
-
-  <div id="tab-recommend" class="tab-panel">
-    <div class="card">
-      <h2>推荐测试</h2>
-      <div class="form-grid">
-        <div class="field wide">
-          <label>你想吃什么</label>
-          <textarea id="rec-source" placeholder="例如：家常菜、少辣、想吃汤…"></textarea>
-        </div>
-        <div class="field">
-          <label>用户 ID</label>
-          <input id="rec-user-id" type="number" placeholder="必填">
-        </div>
-        <div class="field">
-          <label>几个菜</label>
-          <input id="rec-dish-count" type="number" value="2" min="1" max="6">
-        </div>
-        <div class="field">
-          <label>总热量</label>
-          <input id="rec-calories" type="number" value="900" min="100" max="5000">
-        </div>
-      </div>
-      <div class="field" style="margin-top:14px">
-        <label>主食</label>
-        <div class="action-chip-row" id="staple-row">
-          <button class="btn btn-small btn-primary staple-btn" data-value="RICE" onclick="selectStaple(this)">米饭</button>
-          <button class="btn btn-small staple-btn" data-value="NOODLES" onclick="selectStaple(this)">面条</button>
-          <button class="btn btn-small staple-btn" data-value="COARSE_GRAINS" onclick="selectStaple(this)">粗粮</button>
-          <button class="btn btn-small staple-btn" data-value="NO_STAPLE" onclick="selectStaple(this)">不吃主食</button>
-        </div>
-      </div>
-      <div class="action-row">
-        <button id="rec-btn" class="btn btn-primary" onclick="doRecommend()">生成推荐</button>
-        <span id="rec-loading" class="loading-text" style="display:none">调用完整推荐链路中…</span>
-      </div>
-    </div>
-    <div id="rec-error" class="message-box error"></div>
-    <div id="rec-success" class="message-box success"></div>
-    <div id="rec-reason" class="card" style="display:none"></div>
-    <div class="section-head" id="rec-results-header" style="display:none">
-      <span id="rec-count" class="results-count"></span>
-    </div>
-    <div id="rec-results" class="recipe-list"></div>
-  </div>
-
-  <div id="tab-inspire" class="tab-panel">
-    <div class="card">
-      <div class="section-head">
-        <h2>来点灵感</h2>
-        <span class="results-count">从基础菜单随机抽样，快速给运营同学找方向</span>
-      </div>
-      <div class="action-row">
-        <button id="inspire-btn" class="btn btn-primary" onclick="doInspire()">换一批</button>
-        <button class="btn btn-small btn-primary count-btn active" data-count="6" onclick="setInspireCount(this)">6 道</button>
-        <button class="btn btn-small count-btn" data-count="12" onclick="setInspireCount(this)">12 道</button>
-        <button class="btn btn-small count-btn" data-count="24" onclick="setInspireCount(this)">24 道</button>
-        <span id="inspire-loading" class="loading-text" style="display:none">加载中…</span>
-      </div>
-    </div>
-    <div id="inspire-error" class="message-box error"></div>
-    <div id="inspire-results" class="recipe-list"></div>
-  </div>
-
-  <div id="tab-ops" class="tab-panel">
-    <div class="ops-grid">
-      <div class="stack">
-        <div class="card">
-          <div class="section-head">
-            <h2>已生成菜谱查询</h2>
-            <span class="results-count">查、补、重试、回放</span>
-          </div>
-          <div class="form-grid">
-            <div class="field">
-              <label>菜名</label>
-              <input id="ops-title" placeholder="模糊匹配标题">
-            </div>
-            <div class="field">
-              <label>provider</label>
-              <input id="ops-provider" placeholder="如 deepseek-chat">
-            </div>
-            <div class="field">
-              <label>图片状态</label>
-              <select id="ops-image-status">
-                <option value="">全部</option>
-                <option value="PENDING">PENDING</option>
-                <option value="GENERATED">GENERATED</option>
-                <option value="FAILED">FAILED</option>
-                <option value="OMITTED">OMITTED</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>做法状态</label>
-              <select id="ops-steps-status">
-                <option value="">全部</option>
-                <option value="PENDING">PENDING</option>
-                <option value="GENERATED">GENERATED</option>
-                <option value="FAILED">FAILED</option>
-                <option value="OMITTED">OMITTED</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>视频状态</label>
-              <select id="ops-video-status">
-                <option value="">全部</option>
-                <option value="PENDING">PENDING</option>
-                <option value="GENERATED">GENERATED</option>
-                <option value="FAILED">FAILED</option>
-                <option value="OMITTED">OMITTED</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>偏好状态</label>
-              <select id="ops-preference">
-                <option value="">全部</option>
-                <option value="LIKE">LIKE</option>
-                <option value="DISLIKE">DISLIKE</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>用户 ID</label>
-              <input id="ops-user-id" type="number" placeholder="选填">
-            </div>
-            <div class="field">
-              <label>返回条数</label>
-              <select id="ops-limit">
-                <option value="10">10</option>
-                <option value="30" selected>30</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-            </div>
-          </div>
-          <div class="action-row">
-            <button id="ops-btn" class="btn btn-primary" onclick="loadOpsRecipes()">查询内容</button>
-            <span id="ops-loading" class="loading-text" style="display:none">加载中…</span>
-          </div>
-        </div>
-        <div id="ops-error" class="message-box error"></div>
-        <div id="ops-success" class="message-box success"></div>
-        <div class="section-head" id="ops-results-header" style="display:none">
-          <span id="ops-count" class="results-count"></span>
-        </div>
-        <div id="ops-results" class="recipe-list"></div>
-      </div>
-      <div class="stack">
-        <div class="card">
-          <div class="section-head">
-            <h2>基础库版本管理</h2>
-            <span class="results-count">回滚只切 active 指针</span>
-          </div>
-          <div class="action-row">
-            <button class="btn btn-primary" onclick="loadCatalogDatasets()">刷新版本</button>
-            <span id="dataset-loading" class="loading-text" style="display:none">加载中…</span>
-          </div>
-          <div id="dataset-error" class="message-box error"></div>
-          <div id="dataset-success" class="message-box success"></div>
-          <div style="margin-top:12px;overflow:auto">
-            <table class="table-lite">
-              <thead>
-                <tr>
-                  <th>版本</th>
-                  <th>状态</th>
-                  <th>菜品数</th>
-                  <th>导入时间</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody id="dataset-body">
-                <tr><td colspan="5" class="empty">尚未加载版本列表</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card">
-          <div class="section-head">
-            <h2>菜谱备选扩容清单</h2>
-            <span class="results-count">候选来自近 30 天 LLM 新菜品</span>
-          </div>
-          <div class="form-grid">
-            <div class="field">
-              <label>状态</label>
-              <select id="candidate-status">
-                <option value="">全部</option>
-                <option value="PENDING">PENDING</option>
-                <option value="APPROVED">APPROVED</option>
-                <option value="REJECTED">REJECTED</option>
-                <option value="DUPLICATE">DUPLICATE</option>
-                <option value="INGESTED">INGESTED</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>分类</label>
-              <input id="candidate-category" placeholder="如 虾蟹贝">
-            </div>
-            <div class="field">
-              <label>食材标签</label>
-              <input id="candidate-ingredient-tag" placeholder="如 虾">
-            </div>
-            <div class="field">
-              <label>口味标签</label>
-              <input id="candidate-flavor-tag" placeholder="如 鲜香">
-            </div>
-            <div class="field">
-              <label>最低置信度</label>
-              <input id="candidate-min-confidence" type="number" step="0.05" min="0" max="1" placeholder="0.7">
-            </div>
-            <div class="field">
-              <label>最低样本频次</label>
-              <input id="candidate-min-sample-count" type="number" min="1" placeholder="2">
-            </div>
-            <div class="field">
-              <label>基础库版本</label>
-              <input id="candidate-base-version" placeholder="cn-home-menu-v1">
-            </div>
-            <div class="field">
-              <label>关键词</label>
-              <input id="candidate-q" placeholder="菜名关键词">
-            </div>
-            <div class="field">
-              <label>来源时间</label>
-              <select id="candidate-run-days">
-                <option value="7">近 7 天</option>
-                <option value="30" selected>近 30 天</option>
-                <option value="90">近 90 天</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>返回条数</label>
-              <select id="candidate-limit">
-                <option value="30">30</option>
-                <option value="50" selected>50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-              </select>
-            </div>
-          </div>
-          <div class="action-row">
-            <button id="candidate-run-btn" class="btn btn-ghost" onclick="runCatalogExpansion()">生成候选</button>
-            <button id="candidate-btn" class="btn btn-primary" onclick="loadCatalogCandidates()">查询候选</button>
-            <button class="btn btn-primary" onclick="ingestSelectedCandidates()">生成新版本并收录</button>
-            <span id="candidate-loading" class="loading-text" style="display:none">处理中…</span>
-          </div>
-          <div id="candidate-error" class="message-box error"></div>
-          <div id="candidate-success" class="message-box success"></div>
-          <div class="subtle" id="candidate-summary" style="margin-top:10px">尚未加载候选清单</div>
-          <div id="candidate-results" class="stack" style="margin-top:12px"></div>
-        </div>
-        <div class="card">
-          <h2>批量图片任务</h2>
-          <div class="batch-grid">
-            <div class="field">
-              <label>provider 清理后重建</label>
-              <input id="batch-provider" value="bing-image-search">
-            </div>
-            <div class="field">
-              <label>批处理 delayMs</label>
-              <input id="batch-delay" type="number" value="1200">
-            </div>
-            <div class="field">
-              <label>批处理 limit</label>
-              <input id="batch-limit" type="number" value="0">
-            </div>
-          </div>
-          <div class="action-row">
-            <button class="btn btn-primary" onclick="refreshBatchStatus()">查看状态</button>
-            <button class="btn btn-ghost" onclick="startBatchGenerate()">启动批处理</button>
-            <button class="btn btn-danger" onclick="clearProviderAssets()">清理 provider 资产</button>
-          </div>
-          <div class="detail-grid" style="margin-top:14px">
-            <div class="detail-item">
-              <div class="label">当前批处理状态</div>
-              <div class="value" id="batch-status-value">—</div>
-            </div>
-            <div class="detail-item">
-              <div class="label">说明</div>
-              <div class="value">先查状态，再清理或批量生成，避免重复触发。</div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <h2>推荐记录查询</h2>
-          <div class="risk-list">
-            <div class="risk-item"><strong>定位：</strong> 按 requestId、输入、provider、状态、反馈状态排查推荐全链路。</div>
-            <div class="risk-item"><strong>入口：</strong> 使用顶部“推荐记录”模块查看详情和 batch metrics。</div>
-          </div>
-          <div class="action-row">
-            <button class="btn btn-ghost" onclick="switchTabByName('recommendations')">打开推荐记录</button>
-          </div>
-        </div>
-        <div class="card">
-          <h2>运营动作说明</h2>
-          <div class="risk-list">
-            <div class="risk-item"><strong>补图：</strong> 适合缺图、图片失败、旧缓存失效。</div>
-            <div class="risk-item"><strong>补做法：</strong> 适合极简卡片、步骤丢失、收藏前补齐。</div>
-            <div class="risk-item"><strong>生成视频：</strong> 依赖已有图片，适合运营素材补充。</div>
-            <div class="risk-item"><strong>重新推荐：</strong> 用原输入回放一次完整推荐流程。</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-users" class="tab-panel">
-    <div class="user-layout">
-      <div class="stack">
-        <div class="card">
-          <h2>用户搜索</h2>
-          <div class="form-grid">
-            <div class="field wide">
-              <label>用户名 / 邮箱 / userId</label>
-              <input id="user-search-q" placeholder="例如：zhao / zhao@example.com / 2" onkeydown="if(event.key==='Enter')searchUsers()">
-            </div>
-            <div class="field">
-              <label>返回条数</label>
-              <select id="user-search-limit">
-                <option value="10">10</option>
-                <option value="20" selected>20</option>
-                <option value="50">50</option>
-              </select>
-            </div>
-          </div>
-          <div class="action-row">
-            <button id="user-search-btn" class="btn btn-primary" onclick="searchUsers()">查询用户</button>
-            <span id="user-search-loading" class="loading-text" style="display:none">查询中…</span>
-          </div>
-        </div>
-        <div id="user-error" class="message-box error"></div>
-        <div id="user-success" class="message-box success"></div>
-        <div id="user-list" class="user-list"></div>
-      </div>
-
-      <div class="detail-panel">
-        <div class="card">
-          <div class="section-head">
-            <h2>用户详情</h2>
-            <span id="selected-user-label" class="results-count">尚未选择用户</span>
-          </div>
-          <div id="user-detail-empty" class="empty">先在左侧搜索并选择一个用户。</div>
-          <div id="user-detail-content" style="display:none">
-            <div class="detail-grid" id="user-detail-grid"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-head">
-            <h2>订阅与配额</h2>
-            <span class="results-count">用于客服排障和轻量修复</span>
-          </div>
-          <div id="subscription-empty" class="empty">选择用户后可查看。</div>
-          <div id="subscription-content" style="display:none">
-            <div class="detail-grid" id="subscription-grid"></div>
-            <div class="inline-actions">
-              <button class="btn btn-ghost" onclick="refreshUserSubscription()">刷新订阅状态</button>
-              <button class="btn btn-ghost" onclick="recalculateQuota()">重算今日配额</button>
-              <button class="btn btn-danger" onclick="grantCredits()">修正次数余额</button>
-              <button id="guest-trial-reset-btn" class="btn btn-danger" onclick="resetGuestTrial()" style="display:none">重置游客次数</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>最近 10 条菜谱记录</h2>
-          <div id="recent-recipes-empty" class="empty">选择用户后可查看。</div>
-          <div id="recent-recipes-content" style="display:none">
-            <table class="table-lite">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>菜名</th>
-                  <th>图片</th>
-                  <th>步骤</th>
-                  <th>视频</th>
-                  <th>偏好</th>
-                  <th>更新时间</th>
-                </tr>
-              </thead>
-              <tbody id="recent-recipes-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-recommendations" class="tab-panel">
-    <div class="card">
-      <div class="section-head">
-        <h2>推荐记录</h2>
-        <span class="results-count">按 requestId、输入、状态、反馈状态定位推荐全链路</span>
-      </div>
-      <div class="form-grid">
-        <div class="field">
-          <label>requestId</label>
-          <input id="rec-log-request-id" placeholder="精确 requestId">
-        </div>
-        <div class="field">
-          <label>输入内容</label>
-          <input id="rec-log-source-text" placeholder="模糊匹配 sourceText">
-        </div>
-        <div class="field">
-          <label>provider</label>
-          <input id="rec-log-provider" placeholder="如 deepseek-chat">
-        </div>
-        <div class="field">
-          <label>状态</label>
-          <select id="rec-log-status">
-            <option value="">全部</option>
-            <option value="SUCCESS">SUCCESS</option>
-            <option value="FAILED">FAILED</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>反馈状态</label>
-          <select id="rec-log-feedback-status">
-            <option value="">全部</option>
-            <option value="SATISFIED">SATISFIED</option>
-            <option value="UNSATISFIED">UNSATISFIED</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>缓存命中</label>
-          <select id="rec-log-cache-hit">
-            <option value="">全部</option>
-            <option value="true">true</option>
-            <option value="false">false</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>触发场景</label>
-          <select id="rec-log-trigger-scenario">
-            <option value="">全部</option>
-            <option value="PRELOAD">PRELOAD（预加载）</option>
-            <option value="STREAMING">STREAMING（流式）</option>
-            <option value="SYNC_FALLBACK">SYNC_FALLBACK（同步兜底）</option>
-            <option value="QUOTA_DEDUCT_ONLY">QUOTA_DEDUCT_ONLY（仅扣配额）</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>用户 ID</label>
-          <input id="rec-log-user-id" type="number" placeholder="选填">
-        </div>
-        <div class="field">
-          <label>返回条数</label>
-          <select id="rec-log-limit">
-            <option value="10">10</option>
-            <option value="30" selected>30</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-      </div>
-      <div class="action-row">
-        <button id="rec-log-btn" class="btn btn-primary" onclick="loadRecommendationRecords()">查询推荐记录</button>
-        <span id="rec-log-loading" class="loading-text" style="display:none">查询中…</span>
-      </div>
-    </div>
-    <div id="rec-log-error" class="message-box error"></div>
-    <div class="section-head" id="rec-log-results-header" style="display:none">
-      <span id="rec-log-count" class="results-count"></span>
-    </div>
-    <div id="rec-log-results" class="recipe-list"></div>
-  </div>
-
-  <div id="tab-stats" class="tab-panel">
-    <div class="card">
-      <div class="section-head">
-        <h2>推荐数据统计</h2>
-        <span class="results-count">满意度、缓存命中率、性能分布</span>
-      </div>
-      <div class="action-row">
-        <button class="btn btn-small btn-primary stats-days-btn active" data-days="30" onclick="selectStatsDays(this)">近 30 天</button>
-        <button class="btn btn-small stats-days-btn" data-days="7" onclick="selectStatsDays(this)">近 7 天</button>
-        <button class="btn btn-small stats-days-btn" data-days="90" onclick="selectStatsDays(this)">近 90 天</button>
-        <button class="btn btn-small stats-days-btn" data-days="0" onclick="selectStatsDays(this)">全部</button>
-        <button id="stats-btn" class="btn btn-primary" onclick="loadStats()">加载统计</button>
-        <span id="stats-loading" class="loading-text" style="display:none">统计中…</span>
-      </div>
-    </div>
-    <div id="stats-error" class="message-box error"></div>
-
-    <div id="stats-content" style="display:none">
-      <div class="card">
-        <h2>总览</h2>
-        <div class="stat-grid" id="stats-overview-grid"></div>
-      </div>
-      <div class="card">
-        <h2>按 Provider 分布</h2>
-        <div id="stats-provider-wrap">
-          <table class="table-lite">
-            <thead>
-              <tr>
-                <th>Provider</th>
-                <th>总量</th>
-                <th>成功率</th>
-                <th>满意数</th>
-                <th>不满意数</th>
-                <th>满意率</th>
-                <th>平均耗时 (ms)</th>
-              </tr>
-            </thead>
-            <tbody id="stats-provider-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-llm" class="tab-panel">
-    <div id="llm-error" class="message-box error"></div>
-    <div id="llm-success" class="message-box success"></div>
-    <div id="llm-scenes-grid" class="stack"></div>
-  </div>
-
-  <div id="tab-taxonomy" class="tab-panel">
-    <div class="card" style="margin-bottom:16px">
-      <div class="section-head">
-        <h2>食材分类树</h2>
-        <span class="results-count" id="tx-summary">—</span>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <input id="tx-search" placeholder="搜索食材名称…" style="width:220px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);font-size:13px" oninput="txFilterTree()" onkeydown="if(event.key==='Escape')clearTxSearch()">
-        <button class="btn btn-ghost btn-small" onclick="clearTxSearch()">清除</button>
-        <button class="btn btn-ghost btn-small" onclick="txExpandAll()">展开全部</button>
-        <button class="btn btn-ghost btn-small" onclick="txCollapseAll()">折叠全部</button>
-        <button class="btn btn-ghost btn-small" onclick="loadTaxonomyTree()" id="tx-reload-btn">刷新</button>
-        <button class="btn btn-danger btn-small" onclick="reseedTaxonomy()" id="tx-reseed-btn">重新生成（LLM）</button>
-        <span id="tx-loading" class="loading-text" style="display:none">加载中…</span>
-        <span id="tx-reseed-loading" class="loading-text" style="display:none">LLM 重新生成中，约 60–120s…</span>
-      </div>
-    </div>
-    <div id="tx-error" class="message-box error"></div>
-
-    <div id="tx-history-banner" style="display:none;margin-bottom:12px;padding:10px 14px;border-radius:10px;background:#fef3c7;border:1px solid #fde68a;font-size:13px;display:none;align-items:center;gap:10px">
-      <span>📋 当前查看历史版本：<strong id="tx-history-label"></strong></span>
-      <button class="btn btn-ghost btn-small" onclick="exitHistoryView()">返回当前版本</button>
-    </div>
-
-    <div style="display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start">
-      <div class="card" style="padding:12px">
-        <div id="tx-tree" style="min-height:200px"></div>
-      </div>
-      <div id="tx-detail-panel" class="card" style="display:none">
-        <div id="tx-breadcrumb" style="font-size:12px;color:var(--muted);margin-bottom:12px"></div>
-        <div id="tx-detail-title" style="font-size:16px;font-weight:800;margin-bottom:4px"></div>
-        <div id="tx-detail-count" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
-        <div id="tx-items-loading" class="loading-text" style="display:none;margin-bottom:10px">加载菜谱…</div>
-        <div id="tx-items-list"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:18px">
-      <div class="section-head">
-        <h2>版本历史</h2>
-        <button class="btn btn-ghost btn-small" onclick="loadTxSnapshots()" id="tx-snap-reload-btn">刷新</button>
-      </div>
-      <div id="tx-snap-loading" class="loading-text" style="display:none;margin-bottom:8px">加载中…</div>
-      <div id="tx-snap-list"></div>
-    </div>
+    <div class="card"><h2>已配置榜单</h2><div id="boardList"></div></div>
   </div>
 </div>
 
-<div id="lightbox" onclick="closeLightbox()">
-  <button type="button" onclick="closeLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="">
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const BASE = '';
-let catalogCache = null;
-let inspireCount = 6;
-let selectedStaple = 'RICE';
-let selectedUserId = null;
-let userSearchResults = [];
-let selectedCandidateIds = new Set();
-let txTreeData = null;
-let txSelectedNodeId = null;
-let txBreadcrumb = [];
+let META = null;
+const $ = id => document.getElementById(id);
+const secret = () => $('secret').value.trim();
 
-function getSecret(){ return sessionStorage.getItem('admin_secret') || ''; }
-function saveSecret(){
-  sessionStorage.setItem('admin_secret', document.getElementById('secret-input').value.trim());
-  updateSecretStatus();
-  // If LLM tab is active and hasn't loaded yet, trigger load now that secret is available
-  if (document.getElementById('tab-llm')?.classList.contains('active') &&
-      Object.keys(llmScenesData).length === 0) {
-    loadLlmScenes();
-  }
-}
-function updateSecretStatus(){
-  const secret = getSecret();
-  const status = document.getElementById('secret-status');
-  status.textContent = secret ? '密钥已设置' : '未设置';
-  status.className = secret ? 'status-ok' : 'status-empty';
-  document.getElementById('secret-input').value = secret ? '••••••••' : '';
-  document.getElementById('env-pill').textContent = `环境：${location.hostname || 'local'}`;
-}
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
-function switchTab(name, btn){
-  document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
-  btn.classList.add('active');
-  if(name === 'inspire' && !catalogCache){ loadCatalog(); }
-  if(name === 'ops'){ loadCatalogDatasets(); }
-  if(name === 'taxonomy'){ if(!txTreeData) loadTaxonomyTree(); loadTxSnapshots(); }
-}
-
-function switchTabByName(name){
-  const btn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
-  if(btn) switchTab(name, btn);
-}
-
-const ADMIN_FETCH_MAX_CONCURRENT = 2;
-const ADMIN_FETCH_MIN_START_GAP_MS = 350;
-let adminFetchActive = 0;
-let adminFetchLastStartedAt = 0;
-const adminFetchQueue = [];
-
-function scheduleAdminFetch(task){
-  return new Promise((resolve, reject) => {
-    adminFetchQueue.push({ task, resolve, reject });
-    drainAdminFetchQueue();
+async function api(path, method='GET', body){
+  const res = await fetch('/admin'+path, {
+    method,
+    headers:{'Content-Type':'application/json','X-Admin-Secret':secret()},
+    body: body ? JSON.stringify(body) : undefined
   });
+  if(!res.ok){ let m=res.status; try{m=(await res.json()).message||m;}catch(e){} throw new Error(m); }
+  return res.status===204 ? null : res.json();
 }
 
-function drainAdminFetchQueue(){
-  if(adminFetchActive >= ADMIN_FETCH_MAX_CONCURRENT || adminFetchQueue.length === 0) return;
-  const waitMs = Math.max(0, ADMIN_FETCH_MIN_START_GAP_MS - (Date.now() - adminFetchLastStartedAt));
-  if(waitMs > 0){
-    setTimeout(drainAdminFetchQueue, waitMs);
-    return;
-  }
-  const next = adminFetchQueue.shift();
-  adminFetchActive += 1;
-  adminFetchLastStartedAt = Date.now();
-  next.task()
-    .then(next.resolve, next.reject)
-    .finally(() => {
-      adminFetchActive = Math.max(0, adminFetchActive - 1);
-      drainAdminFetchQueue();
-    });
-  drainAdminFetchQueue();
+function switchTab(t){
+  $('tab-badge').classList.toggle('active', t==='badge');
+  $('tab-board').classList.toggle('active', t==='board');
+  $('panel-badge').classList.toggle('hidden', t!=='badge');
+  $('panel-board').classList.toggle('hidden', t!=='board');
 }
 
-async function apiFetch(path, options = {}){
-  return scheduleAdminFetch(() => doApiFetch(path, options));
+async function connect(){
+  try{
+    localStorage.setItem('goaway_admin_secret', secret());
+    META = await api('/meta');
+    fillMeta();
+    $('conn').textContent = '已连接 ✓';
+    await Promise.all([loadBadges(), loadBoards()]);
+    addCond('b_conds'); addTerm();
+  }catch(e){ $('conn').textContent='连接失败: '+e.message; toast('连接失败: '+e.message); }
 }
 
-async function doApiFetch(path, options = {}){
-  const res = await fetch(BASE + path, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Admin-Secret': getSecret(),
-      ...(options.headers || {})
-    }
-  });
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : {}; } catch { data = { error: text }; }
-  if(!res.ok){ throw new Error(data.error || `HTTP ${res.status}`); }
-  return data;
+function fillMeta(){
+  $('b_kind').innerHTML = META.badgeKinds.map(k=>`<option value="${k}">${k==='SINGLE'?'单次':'累计'}</option>`).join('');
+  $('b_icon').innerHTML = META.icons.map(i=>`<option value="${i}">${i}</option>`).join('');
 }
 
-function setLoading(prefix, on){
-  const btn = document.getElementById(`${prefix}-btn`);
-  const text = document.getElementById(`${prefix}-loading`);
-  if(btn) btn.disabled = on;
-  if(text) text.style.display = on ? 'inline' : 'none';
+function metricOptions(sel){
+  return META.metrics.map(m=>`<option value="${m.key}">${m.label}（${m.key}）</option>`).join('');
 }
 
-function showBox(id, type, message){
-  const el = document.getElementById(id);
-  el.className = `message-box ${type}`;
-  el.textContent = message;
-}
-function hideBox(id){
-  const el = document.getElementById(id);
-  if(el){
-    el.className = 'message-box';
-    el.style.display = '';
-    el.textContent = '';
-  }
-}
-
-function esc(value){
-  if(value == null) return '';
-  return String(value)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
-
-function fmt(value){
-  if(!value) return '—';
-  const date = new Date(value);
-  if(Number.isNaN(date.getTime())) return String(value).replace('T',' ').slice(0,16);
-  return date.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-}
-
-function badge(label, tone='neutral'){
-  return `<span class="badge badge-${tone}">${esc(label)}</span>`;
-}
-
-function openLightbox(url){
-  if(!url) return;
-  document.getElementById('lightbox-img').src = url;
-  document.getElementById('lightbox').classList.add('open');
-}
-function closeLightbox(){
-  document.getElementById('lightbox').classList.remove('open');
-  document.getElementById('lightbox-img').src = '';
-}
-
-function recipeStatusTags(recipe){
-  const tags = [];
-  if(recipe.imageStatus === 'PENDING' || recipe.imageStatus === 'FAILED') tags.push(badge('缺图', recipe.imageStatus === 'FAILED' ? 'danger' : 'warn'));
-  if(recipe.stepsStatus === 'PENDING' || recipe.stepsStatus === 'FAILED' || !recipe.steps || recipe.steps.length === 0) tags.push(badge('缺步骤', recipe.stepsStatus === 'FAILED' ? 'danger' : 'warn'));
-  if(recipe.videoStatus === 'PENDING' || recipe.videoStatus === 'FAILED' || recipe.videoStatus === 'OMITTED') tags.push(badge('缺视频', recipe.videoStatus === 'FAILED' ? 'danger' : 'warn'));
-  if(recipe.incompleteCache) tags.push(badge('残缺缓存', 'danger'));
-  if(recipe.favorite || recipe.preference === 'LIKE') tags.push(badge('已收藏', 'ok'));
-  return tags.join('');
-}
-
-function actionButtons(recipe, context){
-  if(context !== 'ops') return '';
-  return `
-    <div class="inline-actions">
-      <button class="btn btn-small btn-ghost" onclick="runRecipeAction(${recipe.id}, 'image')">补图</button>
-      <button class="btn btn-small btn-ghost" onclick="runRecipeAction(${recipe.id}, 'steps')">补做法</button>
-      <button class="btn btn-small btn-ghost" onclick="runRecipeAction(${recipe.id}, 'video')">生成视频</button>
-      <button class="btn btn-small btn-primary" onclick="runRecipeAction(${recipe.id}, 'rerun')">重新推荐一次</button>
+// ── 条件行（勋章规则 / 榜单 HAVING 共用）──
+function addCond(containerId){
+  const c = $(containerId);
+  if(c.children.length>=3){ toast('最多 3 个条件'); return; }
+  const div = document.createElement('div');
+  div.className='cond';
+  div.innerHTML = `
+    <div class="row">
+      <select class="c-metric">${metricOptions()}</select>
+      <select class="c-aop"><option value="">（不运算）</option>${META.arithOps.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>
+      <input class="c-anum" type="number" placeholder="数" style="width:80px">
+      <select class="c-cmp">${META.compareOps.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>
+      <input class="c-th" type="number" placeholder="阈值">
+      <label class="row" style="gap:4px"><input type="checkbox" class="c-neg">非</label>
+      <button class="btn btn-sm btn-danger" onclick="this.closest('.cond').remove()">删</button>
     </div>`;
+  c.appendChild(div);
 }
 
-function renderRecipeCards(items, targetId, context = 'default'){
-  const container = document.getElementById(targetId);
-  if(!items || items.length === 0){
-    container.innerHTML = '<div class="empty">暂无结果</div>';
-    return;
-  }
-  container.innerHTML = items.map(recipe => {
-    const cardId = `${targetId}-${recipe.id || Math.random().toString(36).slice(2)}`;
-    const thumb = recipe.imageUrl
-      ? `<img class="recipe-thumb" src="${esc(recipe.imageUrl)}" alt="${esc(recipe.title)}" onclick="openLightbox('${esc(recipe.imageUrl)}')">`
-      : `<div class="recipe-thumb-placeholder">🍽</div>`;
-    const ingredients = (recipe.ingredients || []).map(item => esc(item.name || item.label || item)).filter(Boolean);
-    const seasonings = (recipe.seasonings || []).map(item => esc(item.name || item.label || item)).filter(Boolean);
-    const steps = recipe.steps || [];
-    return `
-      <div class="recipe-card">
-        <div class="recipe-body">
-          <div class="recipe-head">
-            ${thumb}
-            <div style="flex:1;min-width:0">
-              <div class="recipe-title">${esc(recipe.title || '未命名菜谱')}</div>
-              <div class="recipe-summary">${esc(recipe.summary || '暂无摘要')}</div>
-              <div class="badge-row">
-                ${badge(`#${recipe.id || '-'}`,'neutral')}
-                ${recipe.provider ? badge(recipe.provider,'accent') : ''}
-                ${recipe.estimatedCalories ? badge(`${recipe.estimatedCalories} kcal`,'warn') : ''}
-                ${badge(`图片 ${recipe.imageStatus || '—'}`, recipe.imageStatus === 'GENERATED' ? 'ok' : recipe.imageStatus === 'FAILED' ? 'danger' : 'warn')}
-                ${badge(`做法 ${recipe.stepsStatus || '—'}`, recipe.stepsStatus === 'GENERATED' ? 'ok' : recipe.stepsStatus === 'FAILED' ? 'danger' : 'warn')}
-                ${badge(`视频 ${recipe.videoStatus || '—'}`, recipe.videoStatus === 'GENERATED' ? 'ok' : recipe.videoStatus === 'FAILED' ? 'danger' : 'warn')}
-                ${recipe.preference ? badge(`偏好 ${recipe.preference}`,'neutral') : ''}
-                ${recipeStatusTags(recipe)}
-              </div>
-            </div>
-          </div>
-          <div class="meta-grid">
-            <div class="meta-item"><strong>用户：</strong>${esc(recipe.username || '—')} (${esc(recipe.userId || '—')})</div>
-            <div class="meta-item"><strong>requestId：</strong>${esc(recipe.requestId || '—')}</div>
-            <div class="meta-item"><strong>输入：</strong>${esc(recipe.sourceText || '—')}</div>
-            <div class="meta-item"><strong>catalog：</strong>${esc(recipe.catalogItemCode || '—')}</div>
-            <div class="meta-item"><strong>创建：</strong>${fmt(recipe.createdAt)}</div>
-            <div class="meta-item"><strong>更新：</strong>${fmt(recipe.updatedAt)}</div>
-          </div>
-          ${ingredients.length ? `<div style="margin-top:12px"><div class="subtle">食材</div><div class="chip-list">${ingredients.map(i => badge(i,'accent')).join('')}</div></div>` : ''}
-          ${seasonings.length ? `<div style="margin-top:10px"><div class="subtle">佐料</div><div class="chip-list">${seasonings.map(i => badge(i,'neutral')).join('')}</div></div>` : ''}
-          ${steps.length ? `<button class="expand-toggle" onclick="toggleSteps('${cardId}')">展开做法 (${steps.length} 步)</button>` : ''}
-          <div id="${cardId}" class="collapsible">
-            <ol class="steps-list">
-              ${steps.map(step => `<li>${esc(step.content || step)}</li>`).join('')}
-            </ol>
-          </div>
-          ${recipe.videoUrl ? `<div style="margin-top:10px"><a href="${esc(recipe.videoUrl)}" target="_blank">打开视频 ↗</a></div>` : ''}
-          ${actionButtons(recipe, context)}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function toggleSteps(id){
-  const el = document.getElementById(id);
-  if(el) el.classList.toggle('open');
-}
-
-async function doSearch(){
-  const q = document.getElementById('search-q').value.trim();
-  if(!q){ document.getElementById('search-q').focus(); return; }
-  if(!getSecret()){ showBox('search-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('search-error');
-  setLoading('search', true);
-  try{
-    const limit = document.getElementById('search-limit').value;
-    const data = await apiFetch(`/admin/console/recipes/search?q=${encodeURIComponent(q)}&limit=${limit}`);
-    document.getElementById('search-results-header').style.display = 'flex';
-    document.getElementById('search-count').textContent = `找到 ${data.count} 条记录`;
-    renderRecipeCards(data.items, 'search-results');
-  }catch(error){
-    showBox('search-error','error',error.message);
-  }finally{
-    setLoading('search', false);
-  }
-}
-
-function selectStaple(btn){
-  document.querySelectorAll('.staple-btn').forEach(el => { el.classList.remove('btn-primary'); el.classList.add('btn-small'); });
-  document.querySelectorAll('.staple-btn').forEach(el => el.classList.remove('btn-primary'));
-  btn.classList.add('btn-primary');
-  selectedStaple = btn.dataset.value;
-}
-
-async function doRecommend(){
-  const sourceText = document.getElementById('rec-source').value.trim();
-  const userId = Number(document.getElementById('rec-user-id').value);
-  if(!sourceText){ document.getElementById('rec-source').focus(); return; }
-  if(!userId){ alert('请填写有效的用户 ID'); return; }
-  hideBox('rec-error'); hideBox('rec-success');
-  document.getElementById('rec-reason').style.display = 'none';
-  setLoading('rec', true);
-  try{
-    const payload = {
-      sourceText,
-      sourceMode: 'TEXT',
-      dishCount: Number(document.getElementById('rec-dish-count').value) || 2,
-      totalCalories: Number(document.getElementById('rec-calories').value) || 900,
-      staple: selectedStaple,
-      locale: 'zh-CN',
-      userId
+function readConds(containerId){
+  return [...$(containerId).querySelectorAll('.cond')].map(row=>{
+    const metric = row.querySelector('.c-metric').value;
+    const aop = row.querySelector('.c-aop').value;
+    const anum = row.querySelector('.c-anum').value;
+    let left = {type:'metric', metric};
+    if(aop){ left = {type:'arith', op:aop, left:{type:'metric',metric}, right:{type:'const',value:Number(anum||0)}}; }
+    return {
+      left,
+      cmp: row.querySelector('.c-cmp').value,
+      right: {type:'const', value:Number(row.querySelector('.c-th').value||0)},
+      negate: row.querySelector('.c-neg').checked
     };
-    const data = await apiFetch('/admin/console/recommend', { method:'POST', body: JSON.stringify(payload) });
-    if(data.reasonSummary){
-      const reason = document.getElementById('rec-reason');
-      reason.style.display = 'block';
-      reason.innerHTML = `<h2>推荐理由</h2><p style="margin-top:8px">${esc(data.reasonSummary)}</p>`;
-    }
-    document.getElementById('rec-results-header').style.display = 'flex';
-    document.getElementById('rec-count').textContent = `共 ${data.items?.length || 0} 道菜 · provider：${data.provider || '—'}`;
-    renderRecipeCards(data.items || [], 'rec-results');
-    showBox('rec-success','success','推荐链路执行完成，结果已写入数据库。');
-  }catch(error){
-    showBox('rec-error','error',error.message);
-  }finally{
-    setLoading('rec', false);
-  }
-}
-
-function setInspireCount(btn){
-  document.querySelectorAll('.count-btn').forEach(el => el.classList.remove('btn-primary'));
-  btn.classList.add('btn-primary');
-  inspireCount = Number(btn.dataset.count);
-  renderInspire();
-}
-
-async function loadCatalog(){
-  if(!getSecret()){ showBox('inspire-error','error','请先设置 X-Admin-Secret'); return; }
-  setLoading('inspire', true);
-  hideBox('inspire-error');
-  try{
-    catalogCache = await apiFetch('/admin/console/catalog');
-    renderInspire();
-  }catch(error){
-    showBox('inspire-error','error',error.message);
-  }finally{
-    setLoading('inspire', false);
-  }
-}
-
-function doInspire(){
-  if(!catalogCache){ loadCatalog(); return; }
-  renderInspire();
-}
-
-function renderInspire(){
-  if(!catalogCache) return;
-  const items = [...(catalogCache.items || [])].sort(() => Math.random() - 0.5).slice(0, inspireCount);
-  const normalized = items.map(item => ({
-    id: item.id,
-    title: item.name,
-    summary: `${item.category || '未分类'} · ${item.subcategory || '—'} · ${item.cookingMethod || '—'}`,
-    provider: 'catalog',
-    imageStatus: 'OMITTED',
-    stepsStatus: 'OMITTED',
-    videoStatus: 'OMITTED',
-    ingredients: item.ingredientTags || [],
-    seasonings: item.featureTags || [],
-    sourceText: item.rawFlavorText || '',
-    catalogItemCode: item.code
-  }));
-  renderRecipeCards(normalized, 'inspire-results');
-}
-
-async function loadCatalogDatasets(){
-  if(!getSecret()){ showBox('dataset-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('dataset-error'); hideBox('dataset-success');
-  const loading = document.getElementById('dataset-loading');
-  if(loading) loading.style.display = 'inline';
-  try{
-    const data = await apiFetch('/admin/console/catalog/datasets');
-    renderCatalogDatasets(data.items || []);
-  }catch(error){
-    showBox('dataset-error','error',error.message);
-  }finally{
-    if(loading) loading.style.display = 'none';
-  }
-}
-
-function renderCatalogDatasets(items){
-  const body = document.getElementById('dataset-body');
-  if(!items.length){
-    body.innerHTML = '<tr><td colspan="5" class="empty">暂无基础库版本</td></tr>';
-    return;
-  }
-  body.innerHTML = items.map(item => `
-    <tr>
-      <td>${esc(item.version)}</td>
-      <td>${item.active ? badge('active','ok') : badge('inactive','neutral')}</td>
-      <td>${esc(item.totalItems || 0)}</td>
-      <td>${fmt(item.importedAt || item.updatedAt)}</td>
-      <td>
-        ${item.active
-          ? '<span class="subtle">当前版本</span>'
-          : `<button class="btn btn-small btn-ghost" onclick="activateCatalogDataset('${esc(item.version)}')">回滚/激活</button>`}
-      </td>
-    </tr>
-  `).join('');
-}
-
-async function activateCatalogDataset(version){
-  if(!confirm(`确认将基础菜单 active 版本切换为 ${version} 吗？历史菜谱不会删除。`)) return;
-  hideBox('dataset-error'); hideBox('dataset-success');
-  try{
-    const data = await apiFetch(`/admin/console/catalog/datasets/${encodeURIComponent(version)}/activate`, {
-      method:'POST',
-      body:'{}'
-    });
-    catalogCache = null;
-    showBox('dataset-success','success',`已切换 active 版本：${data.dataset?.version || version}`);
-    await loadCatalogDatasets();
-  }catch(error){
-    showBox('dataset-error','error',error.message);
-  }
-}
-
-function buildCandidateQuery(){
-  const params = new URLSearchParams();
-  [
-    ['status','candidate-status'],
-    ['q','candidate-q'],
-    ['category','candidate-category'],
-    ['ingredientTag','candidate-ingredient-tag'],
-    ['flavorTag','candidate-flavor-tag'],
-    ['minConfidence','candidate-min-confidence'],
-    ['minSampleCount','candidate-min-sample-count'],
-    ['baseDatasetVersion','candidate-base-version'],
-    ['limit','candidate-limit']
-  ].forEach(([key,id]) => {
-    const value = document.getElementById(id).value;
-    if(value !== '') params.set(key, value);
   });
-  return params.toString();
 }
 
-async function runCatalogExpansion(){
-  if(!getSecret()){ showBox('candidate-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('candidate-error'); hideBox('candidate-success');
-  setLoading('candidate', true);
-  try{
-    const payload = {
-      days: Number(document.getElementById('candidate-run-days').value) || 30,
-      limit: Number(document.getElementById('candidate-limit').value) || 50
-    };
-    const data = await apiFetch('/admin/console/catalog-expansion/runs', {
-      method:'POST',
-      body: JSON.stringify(payload)
-    });
-    showBox('candidate-success','success',`候选生成完成：${data.candidateCount || 0} 个候选，基础版本 ${data.run?.baseDatasetVersion || '—'}`);
-    await loadCatalogCandidates();
-  }catch(error){
-    showBox('candidate-error','error',error.message);
-  }finally{
-    setLoading('candidate', false);
-  }
-}
-
-async function loadCatalogCandidates(){
-  if(!getSecret()){ showBox('candidate-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('candidate-error'); hideBox('candidate-success');
-  setLoading('candidate', true);
-  try{
-    const data = await apiFetch(`/admin/console/catalog-expansion/candidates?${buildCandidateQuery()}`);
-    selectedCandidateIds = new Set([...selectedCandidateIds].filter(id => (data.items || []).some(item => item.id === id)));
-    renderCatalogCandidates(data.items || [], data.count || 0);
-  }catch(error){
-    showBox('candidate-error','error',error.message);
-  }finally{
-    setLoading('candidate', false);
-  }
-}
-
-function renderCatalogCandidates(items, count){
-  document.getElementById('candidate-summary').textContent = `找到 ${count} 个候选，已选择 ${selectedCandidateIds.size} 个`;
-  const container = document.getElementById('candidate-results');
-  if(!items.length){
-    container.innerHTML = '<div class="empty">暂无候选菜品</div>';
-    return;
-  }
-  container.innerHTML = items.map(item => {
-    const disabled = item.status === 'INGESTED' || item.status === 'REJECTED' || item.status === 'DUPLICATE';
-    const selected = selectedCandidateIds.has(item.id);
-    return `
-      <div class="recipe-card">
-        <div class="recipe-body">
-          <div class="section-head" style="margin-bottom:8px">
-            <div>
-              <label style="display:flex;gap:8px;align-items:center;font-weight:800">
-                <input type="checkbox" ${selected ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="toggleCandidate(${item.id}, this.checked)">
-                ${esc(item.dishName || '未命名候选')}
-              </label>
-              <div class="subtle" style="margin-top:4px">${esc(item.reason || '—')}</div>
-            </div>
-            <div class="badge-row">
-              ${badge(item.status || 'PENDING', statusTone(item.status))}
-              ${badge(`样本 ${item.sampleCount || 0}`, 'warn')}
-              ${badge(`置信度 ${item.confidence ?? '—'}`, 'accent')}
-            </div>
-          </div>
-          <div class="meta-grid">
-            <div class="meta-item"><strong>分类：</strong>${esc(item.category || '—')} / ${esc(item.subcategory || '—')}</div>
-            <div class="meta-item"><strong>做法：</strong>${esc(item.cookingMethod || '—')}</div>
-            <div class="meta-item"><strong>基础版本：</strong>${esc(item.baseDatasetVersion || '—')}</div>
-            <div class="meta-item"><strong>收录版本：</strong>${esc(item.ingestedDatasetVersion || '—')}</div>
-            <div class="meta-item"><strong>requestId：</strong>${esc((item.sourceRequestIds || []).join(', ') || '—')}</div>
-            <div class="meta-item"><strong>更新时间：</strong>${fmt(item.updatedAt)}</div>
-          </div>
-          <div style="margin-top:10px" class="chip-list">
-            ${(item.ingredientTags || []).map(tag => badge(tag,'accent')).join('')}
-            ${(item.flavorTags || []).map(tag => badge(tag,'neutral')).join('')}
-          </div>
-          <div class="inline-actions">
-            <button class="btn btn-small btn-ghost" onclick="updateCandidateStatus(${item.id}, 'APPROVED')">通过</button>
-            <button class="btn btn-small btn-ghost" onclick="updateCandidateStatus(${item.id}, 'REJECTED')">拒绝</button>
-            <button class="btn btn-small btn-ghost" onclick="updateCandidateStatus(${item.id}, 'DUPLICATE')">标记重复</button>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function statusTone(status){
-  if(status === 'INGESTED') return 'ok';
-  if(status === 'REJECTED' || status === 'DUPLICATE') return 'danger';
-  if(status === 'APPROVED') return 'accent';
-  return 'neutral';
-}
-
-function toggleCandidate(id, checked){
-  if(checked) selectedCandidateIds.add(id);
-  else selectedCandidateIds.delete(id);
-  const countText = document.getElementById('candidate-summary').textContent.replace(/已选择 \d+ 个/, `已选择 ${selectedCandidateIds.size} 个`);
-  document.getElementById('candidate-summary').textContent = countText;
-}
-
-async function updateCandidateStatus(id, status){
-  try{
-    await apiFetch(`/admin/console/catalog-expansion/candidates/${id}/status`, {
-      method:'POST',
-      body: JSON.stringify({ status })
-    });
-    if(status === 'REJECTED' || status === 'DUPLICATE') selectedCandidateIds.delete(id);
-    await loadCatalogCandidates();
-  }catch(error){
-    showBox('candidate-error','error',error.message);
-  }
-}
-
-async function ingestSelectedCandidates(){
-  if(selectedCandidateIds.size === 0){
-    showBox('candidate-error','error','请先勾选要收录的候选菜品');
-    return;
-  }
-  if(!confirm(`确认生成新基础菜单版本并收录 ${selectedCandidateIds.size} 个候选菜品吗？`)) return;
-  hideBox('candidate-error'); hideBox('candidate-success');
-  setLoading('candidate', true);
-  try{
-    const data = await apiFetch('/admin/console/catalog-expansion/candidates/ingest', {
-      method:'POST',
-      body: JSON.stringify({ candidateIds: [...selectedCandidateIds], triggerImageBatch: true })
-    });
-    selectedCandidateIds.clear();
-    catalogCache = null;
-    showBox('candidate-success','success',`收录完成：${data.newDatasetVersion}，新增 ${data.ingestedCount} 道，总计 ${data.totalItems} 道，补图任务${data.imageBatchTriggered ? '已触发' : '未触发'}。`);
-    await Promise.all([loadCatalogDatasets(), loadCatalogCandidates()]);
-  }catch(error){
-    showBox('candidate-error','error',error.message);
-  }finally{
-    setLoading('candidate', false);
-  }
-}
-
-function buildOpsQuery(){
-  const params = new URLSearchParams();
-  [
-    ['title','ops-title'],
-    ['provider','ops-provider'],
-    ['imageStatus','ops-image-status'],
-    ['stepsStatus','ops-steps-status'],
-    ['videoStatus','ops-video-status'],
-    ['preference','ops-preference'],
-    ['userId','ops-user-id'],
-    ['limit','ops-limit']
-  ].forEach(([key,id]) => {
-    const value = document.getElementById(id).value;
-    if(value) params.set(key, value);
-  });
-  return params.toString();
-}
-
-async function loadOpsRecipes(){
-  if(!getSecret()){ showBox('ops-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('ops-error'); hideBox('ops-success');
-  setLoading('ops', true);
-  try{
-    const data = await apiFetch(`/admin/console/recipes?${buildOpsQuery()}`);
-    document.getElementById('ops-results-header').style.display = 'flex';
-    document.getElementById('ops-count').textContent = `找到 ${data.count} 条记录`;
-    renderRecipeCards(data.items || [], 'ops-results', 'ops');
-  }catch(error){
-    showBox('ops-error','error',error.message);
-  }finally{
-    setLoading('ops', false);
-  }
-}
-
-async function runRecipeAction(recipeId, action){
-  if(!getSecret()){ showBox('ops-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('ops-error'); hideBox('ops-success');
-  try{
-    const data = await apiFetch(`/admin/console/recipes/${recipeId}/${action}`, { method:'POST', body:'{}' });
-    if(action === 'rerun'){
-      showBox('ops-success','success',`已重新推荐 ${data.items?.length || 0} 道菜。`);
-    }else{
-      const recipe = data.recipe || {};
-      showBox('ops-success','success',`菜谱 #${recipeId} 已执行「${actionLabel(action)}」，当前状态：图片 ${recipe.imageStatus || '—'} / 做法 ${recipe.stepsStatus || '—'} / 视频 ${recipe.videoStatus || '—'}`);
-    }
-    await loadOpsRecipes();
-  }catch(error){
-    showBox('ops-error','error',error.message);
-  }
-}
-
-function actionLabel(action){
-  return ({image:'补图', steps:'补做法', video:'生成视频', rerun:'重新推荐'})[action] || action;
-}
-
-async function refreshBatchStatus(){
-  try{
-    const data = await apiFetch('/admin/meals/images/batch-status');
-    document.getElementById('batch-status-value').textContent = data.status || '—';
-    showBox('ops-success','info',`批处理状态：${data.status || '—'}`);
-  }catch(error){
-    showBox('ops-error','error',error.message);
-  }
-}
-
-async function startBatchGenerate(){
-  try{
-    const payload = {
-      delayMs: Number(document.getElementById('batch-delay').value) || 1200,
-      limit: Number(document.getElementById('batch-limit').value) || 0
-    };
-    const data = await apiFetch('/admin/meals/images/batch-generate', { method:'POST', body: JSON.stringify(payload) });
-    showBox('ops-success','success',data.message || '批处理已启动');
-    await refreshBatchStatus();
-  }catch(error){
-    showBox('ops-error','error',error.message);
-  }
-}
-
-async function clearProviderAssets(){
-  const provider = document.getElementById('batch-provider').value.trim() || 'bing-image-search';
-  if(!confirm(`确认清理 provider=${provider} 的图片资产并将对应菜谱重置为待补图状态吗？`)) return;
-  try{
-    const data = await apiFetch(`/admin/meals/images/assets?provider=${encodeURIComponent(provider)}`, { method:'DELETE' });
-    showBox('ops-success','success',`已清理 ${data.deleted || 0} 条资产，受影响菜谱已重置为待补图。`);
-    await refreshBatchStatus();
-  }catch(error){
-    showBox('ops-error','error',error.message);
-  }
-}
-
-async function searchUsers(){
-  if(!getSecret()){ showBox('user-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('user-error'); hideBox('user-success');
-  setLoading('user-search', true);
-  try{
-    const q = document.getElementById('user-search-q').value.trim();
-    const limit = document.getElementById('user-search-limit').value;
-    const data = await apiFetch(`/admin/console/users/search?q=${encodeURIComponent(q)}&limit=${limit}`);
-    renderUserList(data.items || []);
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }finally{
-    setLoading('user-search', false);
-  }
-}
-
-function renderUserList(items){
-  userSearchResults = items;
-  const list = document.getElementById('user-list');
-  if(!items.length){
-    list.innerHTML = '<div class="empty">没有找到匹配用户</div>';
-    return;
-  }
-  list.innerHTML = items.map(item => `
-    <div class="user-list-item ${selectedUserId === item.id ? 'active' : ''}" onclick="selectUser(${item.id})">
-      <strong>${esc(item.username)} ${item.displayName ? `· ${esc(item.displayName)}` : ''}</strong>
-      <span>${esc(item.email || '—')}</span>
-      <span>喜欢 ${item.favoritesCount || 0} · 菜谱 ${item.recipeCount || 0}</span>
-      <span>最近请求：${fmt(item.recentRequestAt)}</span>
-    </div>
-  `).join('');
-}
-
-async function selectUser(userId){
-  selectedUserId = userId;
-  renderUserList(userSearchResults);
-  hideBox('user-error'); hideBox('user-success');
-  try{
-    const [detail, subscription] = await Promise.all([
-      apiFetch(`/admin/console/users/${userId}`),
-      apiFetch(`/admin/console/users/${userId}/subscription`)
-    ]);
-    renderUserDetail(detail);
-    renderSubscription(subscription);
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }
-}
-
-function renderUserDetail(detail){
-  document.getElementById('selected-user-label').textContent = `用户 #${detail.id} · ${detail.username}`;
-  document.getElementById('user-detail-empty').style.display = 'none';
-  document.getElementById('user-detail-content').style.display = 'block';
-  document.getElementById('recent-recipes-empty').style.display = 'none';
-  document.getElementById('recent-recipes-content').style.display = 'block';
-
-  const grid = document.getElementById('user-detail-grid');
-  grid.innerHTML = [
-    ['用户名', detail.username],
-    ['显示名', detail.displayName || '—'],
-    ['邮箱', detail.email || '—'],
-    ['手机号', detail.phone || '—'],
-    ['地区', detail.region || '—'],
-    ['喜欢的菜谱', detail.favoritesCount],
-    ['总生成记录', detail.recipeCount],
-    ['最近请求时间', fmt(detail.recentRequestAt)],
-    ['创建时间', fmt(detail.createdAt)],
-    ['更新时间', fmt(detail.updatedAt)]
-  ].map(([label, value]) => `<div class="detail-item"><div class="label">${esc(label)}</div><div class="value">${esc(value)}</div></div>`).join('');
-
-  document.getElementById('recent-recipes-body').innerHTML = (detail.recentRecipes || []).map(item => `
-    <tr>
-      <td>${esc(item.id)}</td>
-      <td>${esc(item.title || '—')}</td>
-      <td>${esc(item.imageStatus || '—')}</td>
-      <td>${esc(item.stepsStatus || '—')}</td>
-      <td>${esc(item.videoStatus || '—')}</td>
-      <td>${esc(item.preference || '—')}</td>
-      <td>${fmt(item.updatedAt)}</td>
-    </tr>
-  `).join('');
-}
-
-function renderSubscription(data){
-  document.getElementById('subscription-empty').style.display = 'none';
-  document.getElementById('subscription-content').style.display = 'block';
-  const entitlement = data.entitlement || {};
-  const receipt = data.receiptSummary || {};
-  const gt = data.guestTrial;
-  const rows = [
-    ['订阅状态', data.subscriptionStatus],
-    ['到期时间', data.expiresAt || '—'],
-    ['今日已用', `${data.todayUsed} / ${data.dailyFreeQuota}`],
-    ['剩余次数', data.creditBalance],
-    ['当前可生成', data.canGenerate ? '是' : '否'],
-    ['entitlement', entitlement.status || '—'],
-    ['商品 ID', entitlement.productId || receipt.productId || '—'],
-    ['最新交易', receipt.latestTransactionId || '—'],
-    ['原始交易', receipt.originalTransactionId || '—'],
-    ['最近校验', fmt(receipt.updatedAt || entitlement.updatedAt)]
-  ];
-  if(gt){
-    rows.push(['游客试用已用', `${gt.trialUsedCount} / ${gt.trialMaxCount}`]);
-    rows.push(['游客试用剩余', gt.trialRemaining]);
-  }
-  document.getElementById('subscription-grid').innerHTML = rows
-    .map(([label, value]) => `<div class="detail-item"><div class="label">${esc(label)}</div><div class="value">${esc(value)}</div></div>`).join('');
-  const resetBtn = document.getElementById('guest-trial-reset-btn');
-  if(resetBtn) resetBtn.style.display = gt ? '' : 'none';
-}
-
-function buildRecommendationQuery(){
-  const params = new URLSearchParams();
-  [
-    ['requestId', 'rec-log-request-id'],
-    ['sourceText', 'rec-log-source-text'],
-    ['provider', 'rec-log-provider'],
-    ['status', 'rec-log-status'],
-    ['feedbackStatus', 'rec-log-feedback-status'],
-    ['cacheHit', 'rec-log-cache-hit'],
-    ['triggerScenario', 'rec-log-trigger-scenario'],
-    ['userId', 'rec-log-user-id'],
-    ['limit', 'rec-log-limit']
-  ].forEach(([key, id]) => {
-    const value = document.getElementById(id).value;
-    if(value !== '') params.set(key, value);
-  });
-  return params.toString();
-}
-
-function triggerScenarioBadge(scenario){
-  if(!scenario) return badge('场景未知', 'neutral');
-  const map = {
-    'PRELOAD':           ['预加载', 'neutral'],
-    'STREAMING':         ['流式展示', 'ok'],
-    'SYNC_FALLBACK':     ['同步兜底', 'warn'],
-    'QUOTA_DEDUCT_ONLY': ['仅扣配额', 'accent'],
+// ── 榜单打分公式项 ──
+function addTerm(){
+  const c = $('l_terms');
+  if(c.children.length>=3){ toast('最多 3 项'); return; }
+  const first = c.children.length===0;
+  const div = document.createElement('div');
+  div.className='cond';
+  div.innerHTML = `
+    <div class="row">
+      ${first?'<span class="muted" style="width:54px">起始</span>':`<select class="t-op">${META.arithOps.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`}
+      <select class="t-kind"><option value="metric">指标</option><option value="const">常量</option></select>
+      <select class="t-metric">${metricOptions()}</select>
+      <input class="t-num" type="number" placeholder="常量" style="width:90px;display:none">
+      <button class="btn btn-sm btn-danger" onclick="this.closest('.cond').remove()">删</button>
+    </div>`;
+  div.querySelector('.t-kind').onchange = e=>{
+    const m=div.querySelector('.t-metric'), n=div.querySelector('.t-num');
+    const isM=e.target.value==='metric'; m.style.display=isM?'':'none'; n.style.display=isM?'none':'';
   };
-  const [label, tone] = map[scenario] || [scenario, 'neutral'];
-  return badge(label, tone);
+  c.appendChild(div);
 }
 
-function renderRecommendationCards(items){
-  const container = document.getElementById('rec-log-results');
-  if(!items || items.length === 0){
-    container.innerHTML = '<div class="empty">暂无推荐记录</div>';
-    return;
+function termExpr(row){
+  if(row.querySelector('.t-kind').value==='const'){ return {type:'const', value:Number(row.querySelector('.t-num').value||0)}; }
+  return {type:'metric', metric:row.querySelector('.t-metric').value};
+}
+
+function buildScoreExpr(){
+  const rows=[...$('l_terms').querySelectorAll('.cond')];
+  if(rows.length===0) throw new Error('请至少添加 1 项打分');
+  let acc = termExpr(rows[0]);
+  for(let i=1;i<rows.length;i++){
+    const op = rows[i].querySelector('.t-op').value;
+    acc = {type:'arith', op, left:acc, right:termExpr(rows[i])};
   }
-  container.innerHTML = items.map(item => `
-    <div class="recipe-card">
-      <div class="recipe-body">
-        <div class="recipe-title">${esc(item.sourceText || '未命名推荐')}</div>
-        <div class="recipe-summary">requestId：${esc(item.requestId || '—')}</div>
-        <div class="badge-row">
-          ${triggerScenarioBadge(item.triggerScenario)}
-          ${badge(item.status || '—', item.status === 'SUCCESS' ? 'ok' : 'danger')}
-          ${item.feedbackStatus ? badge(`反馈 ${item.feedbackStatus}`, 'accent') : badge('未反馈', 'neutral')}
-          ${badge(item.cacheHit ? '缓存命中' : '实时生成', item.cacheHit ? 'warn' : 'neutral')}
-          ${item.provider ? badge(item.provider, 'accent') : ''}
-          ${item.durationMs ? badge(`${item.durationMs} ms`, 'warn') : ''}
-        </div>
-        <div class="meta-grid">
-          <div class="meta-item"><strong>用户：</strong>${esc(item.username || '—')} (${esc(item.userId || '—')})</div>
-          <div class="meta-item"><strong>邮箱：</strong>${esc(item.email || '—')}</div>
-          <div class="meta-item"><strong>模式：</strong>${esc(item.sourceMode || '—')}</div>
-          <div class="meta-item"><strong>请求：</strong>${esc(item.dishCount || '—')} 道 / ${esc(item.totalCalories || '—')} kcal / ${esc(item.staple || '—')}</div>
-          <div class="meta-item"><strong>执行轮次：</strong>${esc(item.executionRounds || '—')}</div>
-          <div class="meta-item"><strong>完成时间：</strong>${fmt(item.completedAt || item.createdAt)}</div>
-          ${item.displayedRequestId ? `<div class="meta-item" style="grid-column:1/-1"><strong>展示的预加载：</strong><span style="font-family:monospace;font-size:12px">${esc(item.displayedRequestId)}</span></div>` : ''}
-        </div>
-        <button class="expand-toggle" onclick="toggleSteps('rec-log-${esc(item.requestId || item.id)}')">展开详情</button>
-        <div id="rec-log-${esc(item.requestId || item.id)}" class="collapsible">
-          <div class="detail-grid">
-            <div class="detail-item"><div class="label">request payload</div><div class="value"><pre>${esc(JSON.stringify(item.requestPayloadJson || {}, null, 2))}</pre></div></div>
-            <div class="detail-item"><div class="label">prompt</div><div class="value"><pre>${esc(JSON.stringify(item.promptJson || [], null, 2))}</pre></div></div>
-            <div class="detail-item"><div class="label">batch metrics</div><div class="value"><pre>${esc(JSON.stringify(item.batchMetricsJson || [], null, 2))}</pre></div></div>
-            <div class="detail-item"><div class="label">result payload</div><div class="value"><pre>${esc(JSON.stringify(item.resultPayloadJson || {}, null, 2))}</pre></div></div>
-          </div>
-          ${item.errorMessage ? `<div style="margin-top:10px" class="detail-item"><div class="label">错误</div><div class="value">${esc(item.errorMessage)}</div></div>` : ''}
-        </div>
-      </div>
-    </div>
-  `).join('');
+  return acc;
 }
 
-async function loadRecommendationRecords(){
-  if(!getSecret()){ showBox('rec-log-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('rec-log-error');
-  setLoading('rec-log', true);
+// ── 勋章 ──
+async function loadBadges(){
+  const list = await api('/badges');
+  $('badgeList').innerHTML = list.length? list.map(b=>`
+    <div class="item">
+      <div class="grow"><div class="t">${b.title} <span class="muted">(${b.key})</span></div>
+        <div class="d">${b.description||''} · ${b.kind==='SINGLE'?'单次':'累计'}</div></div>
+      <span class="pill ${b.enabled?'on':'off'}">${b.enabled?'启用':'停用'}</span>
+      <button class="btn btn-sm" onclick='editBadge(${JSON.stringify(b)})'>编辑</button>
+      <button class="btn btn-sm" onclick="toggleBadge(${b.id})">${b.enabled?'停用':'启用'}</button>
+      <button class="btn btn-sm btn-danger" onclick="delBadge(${b.id})">删</button>
+    </div>`).join('') : '<div class="muted">暂无配置勋章</div>';
+}
+function badgeRule(){ return {logic:$('b_logic').value, conditions:readConds('b_conds')}; }
+async function validateBadge(){
+  try{ const r=await api('/rules/validate','POST',{kind:'rule',payload:badgeRule()});
+    $('b_sql').textContent = r.valid? ('HAVING/判定: '+r.sql) : ('✗ '+r.error);
+  }catch(e){ toast(e.message); }
+}
+async function saveBadge(){
   try{
-    const data = await apiFetch(`/admin/console/recommendations?${buildRecommendationQuery()}`);
-    document.getElementById('rec-log-results-header').style.display = 'flex';
-    document.getElementById('rec-log-count').textContent = `找到 ${data.count} 条推荐记录`;
-    renderRecommendationCards(data.items || []);
-  }catch(error){
-    showBox('rec-log-error','error',error.message);
-  }finally{
-    setLoading('rec-log', false);
-  }
+    const id=$('b_id').value;
+    const body={key:$('b_key').value.trim(),title:$('b_title').value.trim(),description:$('b_desc').value.trim(),
+      icon:$('b_icon').value,kind:$('b_kind').value,rule:badgeRule(),enabled:true};
+    await api(id?`/badges/${id}`:'/badges', id?'PUT':'POST', body);
+    toast('已保存'); resetBadgeForm(); loadBadges();
+  }catch(e){ toast('保存失败: '+e.message); }
+}
+function editBadge(b){
+  $('badgeFormTitle').textContent='编辑勋章'; $('b_id').value=b.id;
+  $('b_key').value=b.key; $('b_key').disabled=true; $('b_title').value=b.title;
+  $('b_desc').value=b.description||''; $('b_kind').value=b.kind||'CUMULATIVE'; $('b_icon').value=b.icon||'trophy';
+  const rule=JSON.parse(b.ruleJson); $('b_logic').value=rule.logic||'AND';
+  $('b_conds').innerHTML=''; (rule.conditions||[]).forEach(c=>{ addCond('b_conds'); fillCond($('b_conds').lastElementChild,c); });
+  window.scrollTo(0,0);
+}
+function resetBadgeForm(){
+  $('badgeFormTitle').textContent='新建勋章'; $('b_id').value=''; $('b_key').disabled=false;
+  ['b_key','b_title','b_desc'].forEach(i=>$(i).value=''); $('b_sql').textContent='';
+  $('b_conds').innerHTML=''; addCond('b_conds');
+}
+async function toggleBadge(id){ try{ await api(`/badges/${id}/toggle`,'POST'); loadBadges(); }catch(e){toast(e.message);} }
+async function delBadge(id){ if(!confirm('删除该勋章配置？'))return; try{ await api(`/badges/${id}`,'DELETE'); loadBadges(); }catch(e){toast(e.message);} }
+
+function fillCond(row, c){
+  // c.left 可能是 metric 或 arith(metric op const)
+  let metric=c.left.metric, aop='', anum='';
+  if(c.left.type==='arith'){ metric=c.left.left.metric; aop=c.left.op; anum=c.left.right.value; }
+  row.querySelector('.c-metric').value=metric;
+  row.querySelector('.c-aop').value=aop; row.querySelector('.c-anum').value=anum;
+  row.querySelector('.c-cmp').value=c.cmp; row.querySelector('.c-th').value=c.right.value;
+  row.querySelector('.c-neg').checked=!!c.negate;
 }
 
-async function refreshUserSubscription(){
-  if(!selectedUserId) return;
+// ── 榜单 ──
+async function loadBoards(){
+  const list = await api('/leaderboards');
+  $('boardList').innerHTML = list.length? list.map(b=>`
+    <div class="item">
+      <div class="grow"><div class="t">${b.title} <span class="muted">(${b.key})</span></div>
+        <div class="d">单位 ${b.unit} · 默认 ${b.periodDefault}</div></div>
+      <span class="pill ${b.enabled?'on':'off'}">${b.enabled?'启用':'停用'}</span>
+      <button class="btn btn-sm" onclick='editBoard(${JSON.stringify(b)})'>编辑</button>
+      <button class="btn btn-sm" onclick="toggleBoard(${b.id})">${b.enabled?'停用':'启用'}</button>
+      <button class="btn btn-sm btn-danger" onclick="delBoard(${b.id})">删</button>
+    </div>`).join('') : '<div class="muted">暂无配置榜单</div>';
+}
+function boardHaving(){ const cs=readConds('l_conds'); return cs.length? {logic:$('l_logic').value,conditions:cs} : null; }
+async function validateBoard(){
+  try{ const r=await api('/rules/validate','POST',{kind:'expr',payload:buildScoreExpr()});
+    $('l_sql').textContent = r.valid? ('score = '+r.sql) : ('✗ '+r.error);
+  }catch(e){ toast(e.message); }
+}
+async function saveBoard(){
   try{
-    const data = await apiFetch(`/admin/console/users/${selectedUserId}/subscription/refresh`, { method:'POST', body:'{}' });
-    renderSubscription(data);
-    showBox('user-success','success','订阅状态已刷新。');
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }
+    const id=$('l_id').value;
+    const body={key:$('l_key').value.trim(),title:$('l_title').value.trim(),unit:$('l_unit').value,
+      periodDefault:$('l_period').value,scoreExpr:buildScoreExpr(),having:boardHaving(),enabled:true};
+    await api(id?`/leaderboards/${id}`:'/leaderboards', id?'PUT':'POST', body);
+    toast('已保存'); resetBoardForm(); loadBoards();
+  }catch(e){ toast('保存失败: '+e.message); }
 }
-
-async function recalculateQuota(){
-  if(!selectedUserId) return;
-  try{
-    const data = await apiFetch(`/admin/console/users/${selectedUserId}/quota/recalculate`, { method:'POST', body:'{}' });
-    showBox('user-success','success',`今日配额已重算：${data.todayUsed} / ${data.dailyFreeQuota}`);
-    const subscription = await apiFetch(`/admin/console/users/${selectedUserId}/subscription`);
-    renderSubscription(subscription);
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }
+function editBoard(b){
+  $('boardFormTitle').textContent='编辑榜单'; $('l_id').value=b.id;
+  $('l_key').value=b.key; $('l_key').disabled=true; $('l_title').value=b.title;
+  $('l_unit').value=b.unit||'count'; $('l_period').value=b.periodDefault||'week';
+  $('l_terms').innerHTML=''; rebuildTerms(JSON.parse(b.scoreExprJson));
+  $('l_conds').innerHTML='';
+  if(b.havingRuleJson){ const r=JSON.parse(b.havingRuleJson); $('l_logic').value=r.logic||'AND';
+    (r.conditions||[]).forEach(c=>{ addCond('l_conds'); fillCond($('l_conds').lastElementChild,c); }); }
+  window.scrollTo(0,0);
 }
-
-async function grantCredits(){
-  if(!selectedUserId) return;
-  const input = prompt('输入要修正的次数余额增量，可为负数：', '5');
-  if(input == null) return;
-  const delta = Number(input);
-  if(Number.isNaN(delta)) { alert('请输入有效数字'); return; }
-  if(!confirm(`确认将用户 #${selectedUserId} 的次数余额调整 ${delta > 0 ? '+' : ''}${delta} 吗？`)) return;
-  try{
-    const data = await apiFetch(`/admin/console/users/${selectedUserId}/credits/grant`, {
-      method:'POST',
-      body: JSON.stringify({ delta })
-    });
-    showBox('user-success','success',`次数余额已更新，当前剩余 ${data.creditBalance}`);
-    const subscription = await apiFetch(`/admin/console/users/${selectedUserId}/subscription`);
-    renderSubscription(subscription);
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }
-}
-
-async function resetGuestTrial(){
-  if(!selectedUserId) return;
-  if(!confirm(`确认将用户 #${selectedUserId} 的游客试用次数重置为 0 吗？`)) return;
-  try{
-    const data = await apiFetch(`/admin/console/users/${selectedUserId}/guest/trial/reset`, { method:'POST', body:'{}' });
-    showBox('user-success','success',`游客试用次数已恢复为初始 ${data.trialMaxCount} 次，当前剩余 ${data.trialRemaining} 次`);
-    const subscription = await apiFetch(`/admin/console/users/${selectedUserId}/subscription`);
-    renderSubscription(subscription);
-  }catch(error){
-    showBox('user-error','error',error.message);
-  }
-}
-
-let selectedStatsDays = 30;
-
-function selectStatsDays(btn){
-  document.querySelectorAll('.stats-days-btn').forEach(el => el.classList.remove('btn-primary', 'active'));
-  btn.classList.add('btn-primary', 'active');
-  selectedStatsDays = Number(btn.dataset.days);
-}
-
-async function loadStats(){
-  if(!getSecret()){ showBox('stats-error','error','请先设置 X-Admin-Secret'); return; }
-  hideBox('stats-error');
-  setLoading('stats', true);
-  document.getElementById('stats-content').style.display = 'none';
-  try{
-    const data = await apiFetch(`/admin/console/recommendations/stats?days=${selectedStatsDays}`);
-    renderStatsOverview(data.overview);
-    renderStatsProvider(data.byProvider || []);
-    document.getElementById('stats-content').style.display = 'block';
-  }catch(error){
-    showBox('stats-error','error',error.message);
-  }finally{
-    setLoading('stats', false);
-  }
-}
-
-function renderStatsOverview(overview){
-  const cards = [
-    ['总推荐次数',   overview.total,             'neutral'],
-    ['成功率',       overview.successRate,        'ok'],
-    ['满意率（全量）', overview.satisfiedRate,   'ok'],
-    ['满意率（有反馈）', overview.satisfiedRateOfFeedback, 'accent'],
-    ['不满意数',     overview.unsatisfiedCount,   overview.unsatisfiedCount > 0 ? 'danger' : 'neutral'],
-    ['未反馈数',     overview.noFeedbackCount,    'neutral'],
-    ['缓存命中率',   overview.cacheHitRate,       'warn'],
-    ['平均耗时',     overview.avgDurationMs ? `${overview.avgDurationMs} ms` : '—', 'warn'],
-  ];
-  document.getElementById('stats-overview-grid').innerHTML = cards.map(([label, value, tone]) => `
-    <div class="stat-card">
-      <div class="label">${esc(label)}</div>
-      <div class="value" style="color:var(--${tone === 'ok' ? 'accent' : tone === 'danger' ? '#c0392b' : 'text'})">${esc(String(value ?? '—'))}</div>
-    </div>`).join('');
-}
-
-function renderStatsProvider(rows){
-  if(!rows.length){
-    document.getElementById('stats-provider-body').innerHTML = '<tr><td colspan="7" class="empty">暂无数据</td></tr>';
-    return;
-  }
-  document.getElementById('stats-provider-body').innerHTML = rows.map(row => `
-    <tr>
-      <td>${badge(esc(row.provider || '—'), 'accent')}</td>
-      <td>${esc(row.total)}</td>
-      <td>${esc(row.successRate)}</td>
-      <td>${esc(row.satisfiedCount)}</td>
-      <td>${esc(row.unsatisfiedCount)}</td>
-      <td>${esc(row.satisfiedRate)}</td>
-      <td>${row.avgDurationMs ? esc(row.avgDurationMs) : '—'}</td>
-    </tr>`).join('');
-}
-
-updateSecretStatus();
-document.addEventListener('keydown', event => { if(event.key === 'Escape') closeLightbox(); });
-
-// ── LLM 配置 ──────────────────────────────────────────────────────────────────
-
-const LLM_VENDORS = {
-  deepseek: { label: 'DeepSeek', baseUrl: 'https://api.deepseek.com/v1', models: ['deepseek-chat', 'deepseek-reasoner'] },
-  qwen:     { label: 'Qwen (通义)', baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1', models: ['qwen-plus', 'qwen-turbo', 'qwen-max', 'qwen-long'] },
-  minimax:  { label: 'MiniMax', baseUrl: 'https://api.minimax.chat/v1', models: ['abab6.5s-chat', 'abab6.5-chat'] },
-  glm:      { label: 'GLM (智谱)', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', models: ['glm-4-flash', 'glm-4-air', 'glm-4'] },
-  custom:   { label: '自定义', baseUrl: '', models: [] }
-};
-
-const LLM_SCENE_META = {
-  RECOMMEND: { label: '菜单推荐', desc: '用于 generate() / generateStream() 菜单推荐调用', hasFallback: true },
-  STEPS:     { label: '步骤生成', desc: '用于 streamRecipeSteps() 烹饪步骤流式调用', hasFallback: false }
-};
-
-let llmScenesData = {};
-
-async function loadLlmScenes() {
-  if (!getSecret()) { showBox('llm-error', 'error', '请先设置 X-Admin-Secret'); return; }
-  try {
-    const list = await apiFetch('/admin/console/llm/scenes');
-    llmScenesData = {};
-    list.forEach(s => { llmScenesData[s.scene] = s; });
-    renderLlmScenes();
-  } catch(e) {
-    showBox('llm-error', 'error', '加载 LLM 配置失败：' + e.message);
-  }
-}
-
-function renderLlmScenes() {
-  const grid = document.getElementById('llm-scenes-grid');
-  grid.innerHTML = Object.entries(LLM_SCENE_META).map(([scene, meta]) => {
-    const d = llmScenesData[scene] || {};
-    return `
-    <div class="card" id="llm-card-${scene}">
-      <div class="section-head">
-        <div>
-          <h2>${esc(meta.label)}</h2>
-          <div class="subtle" style="margin-top:4px">${esc(meta.desc)}</div>
-        </div>
-        <span class="pill">${esc(scene)}</span>
-      </div>
-      <div class="form-grid" style="margin-top:12px">
-        <div class="field">
-          <label>厂商预设</label>
-          <select onchange="applyLlmVendor('${scene}', this.value)" id="llm-vendor-${scene}">
-            <option value="">— 选择厂商 —</option>
-            ${Object.entries(LLM_VENDORS).map(([k,v]) => `<option value="${k}">${esc(v.label)}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field wide">
-          <label>Base URL</label>
-          <input id="llm-baseUrl-${scene}" value="${esc(d.baseUrl||'')}" placeholder="https://api.openai.com/v1">
-        </div>
-        <div class="field">
-          <label>模型</label>
-          <input id="llm-model-${scene}" value="${esc(d.model||'')}" placeholder="gpt-4o-mini">
-        </div>
-        ${meta.hasFallback ? `
-        <div class="field">
-          <label>备用模型（Fallback，可留空）</label>
-          <input id="llm-fallbackModel-${scene}" value="${esc(d.fallbackModel||'')}" placeholder="留空则不使用 fallback">
-        </div>` : ''}
-        <div class="field">
-          <label>超时（ms）</label>
-          <input type="number" id="llm-timeoutMs-${scene}" value="${d.timeoutMs||60000}" min="5000" step="1000">
-        </div>
-        <div class="field">
-          <label>API Key（留空保留现有值）</label>
-          <input type="password" id="llm-apiKey-${scene}" placeholder="${esc(d.apiKey||'••••••••')}">
-        </div>
-      </div>
-      <div class="action-row">
-        <button class="btn btn-primary" onclick="saveLlmScene('${scene}')">保存</button>
-        <button class="btn" onclick="testLlmScene('${scene}')">测试连通性</button>
-        <span id="llm-test-result-${scene}" class="loading-text"></span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function applyLlmVendor(scene, vendorKey) {
-  if (!vendorKey || !LLM_VENDORS[vendorKey]) return;
-  const vendor = LLM_VENDORS[vendorKey];
-  const baseUrlEl = document.getElementById(`llm-baseUrl-${scene}`);
-  const modelEl = document.getElementById(`llm-model-${scene}`);
-  if (baseUrlEl && vendor.baseUrl) baseUrlEl.value = vendor.baseUrl;
-  if (modelEl && vendor.models.length > 0) modelEl.value = vendor.models[0];
-}
-
-async function saveLlmScene(scene) {
-  const baseUrl = document.getElementById(`llm-baseUrl-${scene}`).value.trim();
-  const model = document.getElementById(`llm-model-${scene}`).value.trim();
-  const apiKeyEl = document.getElementById(`llm-apiKey-${scene}`);
-  const apiKey = apiKeyEl ? apiKeyEl.value.trim() : '';
-  const fallbackModelEl = document.getElementById(`llm-fallbackModel-${scene}`);
-  const fallbackModel = fallbackModelEl ? fallbackModelEl.value.trim() : '';
-  const timeoutMs = parseInt(document.getElementById(`llm-timeoutMs-${scene}`).value) || 60000;
-
-  if (!baseUrl) { showBox('llm-error','error','Base URL 不能为空'); return; }
-  if (!model)   { showBox('llm-error','error','模型不能为空'); return; }
-
-  const body = { baseUrl, model, fallbackModel, timeoutMs };
-  if (apiKey) body.apiKey = apiKey;
-
-  try {
-    const saved = await apiFetch(`/admin/console/llm/scenes/${scene}`, {
-      method: 'PUT',
-      body: JSON.stringify(body)
-    });
-    llmScenesData[scene] = { ...llmScenesData[scene], ...saved, apiKey: saved.apiKeyMasked };
-    showBox('llm-success','success',`${scene} 配置已保存。API Key: ${esc(saved.apiKeyMasked)}`);
-    showBox('llm-error','error',''); // clear error
-    // Update the placeholder to reflect new masked key
-    if (apiKeyEl) apiKeyEl.placeholder = saved.apiKeyMasked;
-    if (apiKeyEl) apiKeyEl.value = '';
-  } catch(e) {
-    showBox('llm-error','error','保存失败：' + e.message);
-  }
-}
-
-async function testLlmScene(scene) {
-  const resultEl = document.getElementById(`llm-test-result-${scene}`);
-  resultEl.textContent = '测试中…';
-  try {
-    const data = await apiFetch(`/admin/console/llm/scenes/${scene}/test`, { method:'POST', body:'{}' });
-    if (data.ok) {
-      resultEl.textContent = '连通性正常 ✓';
-      resultEl.style.color = 'var(--green)';
-    } else {
-      resultEl.textContent = '失败：' + (data.error || '未知错误');
-      resultEl.style.color = 'var(--red)';
-    }
-  } catch(e) {
-    resultEl.textContent = '请求失败：' + e.message;
-    resultEl.style.color = 'var(--red)';
-  }
-}
-
-// Load LLM scenes when tab is first activated
-const _origSwitchTab = window.switchTab;
-window.switchTab = function(tab, btn) {
-  _origSwitchTab(tab, btn);
-  if (tab === 'llm' && Object.keys(llmScenesData).length === 0) {
-    loadLlmScenes();
-  }
-};
-
-// ── Taxonomy tree ─────────────────────────────────────────────────────────────
-
-async function reseedTaxonomy() {
-  if (!confirm('将调用 LLM 重新生成分类树（约 60–120 秒），现有树会被替换。确认继续？')) return;
-  const loading = document.getElementById('tx-reseed-loading');
-  const errBox = document.getElementById('tx-error');
-  const btn = document.getElementById('tx-reseed-btn');
-  const reloadBtn = document.getElementById('tx-reload-btn');
-  errBox.className = 'message-box';
-  loading.style.display = 'inline';
-  btn.disabled = true;
-  reloadBtn.disabled = true;
-  try {
-    await apiFetch('/admin/console/taxonomy/reseed', { method: 'POST' });
-    txTreeData = null;
-    await loadTaxonomyTree();
-  } catch(e) {
-    errBox.className = 'message-box error';
-    errBox.textContent = '重新生成失败：' + e.message;
-  } finally {
-    loading.style.display = 'none';
-    btn.disabled = false;
-    reloadBtn.disabled = false;
-  }
-}
-
-async function loadTaxonomyTree() {
-  const loading = document.getElementById('tx-loading');
-  const errBox = document.getElementById('tx-error');
-  const btn = document.getElementById('tx-reload-btn');
-  errBox.className = 'message-box';
-  loading.style.display = 'inline';
-  btn.disabled = true;
-  try {
-    const data = await apiFetch('/admin/console/taxonomy/tree');
-    txTreeData = data;
-    txSelectedNodeId = null;
-    txBreadcrumb = [];
-    document.getElementById('tx-detail-panel').style.display = 'none';
-    renderTxTree(data);
-    const total = countTxLeaves(data);
-    document.getElementById('tx-summary').textContent = `${data.length} 个大类 · ${total} 个食材`;
-  } catch(e) {
-    errBox.className = 'message-box error';
-    errBox.textContent = '加载失败：' + e.message;
-  } finally {
-    loading.style.display = 'none';
-    btn.disabled = false;
-  }
-}
-
-function countTxLeaves(nodes) {
-  let n = 0;
-  for (const node of nodes) {
-    if (!node.children || node.children.length === 0) n++;
-    else n += countTxLeaves(node.children);
-  }
-  return n;
-}
-
-function renderTxTree(nodes) {
-  const container = document.getElementById('tx-tree');
-  container.innerHTML = '';
-  const q = document.getElementById('tx-search').value.trim().toLowerCase();
-  for (const node of nodes) {
-    container.appendChild(buildTxNode(node, [], q));
-  }
-}
-
-function buildTxNode(node, ancestors, q) {
-  const wrap = document.createElement('div');
-  const isLeaf = !node.children || node.children.length === 0;
-  const matchSelf = q && node.label.toLowerCase().includes(q);
-  const matchDescendant = q ? nodeMatchesQuery(node, q) : false;
-
-  const row = document.createElement('div');
-  row.className = 'tx-node' + (node.id === txSelectedNodeId ? ' active' : '');
-  if (q && !matchSelf && !matchDescendant) row.classList.add('tx-dim');
-  if (q && matchSelf) row.classList.add('highlighted');
-  row.dataset.id = node.id;
-
-  const arrow = document.createElement('span');
-  arrow.className = 'tx-arrow' + (isLeaf ? '' : '');
-  arrow.textContent = isLeaf ? '·' : '▶';
-
-  const label = document.createElement('span');
-  label.className = 'tx-label';
-  label.textContent = node.label;
-
-  const count = document.createElement('span');
-  count.className = 'tx-count';
-  count.textContent = node.recipeCount;
-
-  row.appendChild(arrow);
-  row.appendChild(label);
-  row.appendChild(count);
-  wrap.appendChild(row);
-
-  if (!isLeaf) {
-    const childWrap = document.createElement('div');
-    childWrap.className = 'tx-children' + (q && matchDescendant ? ' open' : '');
-    for (const child of node.children) {
-      childWrap.appendChild(buildTxNode(child, [...ancestors, node], q));
-    }
-    wrap.appendChild(childWrap);
-
-    row.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = childWrap.classList.contains('open');
-      childWrap.classList.toggle('open', !isOpen);
-      arrow.classList.toggle('open', !isOpen);
-    });
-  } else {
-    row.addEventListener('click', (e) => {
-      e.stopPropagation();
-      selectTxNode(node, [...ancestors, node]);
-    });
-  }
-
-  return wrap;
-}
-
-function nodeMatchesQuery(node, q) {
-  if (node.label.toLowerCase().includes(q)) return true;
-  if (node.children) {
-    for (const child of node.children) {
-      if (nodeMatchesQuery(child, q)) return true;
-    }
-  }
-  return false;
-}
-
-function selectTxNode(node, path) {
-  txSelectedNodeId = node.id;
-  txBreadcrumb = path;
-  // re-render tree to update active state
-  renderTxTree(txTreeData);
-  showTxDetail(node, path);
-}
-
-async function showTxDetail(node, path) {
-  const panel = document.getElementById('tx-detail-panel');
-  panel.style.display = 'block';
-
-  const breadEl = document.getElementById('tx-breadcrumb');
-  breadEl.innerHTML = path.map((n, i) =>
-    i < path.length - 1
-      ? `<span style="cursor:pointer;color:var(--accent)" onclick="selectTxNode(txFindNode(${n.id}),txPathToNode(${n.id}))">${n.label}</span> › `
-      : `<strong>${n.label}</strong>`
-  ).join('');
-
-  document.getElementById('tx-detail-title').textContent = node.label;
-  document.getElementById('tx-detail-count').textContent = `${node.recipeCount} 道菜谱含此食材`;
-
-  const listEl = document.getElementById('tx-items-list');
-  const loadingEl = document.getElementById('tx-items-loading');
-  listEl.innerHTML = '';
-  loadingEl.style.display = 'block';
-
-  try {
-    const data = await apiFetch(`/admin/console/taxonomy/nodes/${node.id}/catalog-items?limit=50`);
-    loadingEl.style.display = 'none';
-    if (!data.items || data.items.length === 0) {
-      listEl.innerHTML = '<div class="empty">暂无关联菜谱</div>';
-      return;
-    }
-    for (const item of data.items) {
-      const card = document.createElement('div');
-      card.className = 'tx-item-card';
-      const tagsHtml = (item.ingredientTags || [])
-        .map(t => `<span class="tx-tag${t === node.label ? '" style="background:var(--accent);color:#fff' : ''}">${t}</span>`)
-        .join('');
-      card.innerHTML = `
-        <div class="name">${item.name}</div>
-        <div class="meta">${item.category} · ${item.subcategory} · ${item.cookingMethod}</div>
-        <div class="tags">${tagsHtml}</div>`;
-      listEl.appendChild(card);
-    }
-  } catch(e) {
-    loadingEl.style.display = 'none';
-    listEl.innerHTML = `<div class="empty" style="color:var(--red)">加载失败：${e.message}</div>`;
-  }
-}
-
-function txFindNode(id) {
-  function find(nodes) {
-    for (const n of nodes) {
-      if (n.id === id) return n;
-      if (n.children) { const r = find(n.children); if (r) return r; }
-    }
-    return null;
-  }
-  return find(txTreeData || []);
-}
-
-function txPathToNode(id) {
-  function findPath(nodes, path) {
-    for (const n of nodes) {
-      const newPath = [...path, n];
-      if (n.id === id) return newPath;
-      if (n.children) { const r = findPath(n.children, newPath); if (r) return r; }
-    }
-    return null;
-  }
-  return findPath(txTreeData || [], []) || [];
-}
-
-function txFilterTree() {
-  if (!txTreeData) return;
-  renderTxTree(txTreeData);
-}
-
-function clearTxSearch() {
-  document.getElementById('tx-search').value = '';
-  if (txTreeData) renderTxTree(txTreeData);
-}
-
-function txExpandAll() {
-  document.querySelectorAll('#tx-tree .tx-children').forEach(el => el.classList.add('open'));
-  document.querySelectorAll('#tx-tree .tx-arrow').forEach(el => {
-    if (el.textContent === '▶') el.classList.add('open');
+function rebuildTerms(expr){
+  // 把左结合的 arith 链拆回项序列
+  const terms=[]; (function walk(e){ if(e.type==='arith'){ walk(e.left); terms.push({op:e.op, node:e.right}); } else { terms.push({op:null, node:e}); } })(expr);
+  terms.forEach((t,i)=>{ addTerm(); const row=$('l_terms').lastElementChild;
+    if(i>0) row.querySelector('.t-op').value=t.op;
+    const kind=t.node.type; row.querySelector('.t-kind').value=kind;
+    const m=row.querySelector('.t-metric'),n=row.querySelector('.t-num');
+    if(kind==='const'){ m.style.display='none'; n.style.display=''; n.value=t.node.value; }
+    else { m.value=t.node.metric; }
   });
 }
-
-function txCollapseAll() {
-  document.querySelectorAll('#tx-tree .tx-children').forEach(el => el.classList.remove('open'));
-  document.querySelectorAll('#tx-tree .tx-arrow').forEach(el => el.classList.remove('open'));
+function resetBoardForm(){
+  $('boardFormTitle').textContent='新建榜单'; $('l_id').value=''; $('l_key').disabled=false;
+  ['l_key','l_title'].forEach(i=>$(i).value=''); $('l_sql').textContent='';
+  $('l_terms').innerHTML=''; addTerm(); $('l_conds').innerHTML='';
 }
+async function toggleBoard(id){ try{ await api(`/leaderboards/${id}/toggle`,'POST'); loadBoards(); }catch(e){toast(e.message);} }
+async function delBoard(id){ if(!confirm('删除该榜单配置？'))return; try{ await api(`/leaderboards/${id}`,'DELETE'); loadBoards(); }catch(e){toast(e.message);} }
 
-// ── Taxonomy snapshot history ─────────────────────────────────────────────────
-
-let txSnapshots = [];
-
-async function loadTxSnapshots() {
-  const loading = document.getElementById('tx-snap-loading');
-  const listEl = document.getElementById('tx-snap-list');
-  loading.style.display = 'inline';
-  try {
-    txSnapshots = await apiFetch('/admin/console/taxonomy/snapshots');
-    renderTxSnapshots();
-  } catch(e) {
-    listEl.innerHTML = `<div class="empty" style="color:var(--red)">加载失败：${e.message}</div>`;
-  } finally {
-    loading.style.display = 'none';
-  }
-}
-
-function renderTxSnapshots() {
-  const listEl = document.getElementById('tx-snap-list');
-  if (!txSnapshots.length) {
-    listEl.innerHTML = '<div class="empty">暂无历史版本</div>';
-    return;
-  }
-  listEl.innerHTML = txSnapshots.map(s => {
-    const dt = new Date(s.createdAt).toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const noteEsc = (s.note || '').replace(/'/g, "\\'");
-    return `<div class="tx-snap-row">
-      <span class="tx-snap-time">${dt}</span>
-      <span class="tx-snap-note">${s.note || '—'}</span>
-      <span class="tx-snap-meta">${s.rootCount} 根节点 · ${s.leafCount} 叶节点</span>
-      <button class="btn btn-ghost btn-small" onclick="viewTxSnapshot(${s.id}, '${noteEsc} · ${dt}')">查看</button>
-      <button class="btn btn-warning btn-small" onclick="restoreTxSnapshot(${s.id}, '${noteEsc}')">恢复</button>
-    </div>`;
-  }).join('');
-}
-
-async function viewTxSnapshot(snapshotId, label) {
-  const errBox = document.getElementById('tx-error');
-  errBox.className = 'message-box';
-  try {
-    const data = await apiFetch(`/admin/console/taxonomy/snapshots/${snapshotId}`);
-    // Show history banner
-    const banner = document.getElementById('tx-history-banner');
-    document.getElementById('tx-history-label').textContent = label;
-    banner.style.display = 'flex';
-    // Render historical tree (read-only: no click-to-load items)
-    txSelectedNodeId = null;
-    document.getElementById('tx-detail-panel').style.display = 'none';
-    renderTxHistoryTree(data.tree);
-    document.getElementById('tx-summary').textContent =
-      `历史版本 · ${data.rootCount} 大类 · ${data.leafCount} 叶节点`;
-  } catch(e) {
-    errBox.className = 'message-box error';
-    errBox.textContent = '加载快照失败：' + e.message;
-  }
-}
-
-function renderTxHistoryTree(nodes) {
-  const container = document.getElementById('tx-tree');
-  container.innerHTML = '';
-  for (const node of nodes) {
-    container.appendChild(buildTxHistoryNode(node, 0));
-  }
-}
-
-function buildTxHistoryNode(node, depth) {
-  const wrap = document.createElement('div');
-  const isLeaf = !node.children || node.children.length === 0;
-  const row = document.createElement('div');
-  row.className = 'tx-node';
-  row.style.paddingLeft = (depth * 14) + 'px';
-
-  const arrow = document.createElement('span');
-  arrow.className = 'tx-arrow';
-  arrow.textContent = isLeaf ? '·' : '▶';
-
-  const label = document.createElement('span');
-  label.className = 'tx-label';
-  label.textContent = node.label;
-
-  row.appendChild(arrow);
-  row.appendChild(label);
-  wrap.appendChild(row);
-
-  if (!isLeaf) {
-    const childWrap = document.createElement('div');
-    childWrap.className = 'tx-children';
-    for (const child of node.children) {
-      childWrap.appendChild(buildTxHistoryNode(child, depth + 1));
-    }
-    wrap.appendChild(childWrap);
-    row.addEventListener('click', () => {
-      const open = childWrap.classList.toggle('open');
-      arrow.classList.toggle('open', open);
-    });
-  }
-  return wrap;
-}
-
-async function restoreTxSnapshot(snapshotId, note) {
-  if (!confirm(`确认将分类树恢复至快照 #${snapshotId}「${note}」？\n当前树结构将被覆盖，操作不可直接撤销。`)) return;
-  const errBox = document.getElementById('tx-error');
-  errBox.className = 'message-box';
-  try {
-    const data = await apiFetch(`/admin/console/taxonomy/snapshots/${snapshotId}/restore`, {method:'POST'});
-    errBox.className = 'message-box success';
-    errBox.textContent = data.message || '恢复成功';
-    exitHistoryView();
-    await loadTxSnapshots();
-  } catch(e) {
-    errBox.className = 'message-box error';
-    errBox.textContent = '恢复失败：' + e.message;
-  }
-}
-
-function exitHistoryView() {
-  document.getElementById('tx-history-banner').style.display = 'none';
-  txTreeData = null;
-  loadTaxonomyTree();
-}
+// 自动回填密钥
+window.addEventListener('DOMContentLoaded',()=>{ const s=localStorage.getItem('goaway_admin_secret'); if(s){ $('secret').value=s; connect(); } });
 </script>
 </body>
 </html>

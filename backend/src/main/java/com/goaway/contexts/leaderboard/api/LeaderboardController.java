@@ -1,10 +1,13 @@
 package com.goaway.contexts.leaderboard.api;
 
+import com.goaway.contexts.leaderboard.api.dto.BoardInfoDTO;
 import com.goaway.contexts.leaderboard.api.dto.LeaderboardDTO;
 import com.goaway.contexts.leaderboard.application.LeaderboardService;
 import com.goaway.platform.security.CurrentUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/leaderboard")
@@ -16,6 +19,11 @@ public class LeaderboardController {
     public LeaderboardController(LeaderboardService leaderboardService, CurrentUserService currentUserService) {
         this.leaderboardService = leaderboardService;
         this.currentUserService = currentUserService;
+    }
+
+    @GetMapping("/boards")
+    public ResponseEntity<List<BoardInfoDTO>> boards() {
+        return ResponseEntity.ok(leaderboardService.listBoards());
     }
 
     @GetMapping

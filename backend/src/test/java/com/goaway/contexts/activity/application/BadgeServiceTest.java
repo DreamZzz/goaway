@@ -21,7 +21,11 @@ class BadgeServiceTest {
 
     private final ActivityEventRepository activityRepo = mock(ActivityEventRepository.class);
     private final UserBadgeRepository userBadgeRepo = mock(UserBadgeRepository.class);
-    private final BadgeService service = new BadgeService(activityRepo, userBadgeRepo);
+    private final com.goaway.contexts.activity.infrastructure.persistence.BadgeDefinitionRepository badgeDefRepo =
+            mock(com.goaway.contexts.activity.infrastructure.persistence.BadgeDefinitionRepository.class);
+    private final BadgeService service = new BadgeService(activityRepo, userBadgeRepo, badgeDefRepo,
+            new com.goaway.contexts.activity.application.rule.RuleEvaluator(),
+            new com.fasterxml.jackson.databind.ObjectMapper());
 
     @Test
     @DisplayName("单次摸鱼满 1 小时解锁「摸鱼马拉松」，未达 4 小时不解锁「带薪一整天」")
