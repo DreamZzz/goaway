@@ -37,6 +37,9 @@ public class LeaderboardJdbcRepository {
         List<Object> args = new ArrayList<>();
         args.add(start);
         args.add(end);
+        if (board.filter != null) {
+            sql.append("AND ").append(board.filter).append(" ");
+        }
         if (dimension.column != null) {
             sql.append("AND w.").append(dimension.column).append(" = ? ");
             args.add(slice);
@@ -62,6 +65,9 @@ public class LeaderboardJdbcRepository {
         args.add(userId);
         args.add(start);
         args.add(end);
+        if (board.filter != null) {
+            sql.append(" AND ").append(board.filter);
+        }
         List<Long> result = jdbcTemplate.query(sql.toString(),
                 (rs, rowNum) -> rs.getObject("score") == null ? null : rs.getLong("score"),
                 args.toArray());
@@ -83,6 +89,9 @@ public class LeaderboardJdbcRepository {
         List<Object> args = new ArrayList<>();
         args.add(start);
         args.add(end);
+        if (board.filter != null) {
+            sql.append("AND ").append(board.filter).append(" ");
+        }
         if (dimension.column != null) {
             sql.append("AND w.").append(dimension.column).append(" = ? ");
             args.add(slice);

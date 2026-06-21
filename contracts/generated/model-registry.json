@@ -542,7 +542,7 @@
     {
       "className": "LeaderboardDTO",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/leaderboard/api/dto/LeaderboardDTO.java",
-      "sourceHash": "bda824997272cbef8e36ba27e61642e7f5d54d1b2a511678231f2458d79d69dd",
+      "sourceHash": "63aa3243de0cad8c2b9ae9542d6f0391b8959326990cbf8e077baa2ed773dae3",
       "fields": [
         {
           "name": "entries",

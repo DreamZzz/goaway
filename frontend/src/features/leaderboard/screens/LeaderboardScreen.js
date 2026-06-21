@@ -17,8 +17,14 @@ import { formatDuration } from '../../checkin/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
 const BOARDS = [
-  { key: 'fishing', label: '摸鱼时长' },
-  { key: 'checkin', label: '连续打卡' },
+  { key: 'fishing', label: '摸鱼时长', unit: 'seconds' },
+  { key: 'fish_single', label: '单次最长摸鱼', unit: 'seconds' },
+  { key: 'fish_total', label: '累计摸鱼', unit: 'seconds' },
+  { key: 'poop_single', label: '单次最长带薪', unit: 'seconds' },
+  { key: 'poop_total', label: '带薪拉屎次数', unit: 'count', suffix: '次' },
+  { key: 'water_total', label: '喝水', unit: 'count', suffix: '杯' },
+  { key: 'smoke_total', label: '抽烟', unit: 'count', suffix: '根' },
+  { key: 'checkin', label: '连续打卡', unit: 'count', suffix: '天' },
 ];
 const PERIODS = [
   { key: 'day', label: '今日' },
@@ -49,8 +55,27 @@ const Segmented = ({ items, value, onChange }) => (
   </View>
 );
 
-const formatScore = (board, score) =>
-  board === 'fishing' ? formatDuration(score) : `${score} 天`;
+const BoardChips = ({ value, onChange }) => (
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    contentContainerStyle={styles.chipRow}
+  >
+    {BOARDS.map((b) => {
+      const active = b.key === value;
+      return (
+        <TouchableOpacity
+          key={b.key}
+          style={[styles.chip, active && styles.chipActive]}
+          onPress={() => onChange(b.key)}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.chipText, active && styles.chipTextActive]}>{b.label}</Text>
+        </TouchableOpacity>
+      );
+    })}
+  </ScrollView>
+);
 
 const LeaderboardScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
@@ -89,6 +114,10 @@ const LeaderboardScreen = ({ navigation }) => {
   const dim = DIMENSIONS.find((d) => d.key === dimension);
   const missingSlice = dim?.field && !profile?.[dim.field];
 
+  const currentBoard = BOARDS.find((b) => b.key === board) || BOARDS[0];
+  const formatScore = (score) =>
+    currentBoard.unit === 'seconds' ? formatDuration(score) : `${score} ${currentBoard.suffix || ''}`;
+
   return (
     <ScrollView
       style={styles.container}
@@ -97,7 +126,7 @@ const LeaderboardScreen = ({ navigation }) => {
     >
       <Text style={styles.pageTitle}>排行榜</Text>
 
-      <Segmented items={BOARDS} value={board} onChange={setBoard} />
+      <BoardChips value={board} onChange={setBoard} />
       <Segmented items={PERIODS} value={period} onChange={setPeriod} />
       <Segmented items={DIMENSIONS} value={dimension} onChange={setDimension} />
 
@@ -114,7 +143,7 @@ const LeaderboardScreen = ({ navigation }) => {
         <View style={styles.myRankCard}>
           <Text style={styles.myRankLabel}>我的排名</Text>
           <Text style={styles.myRankValue}>#{data.myRank}</Text>
-          <Text style={styles.myRankScore}>{formatScore(board, data.myScore || 0)}</Text>
+          <Text style={styles.myRankScore}>{formatScore(data.myScore || 0)}</Text>
         </View>
       )}
 
@@ -134,7 +163,7 @@ const LeaderboardScreen = ({ navigation }) => {
                 <Text style={styles.nickname} numberOfLines={1}>
                   {e.nickname}{e.me ? ' (我)' : ''}
                 </Text>
-                <Text style={styles.score}>{formatScore(board, e.score)}</Text>
+                <Text style={styles.score}>{formatScore(e.score)}</Text>
               </View>
             ))
           )}
@@ -155,12 +184,20 @@ const styles = StyleSheet.create({
   segmentActive: { backgroundColor: colors.bgElev, ...shadows.sm },
   segmentText: { fontSize: 13, color: colors.ink500, fontWeight: '600' },
   segmentTextActive: { color: colors.ink900 },
+  chipRow: { gap: 8, paddingVertical: 2, paddingRight: 8 },
+  chip: {
+    paddingHorizontal: 14, height: 34, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: colors.bgSoft, borderWidth: 0.5, borderColor: colors.ink100,
+  },
+  chipActive: { backgroundColor: colors.brand500, borderColor: colors.brand500 },
+  chipText: { fontSize: 13, color: colors.ink500, fontWeight: '600' },
+  chipTextActive: { color: '#fff' },
   profileHint: {
     backgroundColor: colors.brand50, borderRadius: radius.md, padding: 12,
   },
   profileHintText: { fontSize: 13, color: colors.brand500, fontWeight: '600' },
   myRankCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#2A1F0E',
+    flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.heroDark,
     borderRadius: radius.lg, padding: 16,
   },
   myRankLabel: { color: colors.gold300, fontSize: 13, fontWeight: '600', flex: 1 },

@@ -52,6 +52,7 @@ public class LeaderboardService {
 
         LeaderboardDTO dto = new LeaderboardDTO();
         dto.setBoard(board.code());
+        dto.setUnit(board.unit);
         dto.setDimension(dimension.code);
         dto.setSlice(dimension == Dimension.ALL ? null : effectiveSlice);
         dto.setPeriod(period == PeriodRange.Period.WEEK ? "week" : "day");
