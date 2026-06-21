@@ -384,6 +384,79 @@
       ]
     },
     {
+      "className": "ActivitySummaryDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/ActivitySummaryDTO.java",
+      "sourceHash": "034d318f5809b5fd1d05adc699334b7ba0246c0bc6d9aee0c9163e593630e64c",
+      "fields": [
+        {
+          "name": "water",
+          "javaType": "long"
+        },
+        {
+          "name": "smoke",
+          "javaType": "long"
+        },
+        {
+          "name": "poopCount",
+          "javaType": "long"
+        },
+        {
+          "name": "poopSeconds",
+          "javaType": "long"
+        }
+      ]
+    },
+    {
+      "className": "BadgeDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeDTO.java",
+      "sourceHash": "459b699f2ad51c558f29743a10218cc90892794e337b352d461f516dd505efaf",
+      "fields": [
+        {
+          "name": "key",
+          "javaType": "String"
+        },
+        {
+          "name": "title",
+          "javaType": "String"
+        },
+        {
+          "name": "description",
+          "javaType": "String"
+        },
+        {
+          "name": "threshold",
+          "javaType": "long"
+        },
+        {
+          "name": "current",
+          "javaType": "long"
+        },
+        {
+          "name": "earned",
+          "javaType": "boolean"
+        },
+        {
+          "name": "earnedAt",
+          "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
+      "className": "RecordActivityRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/RecordActivityRequest.java",
+      "sourceHash": "717d256dff3517fdd546d8e954951b8cadcc86376f30c245e9969379f75b2866",
+      "fields": [
+        {
+          "name": "type",
+          "javaType": "String"
+        },
+        {
+          "name": "durationSeconds",
+          "javaType": "Integer"
+        }
+      ]
+    },
+    {
       "className": "AnalyticsEventBatchRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/analytics/api/dto/AnalyticsEventBatchRequest.java",
       "sourceHash": "0813d5ab4854791b9d93063c109e34893fda85c2da26fd92ec685a5d62b7af3c",

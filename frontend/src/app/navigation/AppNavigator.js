@@ -20,6 +20,7 @@ import EditProfileScreen from '../../features/profile/screens/EditProfileScreen'
 import ChangeEmailScreen from '../../features/profile/screens/ChangeEmailScreen';
 import ChangePasswordScreen from '../../features/profile/screens/ChangePasswordScreen';
 import WorkProfileScreen from '../../features/profile/screens/WorkProfileScreen';
+import BadgesScreen from '../../features/badges/screens/BadgesScreen';
 import ReminderScreen from '../../features/reminders/screens/ReminderScreen';
 import OnboardingScreen from '../../features/onboarding/screens/OnboardingScreen';
 import { isOnboarded } from '../../features/onboarding/storage';
@@ -173,6 +174,11 @@ export default function AppNavigator() {
           name="WorkProfile"
           component={WorkProfileScreen}
           options={{ title: '我的画像' }}
+        />
+        <RootStack.Screen
+          name="Badges"
+          component={BadgesScreen}
+          options={{ title: '荣誉徽章' }}
         />
         <RootStack.Screen
           name="Reminders"

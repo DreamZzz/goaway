@@ -398,6 +398,96 @@ export function createUserDTO(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} ActivitySummaryDTO
+ * @property {number|null} water
+ * @property {number|null} smoke
+ * @property {number|null} poopCount
+ * @property {number|null} poopSeconds
+ */
+
+export const ACTIVITY_SUMMARY_DTO_FIELDS = Object.freeze([
+  'water',
+  'smoke',
+  'poopCount',
+  'poopSeconds',
+]);
+
+/**
+ * @param {Partial<ActivitySummaryDTO>} [overrides={}]
+ * @returns {ActivitySummaryDTO}
+ */
+export function createActivitySummaryDTO(overrides = {}) {
+  return {
+    water: null,
+    smoke: null,
+    poopCount: null,
+    poopSeconds: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} BadgeDTO
+ * @property {string|null} key
+ * @property {string|null} title
+ * @property {string|null} description
+ * @property {number|null} threshold
+ * @property {number|null} current
+ * @property {boolean|null} earned
+ * @property {string|null} earnedAt
+ */
+
+export const BADGE_DTO_FIELDS = Object.freeze([
+  'key',
+  'title',
+  'description',
+  'threshold',
+  'current',
+  'earned',
+  'earnedAt',
+]);
+
+/**
+ * @param {Partial<BadgeDTO>} [overrides={}]
+ * @returns {BadgeDTO}
+ */
+export function createBadgeDTO(overrides = {}) {
+  return {
+    key: null,
+    title: null,
+    description: null,
+    threshold: null,
+    current: null,
+    earned: null,
+    earnedAt: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} RecordActivityRequest
+ * @property {string|null} type
+ * @property {number|null} durationSeconds
+ */
+
+export const RECORD_ACTIVITY_REQUEST_FIELDS = Object.freeze([
+  'type',
+  'durationSeconds',
+]);
+
+/**
+ * @param {Partial<RecordActivityRequest>} [overrides={}]
+ * @returns {RecordActivityRequest}
+ */
+export function createRecordActivityRequest(overrides = {}) {
+  return {
+    type: null,
+    durationSeconds: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} AnalyticsEventBatchRequest
  * @property {Array<AnalyticsEventRequest>} events
  */
@@ -957,6 +1047,9 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'SmsCodeRequest',
   'SmsLoginRequest',
   'UserDTO',
+  'ActivitySummaryDTO',
+  'BadgeDTO',
+  'RecordActivityRequest',
   'AnalyticsEventBatchRequest',
   'AnalyticsEventRequest',
   'CheckinSummaryDTO',
@@ -993,6 +1086,9 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   SmsCodeRequest: createSmsCodeRequest,
   SmsLoginRequest: createSmsLoginRequest,
   UserDTO: createUserDTO,
+  ActivitySummaryDTO: createActivitySummaryDTO,
+  BadgeDTO: createBadgeDTO,
+  RecordActivityRequest: createRecordActivityRequest,
   AnalyticsEventBatchRequest: createAnalyticsEventBatchRequest,
   AnalyticsEventRequest: createAnalyticsEventRequest,
   CheckinSummaryDTO: createCheckinSummaryDTO,

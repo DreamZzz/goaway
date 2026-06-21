@@ -105,6 +105,12 @@ const ProfileScreen = ({ navigation }) => {
             detail: '同城 / 同行 / 同工种',
             onPress: () => navigation.navigate('WorkProfile'),
           },
+          {
+            icon: 'medal-outline',
+            label: '荣誉徽章',
+            detail: '单次 / 累计成就',
+            onPress: () => navigation.navigate('Badges'),
+          },
         ]}
       />
 

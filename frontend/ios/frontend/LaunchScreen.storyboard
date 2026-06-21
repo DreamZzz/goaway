@@ -16,11 +16,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchSplash" translatesAutoresizingMaskIntoConstraints="NO" id="9eI-fT-GQm">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchSplash" translatesAutoresizingMaskIntoConstraints="NO" id="9eI-fT-GQm">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.96470588235294119" green="0.5725490196078431" blue="0.14901960784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="1" green="0.969" blue="0.984" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="9eI-fT-GQm" secondAttribute="trailing" id="1gE-3d-N8X"/>
                             <constraint firstItem="9eI-fT-GQm" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="SLC-uV-T5K"/>
@@ -36,6 +36,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchSplash" width="1024" height="1536"/>
+        <image name="LaunchSplash" width="1290" height="2796"/>
     </resources>
 </document>

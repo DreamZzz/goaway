@@ -258,6 +258,66 @@ public struct UserDTO: Codable, Equatable, Sendable {
     }
 }
 
+public struct ActivitySummaryDTO: Codable, Equatable, Sendable {
+    public var water: Int64?
+    public var smoke: Int64?
+    public var poopCount: Int64?
+    public var poopSeconds: Int64?
+
+    public init(
+        water: Int64? = nil,
+        smoke: Int64? = nil,
+        poopCount: Int64? = nil,
+        poopSeconds: Int64? = nil
+    ) {
+        self.water = water
+        self.smoke = smoke
+        self.poopCount = poopCount
+        self.poopSeconds = poopSeconds
+    }
+}
+
+public struct BadgeDTO: Codable, Equatable, Sendable {
+    public var key: String?
+    public var title: String?
+    public var description: String?
+    public var threshold: Int64?
+    public var current: Int64?
+    public var earned: Bool?
+    public var earnedAt: String?
+
+    public init(
+        key: String? = nil,
+        title: String? = nil,
+        description: String? = nil,
+        threshold: Int64? = nil,
+        current: Int64? = nil,
+        earned: Bool? = nil,
+        earnedAt: String? = nil
+    ) {
+        self.key = key
+        self.title = title
+        self.description = description
+        self.threshold = threshold
+        self.current = current
+        self.earned = earned
+        self.earnedAt = earnedAt
+    }
+}
+
+public struct RecordActivityRequest: Codable, Equatable, Sendable {
+    public var type: String?
+    public var durationSeconds: Int?
+
+    public init(
+        type: String? = nil,
+        durationSeconds: Int? = nil
+    ) {
+        self.type = type
+        self.durationSeconds = durationSeconds
+    }
+}
+
 public struct AnalyticsEventBatchRequest: Codable, Equatable, Sendable {
     public var events: [AnalyticsEventRequest]?
 

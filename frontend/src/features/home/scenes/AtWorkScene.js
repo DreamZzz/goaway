@@ -5,6 +5,7 @@ import GIcon, { Mascot } from '../../../shared/components/Icon';
 import { useAuth } from '../../../app/providers/AuthContext';
 import { fishingAPI } from '../../fishing/api';
 import { readSideTools, bumpSideTool, addPoopSession } from '../../fishing/sideTools';
+import { activityAPI } from '../../activity/api';
 import { computeWorkDashboard, formatMoney, formatDuration } from '../../checkin/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
@@ -40,7 +41,16 @@ const AtWorkScene = ({ navigation, settings }) => {
     fishingAPI.summary().then((r) => setSummary(r.data)).catch(() => {});
   }, [isAuthenticated]);
 
-  useEffect(() => { loadSummary(); readSideTools().then(setSide); }, [loadSummary]);
+  // 登录态读服务器今日汇总；游客读本地
+  const loadSide = useCallback(() => {
+    if (isAuthenticated) {
+      activityAPI.summary().then((r) => setSide(r.data)).catch(() => {});
+    } else {
+      readSideTools().then(setSide);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => { loadSummary(); loadSide(); }, [loadSummary, loadSide]);
 
   // 上报已累计的整秒（与上次上报的差量）
   const reportElapsed = useCallback(() => {
@@ -67,16 +77,26 @@ const AtWorkScene = ({ navigation, settings }) => {
     return () => {
       clearInterval(tickRef.current);
       sub.remove();
-      reportElapsed(); // 离开页面结算
+      reportElapsed(); // 离开页面结算（日累计）
+      // 单次摸鱼事件级落库（≥30s 才记，供「单次最长摸鱼」榜与徽章）
+      const total = Math.floor((Date.now() - startRef.current) / 1000);
+      if (isAuthenticated && total >= 30) {
+        activityAPI.record('FISH', total).catch(() => {});
+      }
     };
-  }, [reportElapsed]);
+  }, [reportElapsed, isAuthenticated]);
 
   const togglePoop = () => {
     if (pooping) {
       clearInterval(poopTickRef.current);
-      const secs = (Date.now() - poopStartRef.current) / 1000;
+      const secs = Math.floor((Date.now() - poopStartRef.current) / 1000);
       setPooping(false);
-      addPoopSession(secs).then(setSide);
+      setSide((s) => ({ ...s, poopCount: (s.poopCount || 0) + 1, poopSeconds: (s.poopSeconds || 0) + secs }));
+      if (isAuthenticated) {
+        activityAPI.record('POOP', secs).catch(() => {});
+      } else {
+        addPoopSession(secs);
+      }
     } else {
       poopStartRef.current = Date.now();
       setPoopElapsed(0);
@@ -88,7 +108,14 @@ const AtWorkScene = ({ navigation, settings }) => {
   };
   useEffect(() => () => clearInterval(poopTickRef.current), []);
 
-  const bump = (key) => () => bumpSideTool(key).then(setSide);
+  const bump = (key) => () => {
+    setSide((s) => ({ ...s, [key]: (s[key] || 0) + 1 })); // 乐观更新
+    if (isAuthenticated) {
+      activityAPI.record(key === 'water' ? 'WATER' : 'SMOKE').catch(() => {});
+    } else {
+      bumpSideTool(key);
+    }
+  };
   const todaySeconds = (summary?.todaySeconds || 0) + (isAuthenticated ? 0 : Math.floor(elapsed));
 
   return (
