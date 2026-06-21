@@ -1,6 +1,7 @@
 package com.goaway.contexts.activity.application;
 
 import com.goaway.contexts.activity.api.dto.ActivitySummaryDTO;
+import com.goaway.contexts.activity.api.dto.BadgeAwardDTO;
 import com.goaway.contexts.activity.api.dto.RecordActivityRequest;
 import com.goaway.contexts.activity.domain.ActivityEvent;
 import com.goaway.contexts.activity.domain.ActivityType;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ActivityService {
@@ -27,8 +29,9 @@ public class ActivityService {
         this.badgeService = badgeService;
     }
 
+    /** 记录动作并返回本次新解锁的勋章档位（供客户端中奖弹窗）。 */
     @Transactional
-    public void record(Long userId, RecordActivityRequest request) {
+    public List<BadgeAwardDTO> record(Long userId, RecordActivityRequest request) {
         ActivityType type;
         try {
             type = ActivityType.valueOf(request.getType().trim().toUpperCase());
@@ -41,7 +44,7 @@ public class ActivityService {
             duration = Math.max(0, Math.min(request.getDurationSeconds(), MAX_DURATION_SECONDS));
         }
         repository.save(new ActivityEvent(userId, type, duration));
-        badgeService.evaluateAndAward(userId);
+        return badgeService.evaluateAndAward(userId);
     }
 
     @Transactional(readOnly = true)

@@ -1,12 +1,15 @@
 package com.goaway.contexts.activity.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goaway.contexts.activity.api.dto.BadgeAwardDTO;
 import com.goaway.contexts.activity.api.dto.BadgeDTO;
+import com.goaway.contexts.activity.api.dto.BadgeSeriesDTO;
+import com.goaway.contexts.activity.api.dto.BadgeTierItemDTO;
+import com.goaway.contexts.activity.api.dto.BadgeWallDTO;
 import com.goaway.contexts.activity.application.rule.RuleEvaluator;
-import com.goaway.contexts.activity.domain.Badge;
 import com.goaway.contexts.activity.domain.BadgeDefinition;
-import com.goaway.contexts.activity.domain.BadgeMetric;
-import com.goaway.contexts.activity.domain.ActivityType;
+import com.goaway.contexts.activity.domain.BadgeSeries;
+import com.goaway.contexts.activity.domain.BadgeTier;
 import com.goaway.contexts.activity.domain.UserBadge;
 import com.goaway.contexts.activity.domain.rule.Condition;
 import com.goaway.contexts.activity.domain.rule.Expr;
@@ -20,11 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class BadgeService {
@@ -47,19 +52,7 @@ public class BadgeService {
         this.objectMapper = objectMapper;
     }
 
-    /** 内置勋章指标（旧 BadgeMetric 枚举口径）。 */
-    private Map<BadgeMetric, Long> computeMetrics(Long userId) {
-        Map<BadgeMetric, Long> m = new EnumMap<>(BadgeMetric.class);
-        m.put(BadgeMetric.FISH_MAX_SECONDS, activityRepo.maxDurationByUserIdAndType(userId, ActivityType.FISH));
-        m.put(BadgeMetric.POOP_MAX_SECONDS, activityRepo.maxDurationByUserIdAndType(userId, ActivityType.POOP));
-        m.put(BadgeMetric.FISH_TOTAL_SECONDS, activityRepo.sumDurationByUserIdAndType(userId, ActivityType.FISH));
-        m.put(BadgeMetric.WATER_TOTAL_COUNT, activityRepo.countByUserIdAndType(userId, ActivityType.WATER));
-        m.put(BadgeMetric.SMOKE_TOTAL_COUNT, activityRepo.countByUserIdAndType(userId, ActivityType.SMOKE));
-        m.put(BadgeMetric.POOP_TOTAL_COUNT, activityRepo.countByUserIdAndType(userId, ActivityType.POOP));
-        return m;
-    }
-
-    /** 规则引擎指标快照（按 Metric 目录 key），供配置勋章/校验用。 */
+    /** 规则引擎指标快照（按 Metric 目录 key 聚合 activity_events）。 */
     private Map<String, Long> metricSnapshot(Long userId) {
         Map<String, Long> snap = new HashMap<>();
         for (Metric m : Metric.values()) {
@@ -73,67 +66,126 @@ public class BadgeService {
         return snap;
     }
 
-    /** 评估并发放新解锁的徽章（内置 + 配置；幂等）。返回本次新解锁的 key。 */
-    @Transactional
-    public List<String> evaluateAndAward(Long userId) {
-        List<String> newly = new ArrayList<>();
-        // 内置
-        Map<BadgeMetric, Long> metrics = computeMetrics(userId);
-        for (Badge badge : Badge.values()) {
-            long current = metrics.getOrDefault(badge.getMetric(), 0L);
-            if (current >= badge.getThreshold() && !userBadgeRepo.existsByUserIdAndBadgeKey(userId, badge.getKey())) {
-                userBadgeRepo.save(new UserBadge(userId, badge.getKey()));
-                newly.add(badge.getKey());
-            }
-        }
-        // 配置
-        Map<String, Long> snap = metricSnapshot(userId);
-        for (BadgeDefinition def : badgeDefRepo.findByEnabledTrueOrderBySortOrderAscIdAsc()) {
-            try {
-                Rule rule = objectMapper.readValue(def.getRuleJson(), Rule.class);
-                if (ruleEvaluator.evalRule(rule, snap)
-                        && !userBadgeRepo.existsByUserIdAndBadgeKey(userId, def.getKey())) {
-                    userBadgeRepo.save(new UserBadge(userId, def.getKey()));
-                    newly.add(def.getKey());
-                }
-            } catch (Exception e) {
-                log.warn("跳过配置勋章 {}（规则解析/求值失败）: {}", def.getKey(), e.getMessage());
-            }
-        }
-        return newly;
+    private Set<String> earnedKeys(Long userId) {
+        Set<String> s = new HashSet<>();
+        for (UserBadge ub : userBadgeRepo.findByUserId(userId)) s.add(ub.getBadgeKey());
+        return s;
     }
 
-    /** 徽章墙：内置 + 配置勋章（已得高亮 + 未得进度）。 */
+    /**
+     * 评估并发放新解锁档位（内置系列 + 配置勋章；幂等）。
+     * 系列：跨过的每档都落库（保留各档获得日期），但每系列只返回「最高新档」用于弹窗，避免连弹。
+     */
     @Transactional
-    public List<BadgeDTO> listBadges(Long userId) {
-        evaluateAndAward(userId);
-        Map<BadgeMetric, Long> metrics = computeMetrics(userId);
-        Map<String, java.time.LocalDateTime> earned = new HashMap<>();
-        for (UserBadge ub : userBadgeRepo.findByUserId(userId)) {
-            earned.put(ub.getBadgeKey(), ub.getEarnedAt());
-        }
-        List<BadgeDTO> result = new ArrayList<>();
-        for (Badge badge : Badge.values()) {
-            long current = metrics.getOrDefault(badge.getMetric(), 0L);
-            boolean isEarned = earned.containsKey(badge.getKey());
-            double progress = badge.getThreshold() <= 0 ? 1.0
-                    : Math.min(1.0, (double) current / badge.getThreshold());
-            result.add(new BadgeDTO(badge, current, isEarned,
-                    isEarned ? earned.get(badge.getKey()) : null, progress));
-        }
-        // 配置勋章
+    public List<BadgeAwardDTO> evaluateAndAward(Long userId) {
         Map<String, Long> snap = metricSnapshot(userId);
-        for (BadgeDefinition def : badgeDefRepo.findByEnabledTrueOrderBySortOrderAscIdAsc()) {
-            boolean isEarned = earned.containsKey(def.getKey());
-            result.add(buildConfigBadgeDTO(def, snap, isEarned,
-                    isEarned ? earned.get(def.getKey()) : null));
+        Set<String> owned = earnedKeys(userId);
+        List<BadgeAwardDTO> awards = new ArrayList<>();
+
+        for (BadgeSeries series : BadgeSeries.values()) {
+            long value = snap.getOrDefault(series.getMetric().getKey(), 0L);
+            boolean hadBefore = ownedAnyTier(owned, series);
+            BadgeAwardDTO best = null;
+            for (BadgeTier tier : BadgeTier.ASCENDING) {
+                if (value < series.thresholdOf(tier)) break;        // 阈值递增，后面更高也不满足
+                String key = series.badgeKey(tier);
+                if (owned.contains(key)) continue;
+                UserBadge saved = userBadgeRepo.save(new UserBadge(userId, key));
+                owned.add(key);
+                best = new BadgeAwardDTO(series.getKey(), series.getTitle(), series.getIcon(),
+                        tier.name(), tier.getLabel(), tier.getOrder(), tier.getColorKey(),
+                        series.thresholdOf(tier), series.getMetric().getUnit(),
+                        saved.getEarnedAt(), hadBefore); // 之前有过该系列 → 晋级
+            }
+            if (best != null) awards.add(best);
         }
-        return result;
+
+        // 配置勋章（单枚，无档位）
+        for (BadgeDefinition def : badgeDefRepo.findByEnabledTrueOrderBySortOrderAscIdAsc()) {
+            if (owned.contains(def.getKey())) continue;
+            try {
+                Rule rule = objectMapper.readValue(def.getRuleJson(), Rule.class);
+                if (ruleEvaluator.evalRule(rule, snap)) {
+                    UserBadge saved = userBadgeRepo.save(new UserBadge(userId, def.getKey()));
+                    owned.add(def.getKey());
+                    awards.add(new BadgeAwardDTO(def.getKey(), def.getTitle(),
+                            def.getIcon() == null ? "trophy" : def.getIcon(),
+                            "", "", 0, "lav", 0, "count", saved.getEarnedAt(), false));
+                }
+            } catch (Exception e) {
+                log.warn("跳过配置勋章 {}（解析/求值失败）: {}", def.getKey(), e.getMessage());
+            }
+        }
+        return awards;
+    }
+
+    private boolean ownedAnyTier(Set<String> owned, BadgeSeries series) {
+        for (BadgeTier tier : BadgeTier.ASCENDING) {
+            if (owned.contains(series.badgeKey(tier))) return true;
+        }
+        return false;
+    }
+
+    /** 勋章墙：系列（档位/晋级进度）+ 配置勋章 extras。 */
+    @Transactional
+    public BadgeWallDTO listWall(Long userId) {
+        evaluateAndAward(userId); // 懒补发，保证展示一致
+        Map<String, Long> snap = metricSnapshot(userId);
+        Map<String, LocalDateTime> earned = new HashMap<>();
+        for (UserBadge ub : userBadgeRepo.findByUserId(userId)) earned.put(ub.getBadgeKey(), ub.getEarnedAt());
+
+        List<BadgeSeriesDTO> seriesList = new ArrayList<>();
+        for (BadgeSeries series : BadgeSeries.values()) {
+            long value = snap.getOrDefault(series.getMetric().getKey(), 0L);
+            BadgeSeriesDTO dto = new BadgeSeriesDTO();
+            dto.setSeriesKey(series.getKey());
+            dto.setTitle(series.getTitle());
+            dto.setIcon(series.getIcon());
+            dto.setUnit(series.getMetric().getUnit());
+            dto.setCurrent(value);
+
+            List<BadgeTierItemDTO> tiers = new ArrayList<>();
+            BadgeTier currentTier = null;
+            LocalDateTime currentEarnedAt = null;
+            BadgeTier nextTier = null;
+            for (BadgeTier tier : BadgeTier.ASCENDING) {
+                String key = series.badgeKey(tier);
+                boolean isEarned = earned.containsKey(key);
+                LocalDateTime at = earned.get(key);
+                tiers.add(new BadgeTierItemDTO(tier.name(), tier.getLabel(), tier.getColorKey(),
+                        series.thresholdOf(tier), isEarned, at));
+                if (isEarned) { currentTier = tier; currentEarnedAt = at; }
+                else if (nextTier == null) { nextTier = tier; }
+            }
+            dto.setTiers(tiers);
+            dto.setCurrentTier(currentTier == null ? null : currentTier.name());
+            dto.setCurrentTierLabel(currentTier == null ? null : currentTier.getLabel());
+            dto.setCurrentTierOrder(currentTier == null ? -1 : currentTier.getOrder());
+            dto.setCurrentColorKey(currentTier == null ? null : currentTier.getColorKey());
+            dto.setCurrentEarnedAt(currentEarnedAt);
+            if (nextTier == null) {
+                dto.setNextTierLabel(null);
+                dto.setNextThreshold(0);
+                dto.setProgressToNext(1.0);
+            } else {
+                long nt = series.thresholdOf(nextTier);
+                dto.setNextTierLabel(nextTier.getLabel());
+                dto.setNextThreshold(nt);
+                dto.setProgressToNext(nt <= 0 ? 1.0 : Math.min(1.0, (double) value / nt));
+            }
+            seriesList.add(dto);
+        }
+
+        List<BadgeDTO> extras = new ArrayList<>();
+        for (BadgeDefinition def : badgeDefRepo.findByEnabledTrueOrderBySortOrderAscIdAsc()) {
+            extras.add(buildConfigBadgeDTO(def, snap, earned.containsKey(def.getKey()), earned.get(def.getKey())));
+        }
+        return new BadgeWallDTO(seriesList, extras);
     }
 
     /** 配置勋章 DTO：尽量从首个「指标 ≥/> 常量」条件推断进度，否则按是否解锁给 0/1。 */
     private BadgeDTO buildConfigBadgeDTO(BadgeDefinition def, Map<String, Long> snap,
-                                         boolean earned, java.time.LocalDateTime earnedAt) {
+                                         boolean earned, LocalDateTime earnedAt) {
         long current = 0;
         long threshold = 0;
         String unit = "count";
@@ -154,7 +206,7 @@ public class BadgeService {
                 }
             }
         } catch (Exception ignored) {
-            // 复杂规则无法简单推断进度，保留 earned ? 1 : 0
+            // 复杂规则不推断进度
         }
         return new BadgeDTO(def.getKey(), def.getTitle(), def.getDescription(),
                 def.getKind() == null ? "CUMULATIVE" : def.getKind(),

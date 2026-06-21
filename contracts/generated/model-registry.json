@@ -407,9 +407,48 @@
       ]
     },
     {
+      "className": "BadgeAwardDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeAwardDTO.java",
+      "sourceHash": "8d6f34d1bf97d1a1e105bbf6f3ec7b001f7bfd7527646473e593bf4036a72976",
+      "fields": [
+        {
+          "name": "seriesKey",
+          "javaType": "String"
+        },
+        {
+          "name": "seriesTitle",
+          "javaType": "String"
+        },
+        {
+          "name": "icon",
+          "javaType": "String"
+        },
+        {
+          "name": "tierOrder",
+          "javaType": "int"
+        },
+        {
+          "name": "colorKey",
+          "javaType": "String"
+        },
+        {
+          "name": "threshold",
+          "javaType": "long"
+        },
+        {
+          "name": "earnedAt",
+          "javaType": "LocalDateTime"
+        },
+        {
+          "name": "promotion",
+          "javaType": "boolean"
+        }
+      ]
+    },
+    {
       "className": "BadgeDTO",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeDTO.java",
-      "sourceHash": "4938efca28ae9b7f5c3425e94196295ca9941829ec45a6a6b26448aba1cb10d9",
+      "sourceHash": "49f79ec8fbc65aaf99a1e2e580215efdc4644e032ebf38cc13c0c0547f41b0fc",
       "fields": [
         {
           "name": "key",
@@ -438,6 +477,79 @@
         {
           "name": "earnedAt",
           "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
+      "className": "BadgeSeriesDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeSeriesDTO.java",
+      "sourceHash": "14b51cb27fe8b15f4f8f96b187c9153252cd99c040aa31991648733ec42d5a48",
+      "fields": [
+        {
+          "name": "seriesKey",
+          "javaType": "String"
+        },
+        {
+          "name": "title",
+          "javaType": "String"
+        },
+        {
+          "name": "icon",
+          "javaType": "String"
+        },
+        {
+          "name": "currentTierLabel",
+          "javaType": "String"
+        },
+        {
+          "name": "currentColorKey",
+          "javaType": "String"
+        },
+        {
+          "name": "currentEarnedAt",
+          "javaType": "LocalDateTime"
+        },
+        {
+          "name": "tiers",
+          "javaType": "List<BadgeTierItemDTO>"
+        }
+      ]
+    },
+    {
+      "className": "BadgeTierItemDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeTierItemDTO.java",
+      "sourceHash": "9fb6121a78e708856196f981d5ff0f1a9fc05a8cd19b0d8f9adf2dc8cd8a6a01",
+      "fields": [
+        {
+          "name": "colorKey",
+          "javaType": "String"
+        },
+        {
+          "name": "threshold",
+          "javaType": "long"
+        },
+        {
+          "name": "earned",
+          "javaType": "boolean"
+        },
+        {
+          "name": "earnedAt",
+          "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
+      "className": "BadgeWallDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/activity/api/dto/BadgeWallDTO.java",
+      "sourceHash": "08fd9b9bc4ed47a1fd0df11731aeadcd4d9252f83511006cafac5472bcf91d39",
+      "fields": [
+        {
+          "name": "series",
+          "javaType": "List<BadgeSeriesDTO>"
+        },
+        {
+          "name": "extras",
+          "javaType": "List<BadgeDTO>"
         }
       ]
     },

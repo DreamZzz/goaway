@@ -427,6 +427,47 @@ export function createActivitySummaryDTO(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} BadgeAwardDTO
+ * @property {string|null} seriesKey
+ * @property {string|null} seriesTitle
+ * @property {string|null} icon
+ * @property {number|null} tierOrder
+ * @property {string|null} colorKey
+ * @property {number|null} threshold
+ * @property {string|null} earnedAt
+ * @property {boolean|null} promotion
+ */
+
+export const BADGE_AWARD_DTO_FIELDS = Object.freeze([
+  'seriesKey',
+  'seriesTitle',
+  'icon',
+  'tierOrder',
+  'colorKey',
+  'threshold',
+  'earnedAt',
+  'promotion',
+]);
+
+/**
+ * @param {Partial<BadgeAwardDTO>} [overrides={}]
+ * @returns {BadgeAwardDTO}
+ */
+export function createBadgeAwardDTO(overrides = {}) {
+  return {
+    seriesKey: null,
+    seriesTitle: null,
+    icon: null,
+    tierOrder: null,
+    colorKey: null,
+    threshold: null,
+    earnedAt: null,
+    promotion: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} BadgeDTO
  * @property {string|null} key
  * @property {string|null} title
@@ -460,6 +501,96 @@ export function createBadgeDTO(overrides = {}) {
     current: null,
     earned: null,
     earnedAt: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} BadgeSeriesDTO
+ * @property {string|null} seriesKey
+ * @property {string|null} title
+ * @property {string|null} icon
+ * @property {string|null} currentTierLabel
+ * @property {string|null} currentColorKey
+ * @property {string|null} currentEarnedAt
+ * @property {Array<BadgeTierItemDTO>} tiers
+ */
+
+export const BADGE_SERIES_DTO_FIELDS = Object.freeze([
+  'seriesKey',
+  'title',
+  'icon',
+  'currentTierLabel',
+  'currentColorKey',
+  'currentEarnedAt',
+  'tiers',
+]);
+
+/**
+ * @param {Partial<BadgeSeriesDTO>} [overrides={}]
+ * @returns {BadgeSeriesDTO}
+ */
+export function createBadgeSeriesDTO(overrides = {}) {
+  return {
+    seriesKey: null,
+    title: null,
+    icon: null,
+    currentTierLabel: null,
+    currentColorKey: null,
+    currentEarnedAt: null,
+    tiers: [],
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} BadgeTierItemDTO
+ * @property {string|null} colorKey
+ * @property {number|null} threshold
+ * @property {boolean|null} earned
+ * @property {string|null} earnedAt
+ */
+
+export const BADGE_TIER_ITEM_DTO_FIELDS = Object.freeze([
+  'colorKey',
+  'threshold',
+  'earned',
+  'earnedAt',
+]);
+
+/**
+ * @param {Partial<BadgeTierItemDTO>} [overrides={}]
+ * @returns {BadgeTierItemDTO}
+ */
+export function createBadgeTierItemDTO(overrides = {}) {
+  return {
+    colorKey: null,
+    threshold: null,
+    earned: null,
+    earnedAt: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} BadgeWallDTO
+ * @property {Array<BadgeSeriesDTO>} series
+ * @property {Array<BadgeDTO>} extras
+ */
+
+export const BADGE_WALL_DTO_FIELDS = Object.freeze([
+  'series',
+  'extras',
+]);
+
+/**
+ * @param {Partial<BadgeWallDTO>} [overrides={}]
+ * @returns {BadgeWallDTO}
+ */
+export function createBadgeWallDTO(overrides = {}) {
+  return {
+    series: [],
+    extras: [],
     ...overrides,
   };
 }
@@ -1071,7 +1202,11 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'SmsLoginRequest',
   'UserDTO',
   'ActivitySummaryDTO',
+  'BadgeAwardDTO',
   'BadgeDTO',
+  'BadgeSeriesDTO',
+  'BadgeTierItemDTO',
+  'BadgeWallDTO',
   'RecordActivityRequest',
   'AnalyticsEventBatchRequest',
   'AnalyticsEventRequest',
@@ -1111,7 +1246,11 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   SmsLoginRequest: createSmsLoginRequest,
   UserDTO: createUserDTO,
   ActivitySummaryDTO: createActivitySummaryDTO,
+  BadgeAwardDTO: createBadgeAwardDTO,
   BadgeDTO: createBadgeDTO,
+  BadgeSeriesDTO: createBadgeSeriesDTO,
+  BadgeTierItemDTO: createBadgeTierItemDTO,
+  BadgeWallDTO: createBadgeWallDTO,
   RecordActivityRequest: createRecordActivityRequest,
   AnalyticsEventBatchRequest: createAnalyticsEventBatchRequest,
   AnalyticsEventRequest: createAnalyticsEventRequest,

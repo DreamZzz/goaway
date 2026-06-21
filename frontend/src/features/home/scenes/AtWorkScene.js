@@ -6,6 +6,7 @@ import { useAuth } from '../../../app/providers/AuthContext';
 import { fishingAPI } from '../../fishing/api';
 import { readSideTools, bumpSideTool, addPoopSession } from '../../fishing/sideTools';
 import { activityAPI } from '../../activity/api';
+import { useCelebration } from '../../../app/providers/BadgeCelebrationContext';
 import { computeWorkDashboard, formatMoney, formatDuration } from '../../checkin/utils';
 import { colors, radius, spacing, shadows } from '../../../shared/theme';
 
@@ -20,6 +21,7 @@ const formatStopwatch = (sec) => {
 
 const AtWorkScene = ({ navigation, settings }) => {
   const { isAuthenticated } = useAuth();
+  const { celebrate } = useCelebration();
   const perSecond = computeWorkDashboard(settings).perSecond;
 
   const [elapsed, setElapsed] = useState(0);
@@ -81,10 +83,10 @@ const AtWorkScene = ({ navigation, settings }) => {
       // 单次摸鱼事件级落库（≥30s 才记，供「单次最长摸鱼」榜与徽章）
       const total = Math.floor((Date.now() - startRef.current) / 1000);
       if (isAuthenticated && total >= 30) {
-        activityAPI.record('FISH', total).catch(() => {});
+        activityAPI.record('FISH', total).then((r) => celebrate(r.data)).catch(() => {});
       }
     };
-  }, [reportElapsed, isAuthenticated]);
+  }, [reportElapsed, isAuthenticated, celebrate]);
 
   const togglePoop = () => {
     if (pooping) {
@@ -93,7 +95,7 @@ const AtWorkScene = ({ navigation, settings }) => {
       setPooping(false);
       setSide((s) => ({ ...s, poopCount: (s.poopCount || 0) + 1, poopSeconds: (s.poopSeconds || 0) + secs }));
       if (isAuthenticated) {
-        activityAPI.record('POOP', secs).catch(() => {});
+        activityAPI.record('POOP', secs).then((r) => celebrate(r.data)).catch(() => {});
       } else {
         addPoopSession(secs);
       }
@@ -111,7 +113,7 @@ const AtWorkScene = ({ navigation, settings }) => {
   const bump = (key) => () => {
     setSide((s) => ({ ...s, [key]: (s[key] || 0) + 1 })); // 乐观更新
     if (isAuthenticated) {
-      activityAPI.record(key === 'water' ? 'WATER' : 'SMOKE').catch(() => {});
+      activityAPI.record(key === 'water' ? 'WATER' : 'SMOKE').then((r) => celebrate(r.data)).catch(() => {});
     } else {
       bumpSideTool(key);
     }

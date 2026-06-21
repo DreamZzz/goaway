@@ -20,12 +20,12 @@ public class ActivityController {
         this.currentUserService = currentUserService;
     }
 
-    /** 记录一次离散动作（喝水/抽烟/拉屎），异步基础数据。 */
+    /** 记录一次离散动作（喝水/抽烟/拉屎/摸鱼），返回本次新解锁的勋章档位（中奖弹窗用）。 */
     @PostMapping("/events")
-    public ResponseEntity<Void> record(@Valid @RequestBody RecordActivityRequest request) {
+    public ResponseEntity<java.util.List<com.goaway.contexts.activity.api.dto.BadgeAwardDTO>> record(
+            @Valid @RequestBody RecordActivityRequest request) {
         Long userId = currentUserService.requireRealUserId();
-        activityService.record(userId, request);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok(activityService.record(userId, request));
     }
 
     @GetMapping("/summary")

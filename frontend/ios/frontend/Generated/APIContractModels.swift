@@ -277,6 +277,37 @@ public struct ActivitySummaryDTO: Codable, Equatable, Sendable {
     }
 }
 
+public struct BadgeAwardDTO: Codable, Equatable, Sendable {
+    public var seriesKey: String?
+    public var seriesTitle: String?
+    public var icon: String?
+    public var tierOrder: Int?
+    public var colorKey: String?
+    public var threshold: Int64?
+    public var earnedAt: String?
+    public var promotion: Bool?
+
+    public init(
+        seriesKey: String? = nil,
+        seriesTitle: String? = nil,
+        icon: String? = nil,
+        tierOrder: Int? = nil,
+        colorKey: String? = nil,
+        threshold: Int64? = nil,
+        earnedAt: String? = nil,
+        promotion: Bool? = nil
+    ) {
+        self.seriesKey = seriesKey
+        self.seriesTitle = seriesTitle
+        self.icon = icon
+        self.tierOrder = tierOrder
+        self.colorKey = colorKey
+        self.threshold = threshold
+        self.earnedAt = earnedAt
+        self.promotion = promotion
+    }
+}
+
 public struct BadgeDTO: Codable, Equatable, Sendable {
     public var key: String?
     public var title: String?
@@ -302,6 +333,66 @@ public struct BadgeDTO: Codable, Equatable, Sendable {
         self.current = current
         self.earned = earned
         self.earnedAt = earnedAt
+    }
+}
+
+public struct BadgeSeriesDTO: Codable, Equatable, Sendable {
+    public var seriesKey: String?
+    public var title: String?
+    public var icon: String?
+    public var currentTierLabel: String?
+    public var currentColorKey: String?
+    public var currentEarnedAt: String?
+    public var tiers: [BadgeTierItemDTO]?
+
+    public init(
+        seriesKey: String? = nil,
+        title: String? = nil,
+        icon: String? = nil,
+        currentTierLabel: String? = nil,
+        currentColorKey: String? = nil,
+        currentEarnedAt: String? = nil,
+        tiers: [BadgeTierItemDTO]? = nil
+    ) {
+        self.seriesKey = seriesKey
+        self.title = title
+        self.icon = icon
+        self.currentTierLabel = currentTierLabel
+        self.currentColorKey = currentColorKey
+        self.currentEarnedAt = currentEarnedAt
+        self.tiers = tiers
+    }
+}
+
+public struct BadgeTierItemDTO: Codable, Equatable, Sendable {
+    public var colorKey: String?
+    public var threshold: Int64?
+    public var earned: Bool?
+    public var earnedAt: String?
+
+    public init(
+        colorKey: String? = nil,
+        threshold: Int64? = nil,
+        earned: Bool? = nil,
+        earnedAt: String? = nil
+    ) {
+        self.colorKey = colorKey
+        self.threshold = threshold
+        self.earned = earned
+        self.earnedAt = earnedAt
+    }
+}
+
+public struct BadgeWallDTO: Codable, Equatable, Sendable {
+    public var series: [BadgeSeriesDTO]?
+    public var extras: [BadgeDTO]?
+
+    public init(
+        series: [BadgeSeriesDTO]? = nil,
+        extras: [BadgeDTO]? = nil
+    ) {
+        self.series = series
+        self.extras = extras
     }
 }
 
