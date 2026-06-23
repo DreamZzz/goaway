@@ -123,6 +123,12 @@ const ProfileScreen = ({ navigation }) => {
             detail: '喝水 / 久坐 / 下班',
             onPress: () => navigation.navigate('Reminders'),
           },
+          {
+            icon: 'flame-outline',
+            label: '毒舌推送',
+            detail: '让最讨厌的人定时来阴阳你',
+            onPress: () => navigation.navigate('PushSettings'),
+          },
         ]}
       />
 

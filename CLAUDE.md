@@ -67,8 +67,9 @@ memory/     持久上下文笔记
 ### 后端包结构（根包 `com.goaway`）
 
 - **`contexts/`** —— 业务域，每域分 `api → application → domain/infrastructure`。
-  当前域：`account`（游客 token + 手机号/Apple 登录 + JWT）、`media`、`analytics`。
-  **规划新增**：`checkin`（打卡）、`fishing`（摸鱼）、`weekly`（AI 周报）、`mood`（情绪/树洞）、`leaderboard`（匿名榜）。
+  当前域：`account`、`media`、`analytics`、`workprofile`（打工人/最讨厌的人画像）、`checkin`、`fishing`、
+  `weekly`、`mood`、`leaderboard`、`activity`、`admin`、`roleplay`（AI 对线）、
+  `push`（设备 token + 推送偏好 + 活跃水位）、`taunt`（主动毒舌推送：定时/场景/召回触发，千人千面 LLM 生成）。
 - **`platform/`** —— 横切技术关注点：`security`、`config`、`llm`（LlmSceneConfig 场景→模型路由）、provider 抽象。
 - **`shared/`** —— 与域无关的响应 DTO。
 
@@ -85,12 +86,12 @@ memory/     持久上下文笔记
 | 短信登录 | `APP_AUTH_SMS_PROVIDER` | `log` | `aliyun` |
 | 密码找回邮件 | `APP_AUTH_PASSWORD_RESET_PROVIDER` | `log` | `mail` |
 | LLM（周报/毒鸡汤/骂老板） | `APP_LLM_PROVIDER` | `mock` | `openai-compatible`（deepseek） |
-| 推送（喝水/久坐/下班提醒） | `APP_PUSH_PROVIDER` | `log` | `apns` / 阿里云 EMAS |
+| 远程推送（毒舌主动推送等） | `APP_PUSH_PROVIDER` | `log` | `apns`（token 鉴权 .p8，`app.push.apns.*`） |
 | 内容审核（树洞 UGC） | `APP_MODERATION_PROVIDER` | `passthrough` | 阿里云内容安全 |
 | 行为埋点 | `APP_ANALYTICS_PROVIDER` | `log` | `umeng` |
 
-> `app.push.*` 与 `app.moderation.*` 目前仅有配置占位，provider 实现待 Phase 3 落地。
-> LLM 配置键为通用的 `app.llm.openai.*`。
+> `APP_PUSH_PROVIDER` 已落地：`PushProvider` 接口 + `LogPushProvider`（本地）/`ApnsPushProvider`（JDK HttpClient HTTP/2 直连 APNs）。
+> `app.moderation.*` 仍仅有配置占位，待 Phase 3。LLM 配置键为通用的 `app.llm.openai.*`（毒舌推送复用 `GENERAL` 场景）。
 
 ### 前端结构
 

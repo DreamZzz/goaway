@@ -21,6 +21,8 @@
 		D4B7A2C91F3E4D5C8B6A7002 /* MealSpeechPlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B7A2C91F3E4D5C8B6A7001 /* MealSpeechPlaybackSession.swift */; };
 		E2A1B3C4D5E6F70819203002 /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */; };
 		E2A1B3C4D5E6F70819203004 /* LocalNotificationManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */; };
+		E2A1B3C4D5E6F70819203006 /* RemotePushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203005 /* RemotePushManager.swift */; };
+		E2A1B3C4D5E6F70819203008 /* RemotePushManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203007 /* RemotePushManagerBridge.m */; };
 		F748536D2F87F1970057E5D6 /* UmengBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = F748536C2F87F1970057E5D6 /* UmengBootstrap.m */; };
 		F748536E2F87F1970057E5D6 /* UmengAnalyticsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = F748536A2F87F1970057E5D6 /* UmengAnalyticsBridge.m */; };
 /* End PBXBuildFile section */
@@ -43,6 +45,8 @@
 		D4B7A2C91F3E4D5C8B6A7001 /* MealSpeechPlaybackSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MealSpeechPlaybackSession.swift; path = frontend/MealSpeechPlaybackSession.swift; sourceTree = "<group>"; };
 		E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalNotificationManager.swift; path = frontend/LocalNotificationManager.swift; sourceTree = "<group>"; };
 		E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LocalNotificationManagerBridge.m; path = frontend/LocalNotificationManagerBridge.m; sourceTree = "<group>"; };
+		E2A1B3C4D5E6F70819203005 /* RemotePushManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RemotePushManager.swift; path = frontend/RemotePushManager.swift; sourceTree = "<group>"; };
+		E2A1B3C4D5E6F70819203007 /* RemotePushManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RemotePushManagerBridge.m; path = frontend/RemotePushManagerBridge.m; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F748536A2F87F1970057E5D6 /* UmengAnalyticsBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UmengAnalyticsBridge.m; sourceTree = "<group>"; };
 		F748536B2F87F1970057E5D6 /* UmengBootstrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UmengBootstrap.h; sourceTree = "<group>"; };
@@ -75,6 +79,8 @@
 				B6A10C7D2F9A4D5E8C301000 /* ShoppingListShareBridge.m */,
 				E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */,
 				E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */,
+				E2A1B3C4D5E6F70819203005 /* RemotePushManager.swift */,
+				E2A1B3C4D5E6F70819203007 /* RemotePushManagerBridge.m */,
 				8AB3C6B82E0A8C4400D0A111 /* APIContractModels.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -290,6 +296,8 @@
 				B6A10C7D2F9A4D5E8C301001 /* ShoppingListShareBridge.m in Sources */,
 				E2A1B3C4D5E6F70819203002 /* LocalNotificationManager.swift in Sources */,
 				E2A1B3C4D5E6F70819203004 /* LocalNotificationManagerBridge.m in Sources */,
+				E2A1B3C4D5E6F70819203006 /* RemotePushManager.swift in Sources */,
+				E2A1B3C4D5E6F70819203008 /* RemotePushManagerBridge.m in Sources */,
 				F748536D2F87F1970057E5D6 /* UmengBootstrap.m in Sources */,
 				F748536E2F87F1970057E5D6 /* UmengAnalyticsBridge.m in Sources */,
 				8AB3C6B92E0A8C4400D0A111 /* APIContractModels.swift in Sources */,

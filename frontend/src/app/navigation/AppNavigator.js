@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, AppState, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer, DefaultTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,6 +22,8 @@ import ChangePasswordScreen from '../../features/profile/screens/ChangePasswordS
 import WorkProfileScreen from '../../features/profile/screens/WorkProfileScreen';
 import BadgesScreen from '../../features/badges/screens/BadgesScreen';
 import ReminderScreen from '../../features/reminders/screens/ReminderScreen';
+import PushSettingsScreen from '../../features/push/screens/PushSettingsScreen';
+import { setupRemotePush, reportActive } from '../../features/push';
 import OnboardingScreen from '../../features/onboarding/screens/OnboardingScreen';
 import { isOnboarded } from '../../features/onboarding/storage';
 import { hydrateWorkProfile } from '../../features/onboarding/sync';
@@ -136,6 +138,22 @@ export default function AppNavigator() {
     })();
   }, [loading, isAuthenticated]);
 
+  // 登录后：注册远程推送（token 上报 + 通知点击深链进对线），并上报一次活跃
+  useEffect(() => {
+    if (loading || !isAuthenticated) return;
+    const onTap = (payload) => {
+      if (payload && payload.type === 'taunt' && navigationRef.isReady()) {
+        navigationRef.navigate('Roleplay');
+      }
+    };
+    setupRemotePush(onTap);
+    reportActive();
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') reportActive();
+    });
+    return () => sub.remove();
+  }, [loading, isAuthenticated]);
+
   if (loading || !onboardChecked) {
     return <LoadingGate />;
   }
@@ -181,6 +199,11 @@ export default function AppNavigator() {
         <RootStack.Screen
           name="Reminders"
           component={ReminderScreen}
+          options={{ headerShown: false }}
+        />
+        <RootStack.Screen
+          name="PushSettings"
+          component={PushSettingsScreen}
           options={{ headerShown: false }}
         />
         <RootStack.Screen

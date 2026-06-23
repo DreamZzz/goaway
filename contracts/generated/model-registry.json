@@ -739,6 +739,67 @@
       ]
     },
     {
+      "className": "PushPrefDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/push/api/dto/PushPrefDTO.java",
+      "sourceHash": "0bcc83e39ab124d50b9803639137c1c1f81a28ad8d8f0449553225a14b09cf9e",
+      "fields": [
+        {
+          "name": "enabled",
+          "javaType": "boolean"
+        },
+        {
+          "name": "frequency",
+          "javaType": "String"
+        },
+        {
+          "name": "quietStart",
+          "javaType": "Integer"
+        },
+        {
+          "name": "quietEnd",
+          "javaType": "Integer"
+        }
+      ]
+    },
+    {
+      "className": "RegisterDeviceRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/push/api/dto/RegisterDeviceRequest.java",
+      "sourceHash": "08aad2d2c35aac5085d3e5111842a94d7d290f56bf79503258240d6f7199642f",
+      "fields": [
+        {
+          "name": "deviceToken",
+          "javaType": "String"
+        },
+        {
+          "name": "platform",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "UpdatePushPrefRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/push/api/dto/UpdatePushPrefRequest.java",
+      "sourceHash": "34d5c6e90e26b77582f258206dc435d7a483932c1871de4681d56e974facba2b",
+      "fields": [
+        {
+          "name": "enabled",
+          "javaType": "Boolean"
+        },
+        {
+          "name": "frequency",
+          "javaType": "String"
+        },
+        {
+          "name": "quietStart",
+          "javaType": "Integer"
+        },
+        {
+          "name": "quietEnd",
+          "javaType": "Integer"
+        }
+      ]
+    },
+    {
       "className": "RoleplayChatRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayChatRequest.java",
       "sourceHash": "86dbf2846bb26e5604ba5ff34d398580e6385df81a984ba57faee56d3e74ada4",
@@ -792,6 +853,21 @@
         {
           "name": "description",
           "javaType": "String"
+        }
+      ]
+    },
+    {
+      "className": "TauntPreviewDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/taunt/api/dto/TauntPreviewDTO.java",
+      "sourceHash": "cd32009ac8001c7a9e9287a3f26c59ea49226a448d9fdc95c644c745673e5119",
+      "fields": [
+        {
+          "name": "content",
+          "javaType": "String"
+        },
+        {
+          "name": "sent",
+          "javaType": "boolean"
         }
       ]
     },

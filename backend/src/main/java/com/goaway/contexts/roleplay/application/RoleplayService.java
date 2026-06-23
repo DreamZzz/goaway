@@ -2,6 +2,7 @@ package com.goaway.contexts.roleplay.application;
 
 import com.goaway.contexts.roleplay.api.dto.RoleplayChatRequest;
 import com.goaway.contexts.roleplay.api.dto.RoleplayMessage;
+import com.goaway.contexts.roleplay.domain.PersonaPromptBuilder;
 import com.goaway.contexts.roleplay.domain.RoleplayPersona;
 import com.goaway.platform.llm.LlmScene;
 import com.goaway.platform.provider.llm.ChatMessage;
@@ -63,10 +64,7 @@ public class RoleplayService {
     private String resolveSystemPrompt(RoleplayChatRequest request) {
         String custom = request.getCustomPersona();
         if ("custom".equalsIgnoreCase(request.getPersona()) && custom != null && !custom.isBlank()) {
-            return "你在一个解压聊天 App 里扮演「用户最讨厌的一个人」。这个人的身份与特征："
-                    + custom.trim()
-                    + "。请逼真还原 TA 的说话风格、口吻与让人来气的点。"
-                    + RoleplayPersona.COMMON_CONSTRAINTS;
+            return PersonaPromptBuilder.customRoleSetup(custom) + RoleplayPersona.COMMON_CONSTRAINTS;
         }
         return RoleplayPersona.fromCode(request.getPersona())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "未知角色"))

@@ -55,6 +55,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     return true
   }
+
+  // APNs 注册成功：把 device token 转十六进制交给 RemotePushStore，由 JS 上报后端。
+  func application(_ application: UIApplication,
+                   didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    let token = deviceToken.map { String(format: "%02x", $0) }.joined()
+    RemotePushStore.shared.deliverToken(token)
+  }
+
+  func application(_ application: UIApplication,
+                   didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    NSLog("[push] APNs 注册失败: \(error.localizedDescription)")
+  }
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {

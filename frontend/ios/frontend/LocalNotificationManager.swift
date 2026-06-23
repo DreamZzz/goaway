@@ -15,6 +15,12 @@ final class LocalNotificationTapStore: NSObject, UNUserNotificationCenterDelegat
                               didReceive response: UNNotificationResponse,
                               withCompletionHandler completionHandler: @escaping () -> Void) {
     let request = response.notification.request
+    // 远程推送（APNs）的点击交给 RemotePushStore，本地通知走原逻辑。
+    if request.trigger is UNPushNotificationTrigger {
+      RemotePushStore.shared.deliverTap(request.content.userInfo)
+      completionHandler()
+      return
+    }
     let tap: [String: Any] = [
       "id": request.identifier,
       "payload": request.content.userInfo,

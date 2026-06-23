@@ -46,6 +46,8 @@ public enum RoleplayPersona {
     public String displayName() { return displayName; }
     public String emoji() { return emoji; }
     public String description() { return description; }
+    /** 角色设定句（不含对话约束），供主动毒舌推送追加自己的指令。 */
+    public String roleSetup() { return roleSetup; }
 
     /** 通用对话与安全约束，预设角色与自定义角色共用。 */
     public static final String COMMON_CONSTRAINTS =

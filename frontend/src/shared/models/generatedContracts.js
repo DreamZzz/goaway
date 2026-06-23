@@ -864,6 +864,87 @@ export function createSoupDTO(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} PushPrefDTO
+ * @property {boolean|null} enabled
+ * @property {string|null} frequency
+ * @property {number|null} quietStart
+ * @property {number|null} quietEnd
+ */
+
+export const PUSH_PREF_DTO_FIELDS = Object.freeze([
+  'enabled',
+  'frequency',
+  'quietStart',
+  'quietEnd',
+]);
+
+/**
+ * @param {Partial<PushPrefDTO>} [overrides={}]
+ * @returns {PushPrefDTO}
+ */
+export function createPushPrefDTO(overrides = {}) {
+  return {
+    enabled: null,
+    frequency: null,
+    quietStart: null,
+    quietEnd: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} RegisterDeviceRequest
+ * @property {string|null} deviceToken
+ * @property {string|null} platform
+ */
+
+export const REGISTER_DEVICE_REQUEST_FIELDS = Object.freeze([
+  'deviceToken',
+  'platform',
+]);
+
+/**
+ * @param {Partial<RegisterDeviceRequest>} [overrides={}]
+ * @returns {RegisterDeviceRequest}
+ */
+export function createRegisterDeviceRequest(overrides = {}) {
+  return {
+    deviceToken: null,
+    platform: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} UpdatePushPrefRequest
+ * @property {boolean|null} enabled
+ * @property {string|null} frequency
+ * @property {number|null} quietStart
+ * @property {number|null} quietEnd
+ */
+
+export const UPDATE_PUSH_PREF_REQUEST_FIELDS = Object.freeze([
+  'enabled',
+  'frequency',
+  'quietStart',
+  'quietEnd',
+]);
+
+/**
+ * @param {Partial<UpdatePushPrefRequest>} [overrides={}]
+ * @returns {UpdatePushPrefRequest}
+ */
+export function createUpdatePushPrefRequest(overrides = {}) {
+  return {
+    enabled: null,
+    frequency: null,
+    quietStart: null,
+    quietEnd: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} RoleplayChatRequest
  * @property {string|null} persona
  * @property {string|null} customPersona
@@ -937,6 +1018,29 @@ export function createRoleplayPersonaDTO(overrides = {}) {
     name: null,
     emoji: null,
     description: null,
+    ...overrides,
+  };
+}
+
+/**
+ * @typedef {Object} TauntPreviewDTO
+ * @property {string|null} content
+ * @property {boolean|null} sent
+ */
+
+export const TAUNT_PREVIEW_DTO_FIELDS = Object.freeze([
+  'content',
+  'sent',
+]);
+
+/**
+ * @param {Partial<TauntPreviewDTO>} [overrides={}]
+ * @returns {TauntPreviewDTO}
+ */
+export function createTauntPreviewDTO(overrides = {}) {
+  return {
+    content: null,
+    sent: null,
     ...overrides,
   };
 }
@@ -1218,9 +1322,13 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'LeaderboardEntryDTO',
   'FileUploadResponse',
   'SoupDTO',
+  'PushPrefDTO',
+  'RegisterDeviceRequest',
+  'UpdatePushPrefRequest',
   'RoleplayChatRequest',
   'RoleplayMessage',
   'RoleplayPersonaDTO',
+  'TauntPreviewDTO',
   'GenerateWeeklyRequest',
   'WeeklyReportDTO',
   'UpsertWorkProfileRequest',
@@ -1262,9 +1370,13 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   LeaderboardEntryDTO: createLeaderboardEntryDTO,
   FileUploadResponse: createFileUploadResponse,
   SoupDTO: createSoupDTO,
+  PushPrefDTO: createPushPrefDTO,
+  RegisterDeviceRequest: createRegisterDeviceRequest,
+  UpdatePushPrefRequest: createUpdatePushPrefRequest,
   RoleplayChatRequest: createRoleplayChatRequest,
   RoleplayMessage: createRoleplayMessage,
   RoleplayPersonaDTO: createRoleplayPersonaDTO,
+  TauntPreviewDTO: createTauntPreviewDTO,
   GenerateWeeklyRequest: createGenerateWeeklyRequest,
   WeeklyReportDTO: createWeeklyReportDTO,
   UpsertWorkProfileRequest: createUpsertWorkProfileRequest,

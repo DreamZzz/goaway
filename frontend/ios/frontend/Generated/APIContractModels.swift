@@ -554,6 +554,57 @@ public struct SoupDTO: Codable, Equatable, Sendable {
     }
 }
 
+public struct PushPrefDTO: Codable, Equatable, Sendable {
+    public var enabled: Bool?
+    public var frequency: String?
+    public var quietStart: Int?
+    public var quietEnd: Int?
+
+    public init(
+        enabled: Bool? = nil,
+        frequency: String? = nil,
+        quietStart: Int? = nil,
+        quietEnd: Int? = nil
+    ) {
+        self.enabled = enabled
+        self.frequency = frequency
+        self.quietStart = quietStart
+        self.quietEnd = quietEnd
+    }
+}
+
+public struct RegisterDeviceRequest: Codable, Equatable, Sendable {
+    public var deviceToken: String?
+    public var platform: String?
+
+    public init(
+        deviceToken: String? = nil,
+        platform: String? = nil
+    ) {
+        self.deviceToken = deviceToken
+        self.platform = platform
+    }
+}
+
+public struct UpdatePushPrefRequest: Codable, Equatable, Sendable {
+    public var enabled: Bool?
+    public var frequency: String?
+    public var quietStart: Int?
+    public var quietEnd: Int?
+
+    public init(
+        enabled: Bool? = nil,
+        frequency: String? = nil,
+        quietStart: Int? = nil,
+        quietEnd: Int? = nil
+    ) {
+        self.enabled = enabled
+        self.frequency = frequency
+        self.quietStart = quietStart
+        self.quietEnd = quietEnd
+    }
+}
+
 public struct RoleplayChatRequest: Codable, Equatable, Sendable {
     public var persona: String?
     public var customPersona: String?
@@ -599,6 +650,19 @@ public struct RoleplayPersonaDTO: Codable, Equatable, Sendable {
         self.name = name
         self.emoji = emoji
         self.description = description
+    }
+}
+
+public struct TauntPreviewDTO: Codable, Equatable, Sendable {
+    public var content: String?
+    public var sent: Bool?
+
+    public init(
+        content: String? = nil,
+        sent: Bool? = nil
+    ) {
+        self.content = content
+        self.sent = sent
     }
 }
 
