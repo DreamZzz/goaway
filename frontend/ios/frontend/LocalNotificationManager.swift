@@ -36,8 +36,12 @@ final class LocalNotificationTapStore: NSObject, UNUserNotificationCenterDelegat
   func userNotificationCenter(_ center: UNUserNotificationCenter,
                               willPresent notification: UNNotification,
                               withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-    // Meal reminders are redundant while the user is already in the app.
-    completionHandler([])
+    // 远程推送（毒舌）前台也要弹出，方便自测与实时挑衅；本地提醒在 App 内是冗余的，不打扰。
+    if notification.request.trigger is UNPushNotificationTrigger {
+      completionHandler([.banner, .sound, .list])
+    } else {
+      completionHandler([])
+    }
   }
 
   func consumePendingTap() -> [String: Any]? {

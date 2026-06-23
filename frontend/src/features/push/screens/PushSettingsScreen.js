@@ -63,8 +63,12 @@ const PushSettingsScreen = () => {
   const sendTestTaunt = async () => {
     try {
       const r = await apiClient.post('/taunt/test');
-      Alert.alert('已生成', r.data?.content || '（空）',
-        [{ text: r.data?.sent ? '已推送到本机' : '未发送（无设备/权限）' }]);
+      const sent = r.data?.sent;
+      Alert.alert(
+        sent ? '已推送，注意查收通知' : '生成成功但未送达',
+        (r.data?.content || '（空）') +
+          (sent ? '' : '\n\n未送达：可能未注册设备或未允许通知，请确认已开启推送权限'),
+      );
     } catch (e) {
       Alert.alert('失败', '请先登录并开启推送');
     }

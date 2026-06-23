@@ -84,11 +84,12 @@ public class ApnsJwt {
      * 把 JCE 输出的 DER 编码 ECDSA 签名转成 JOSE 要求的定长 R||S（P-256 共 64 字节）。
      */
     static byte[] derToJose(byte[] der) {
-        int offset = 3 + (der[3] & 0xFF);
+        // DER: 0x30 totalLen 0x02 rLen <r…> 0x02 sLen <s…>
         int rLen = der[3] & 0xFF;
-        int sLen = der[offset + 1] & 0xFF;
         int rStart = 4;
-        int sStart = offset + 2;
+        int sLenIdx = 4 + rLen + 1;     // r 字节之后是 0x02(s 标签)，再之后才是 sLen
+        int sLen = der[sLenIdx] & 0xFF;
+        int sStart = sLenIdx + 1;
 
         byte[] out = new byte[64];
         copyFixed(der, rStart, rLen, out, 0);
