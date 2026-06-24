@@ -1023,6 +1023,35 @@ export function createRoleplayPersonaDTO(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} TauntInboxItemDTO
+ * @property {number|null} id
+ * @property {string|null} content
+ * @property {string|null} trigger
+ * @property {string|null} sentAt
+ */
+
+export const TAUNT_INBOX_ITEM_DTO_FIELDS = Object.freeze([
+  'id',
+  'content',
+  'trigger',
+  'sentAt',
+]);
+
+/**
+ * @param {Partial<TauntInboxItemDTO>} [overrides={}]
+ * @returns {TauntInboxItemDTO}
+ */
+export function createTauntInboxItemDTO(overrides = {}) {
+  return {
+    id: null,
+    content: null,
+    trigger: null,
+    sentAt: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} TauntPreviewDTO
  * @property {string|null} content
  * @property {boolean|null} sent
@@ -1328,6 +1357,7 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'RoleplayChatRequest',
   'RoleplayMessage',
   'RoleplayPersonaDTO',
+  'TauntInboxItemDTO',
   'TauntPreviewDTO',
   'GenerateWeeklyRequest',
   'WeeklyReportDTO',
@@ -1376,6 +1406,7 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   RoleplayChatRequest: createRoleplayChatRequest,
   RoleplayMessage: createRoleplayMessage,
   RoleplayPersonaDTO: createRoleplayPersonaDTO,
+  TauntInboxItemDTO: createTauntInboxItemDTO,
   TauntPreviewDTO: createTauntPreviewDTO,
   GenerateWeeklyRequest: createGenerateWeeklyRequest,
   WeeklyReportDTO: createWeeklyReportDTO,

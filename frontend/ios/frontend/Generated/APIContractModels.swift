@@ -653,6 +653,25 @@ public struct RoleplayPersonaDTO: Codable, Equatable, Sendable {
     }
 }
 
+public struct TauntInboxItemDTO: Codable, Equatable, Sendable {
+    public var id: Int64?
+    public var content: String?
+    public var trigger: String?
+    public var sentAt: String?
+
+    public init(
+        id: Int64? = nil,
+        content: String? = nil,
+        trigger: String? = nil,
+        sentAt: String? = nil
+    ) {
+        self.id = id
+        self.content = content
+        self.trigger = trigger
+        self.sentAt = sentAt
+    }
+}
+
 public struct TauntPreviewDTO: Codable, Equatable, Sendable {
     public var content: String?
     public var sent: Bool?

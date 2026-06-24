@@ -9,7 +9,11 @@ import GIcon from '../../shared/components/Icon';
 import { useAuth } from '../providers/AuthContext';
 import HomeScreen from '../../features/home/screens/HomeScreen';
 import WeeklyScreen from '../../features/weekly/screens/WeeklyScreen';
-import RoleplayScreen from '../../features/roleplay/screens/RoleplayScreen';
+import ConversationListScreen from '../../features/roleplay/screens/ConversationListScreen';
+import ChatThreadScreen from '../../features/roleplay/screens/ChatThreadScreen';
+import { syncTauntInbox } from '../../features/roleplay/inboxSync';
+import { HATED_CODE } from '../../features/roleplay/imStore';
+import { useUnread } from '../providers/UnreadContext';
 import LeaderboardScreen from '../../features/leaderboard/screens/LeaderboardScreen';
 import LoginScreen from '../../features/auth/screens/LoginScreen';
 import RegisterScreen from '../../features/auth/screens/RegisterScreen';
@@ -121,6 +125,7 @@ const LoadingGate = () => (
 
 export default function AppNavigator() {
   const { loading, isAuthenticated } = useAuth();
+  const { refreshUnread } = useUnread();
   const insets = useSafeAreaInsets();
   const [onboardChecked, setOnboardChecked] = useState(false);
   const [needOnboarding, setNeedOnboarding] = useState(false);
@@ -138,21 +143,27 @@ export default function AppNavigator() {
     })();
   }, [loading, isAuthenticated]);
 
-  // 登录后：注册远程推送（token 上报 + 通知点击深链进对线），并上报一次活跃
+  // 登录后：注册远程推送 + 上报活跃 + 同步毒舌收件箱（落本地会话）并刷新未读
   useEffect(() => {
     if (loading || !isAuthenticated) return;
+    const syncInbox = () => syncTauntInbox().then(() => refreshUnread());
     const onTap = (payload) => {
-      if (payload && payload.type === 'taunt' && navigationRef.isReady()) {
-        navigationRef.navigate('Roleplay');
+      if (payload && payload.type === 'taunt') {
+        // 先把这条毒舌同步进本地会话，再深链到「最讨厌的人」线程
+        syncTauntInbox().then(() => {
+          refreshUnread();
+          if (navigationRef.isReady()) navigationRef.navigate('ChatThread', { code: HATED_CODE });
+        });
       }
     };
     setupRemotePush(onTap);
     reportActive();
+    syncInbox();
     const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') reportActive();
+      if (state === 'active') { reportActive(); syncInbox(); }
     });
     return () => sub.remove();
-  }, [loading, isAuthenticated]);
+  }, [loading, isAuthenticated, refreshUnread]);
 
   if (loading || !onboardChecked) {
     return <LoadingGate />;
@@ -188,7 +199,12 @@ export default function AppNavigator() {
         />
         <RootStack.Screen
           name="Roleplay"
-          component={RoleplayScreen}
+          component={ConversationListScreen}
+          options={{ headerShown: false }}
+        />
+        <RootStack.Screen
+          name="ChatThread"
+          component={ChatThreadScreen}
           options={{ headerShown: false }}
         />
         <RootStack.Screen

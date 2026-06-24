@@ -857,6 +857,29 @@
       ]
     },
     {
+      "className": "TauntInboxItemDTO",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/taunt/api/dto/TauntInboxItemDTO.java",
+      "sourceHash": "7872686fa8d77ba9543d13a7b6329e991a2c32cede424ae1a5567d095ba213c0",
+      "fields": [
+        {
+          "name": "id",
+          "javaType": "Long"
+        },
+        {
+          "name": "content",
+          "javaType": "String"
+        },
+        {
+          "name": "trigger",
+          "javaType": "String"
+        },
+        {
+          "name": "sentAt",
+          "javaType": "LocalDateTime"
+        }
+      ]
+    },
+    {
       "className": "TauntPreviewDTO",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/taunt/api/dto/TauntPreviewDTO.java",
       "sourceHash": "cd32009ac8001c7a9e9287a3f26c59ea49226a448d9fdc95c644c745673e5119",

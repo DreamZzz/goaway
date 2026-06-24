@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AuthProvider } from './src/app/providers/AuthContext';
 import { BadgeCelebrationProvider } from './src/app/providers/BadgeCelebrationContext';
+import { UnreadProvider } from './src/app/providers/UnreadContext';
 import AppNavigator from './src/app/navigation/AppNavigator';
 import { AnalyticsProvider } from './src/shared/analytics';
 import { readReminderSettings } from './src/features/reminders/storage';
@@ -42,8 +43,10 @@ function App(): React.JSX.Element {
         <AnalyticsProvider>
           <AuthProvider>
             <BadgeCelebrationProvider>
-              <StatusBar barStyle="dark-content" backgroundColor="#FFF8F1" />
-              <AppNavigator />
+              <UnreadProvider>
+                <StatusBar barStyle="dark-content" backgroundColor="#FFF8F1" />
+                <AppNavigator />
+              </UnreadProvider>
             </BadgeCelebrationProvider>
           </AuthProvider>
         </AnalyticsProvider>
