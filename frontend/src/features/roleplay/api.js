@@ -5,6 +5,9 @@ export const roleplayAPI = {
   personas: () => apiClient.get('/roleplay/personas'),
   // 毒舌收件箱增量同步（id 游标）
   tauntInbox: (sinceId = 0) => apiClient.get('/taunt/inbox', { params: { sinceId } }),
+  // 举报 AI 不当回复（对线/毒舌）
+  reportContent: (content, reason = '') =>
+    apiClient.post('/roleplay/report', { content, reason, source: 'roleplay' }),
 };
 
 /**

@@ -800,6 +800,25 @@
       ]
     },
     {
+      "className": "ReportContentRequest",
+      "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/ReportContentRequest.java",
+      "sourceHash": "8e022184b06e6282c8d5c83dc865bfa552340075d6cd41c3fba26d7f7df9502b",
+      "fields": [
+        {
+          "name": "content",
+          "javaType": "String"
+        },
+        {
+          "name": "reason",
+          "javaType": "String"
+        },
+        {
+          "name": "source",
+          "javaType": "String"
+        }
+      ]
+    },
+    {
       "className": "RoleplayChatRequest",
       "sourcePath": "backend/src/main/java/com/goaway/contexts/roleplay/api/dto/RoleplayChatRequest.java",
       "sourceHash": "86dbf2846bb26e5604ba5ff34d398580e6385df81a984ba57faee56d3e74ada4",

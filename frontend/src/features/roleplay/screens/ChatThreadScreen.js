@@ -72,6 +72,25 @@ const ChatThreadScreen = ({ navigation, route }) => {
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
   }, []);
 
+  const reportMessage = (content) => {
+    if (!content || content === '…' || content === '') return;
+    Alert.alert('举报这条回复', '如果这条 AI 回复让你不适或包含不当内容，可举报，我们会跟进处理。', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '举报',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await roleplayAPI.reportContent(content);
+            Alert.alert('已举报', '感谢反馈，我们会尽快处理。');
+          } catch (e) {
+            Alert.alert('举报失败', '请稍后重试');
+          }
+        },
+      },
+    ]);
+  };
+
   const promptLogin = (title) => {
     setStreaming(false);
     setMessages((prev) => prev.filter((m) => m.id !== 'streaming'));
@@ -150,15 +169,26 @@ const ChatThreadScreen = ({ navigation, route }) => {
             <Text style={styles.chatHint}>对它说点什么，开始今天的对线…</Text>
           </View>
         )}
-        {messages.map((m) => (
-          <View key={m.id} style={[styles.bubbleRow, m.role === 'user' ? styles.rowRight : styles.rowLeft]}>
-            <View style={[styles.bubble, m.role === 'user' ? styles.bubbleUser : styles.bubbleAi]}>
-              <Text style={m.role === 'user' ? styles.bubbleUserText : styles.bubbleAiText}>
+        {messages.map((m) => {
+          const isUser = m.role === 'user';
+          const bubble = (
+            <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleAi]}>
+              <Text style={isUser ? styles.bubbleUserText : styles.bubbleAiText}>
                 {m.content || '…'}
               </Text>
             </View>
-          </View>
-        ))}
+          );
+          return (
+            <View key={m.id} style={[styles.bubbleRow, isUser ? styles.rowRight : styles.rowLeft]}>
+              {isUser ? bubble : (
+                <TouchableOpacity activeOpacity={0.7} delayLongPress={350}
+                  onLongPress={() => reportMessage(m.content)}>
+                  {bubble}
+                </TouchableOpacity>
+              )}
+            </View>
+          );
+        })}
       </ScrollView>
 
       <View style={[styles.inputBar, { paddingBottom: insets.bottom + 8 }]}>

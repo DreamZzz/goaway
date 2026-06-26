@@ -605,6 +605,22 @@ public struct UpdatePushPrefRequest: Codable, Equatable, Sendable {
     }
 }
 
+public struct ReportContentRequest: Codable, Equatable, Sendable {
+    public var content: String?
+    public var reason: String?
+    public var source: String?
+
+    public init(
+        content: String? = nil,
+        reason: String? = nil,
+        source: String? = nil
+    ) {
+        self.content = content
+        self.reason = reason
+        self.source = source
+    }
+}
+
 public struct RoleplayChatRequest: Codable, Equatable, Sendable {
     public var persona: String?
     public var customPersona: String?

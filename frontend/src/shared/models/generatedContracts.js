@@ -945,6 +945,32 @@ export function createUpdatePushPrefRequest(overrides = {}) {
 }
 
 /**
+ * @typedef {Object} ReportContentRequest
+ * @property {string|null} content
+ * @property {string|null} reason
+ * @property {string|null} source
+ */
+
+export const REPORT_CONTENT_REQUEST_FIELDS = Object.freeze([
+  'content',
+  'reason',
+  'source',
+]);
+
+/**
+ * @param {Partial<ReportContentRequest>} [overrides={}]
+ * @returns {ReportContentRequest}
+ */
+export function createReportContentRequest(overrides = {}) {
+  return {
+    content: null,
+    reason: null,
+    source: null,
+    ...overrides,
+  };
+}
+
+/**
  * @typedef {Object} RoleplayChatRequest
  * @property {string|null} persona
  * @property {string|null} customPersona
@@ -1354,6 +1380,7 @@ export const CONTRACT_MODEL_NAMES = Object.freeze([
   'PushPrefDTO',
   'RegisterDeviceRequest',
   'UpdatePushPrefRequest',
+  'ReportContentRequest',
   'RoleplayChatRequest',
   'RoleplayMessage',
   'RoleplayPersonaDTO',
@@ -1403,6 +1430,7 @@ export const CONTRACT_MODEL_FACTORIES = Object.freeze({
   PushPrefDTO: createPushPrefDTO,
   RegisterDeviceRequest: createRegisterDeviceRequest,
   UpdatePushPrefRequest: createUpdatePushPrefRequest,
+  ReportContentRequest: createReportContentRequest,
   RoleplayChatRequest: createRoleplayChatRequest,
   RoleplayMessage: createRoleplayMessage,
   RoleplayPersonaDTO: createRoleplayPersonaDTO,

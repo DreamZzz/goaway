@@ -2,11 +2,15 @@ package com.goaway.contexts.roleplay.api;
 
 import com.goaway.contexts.account.application.GuestSessionService;
 import com.goaway.contexts.account.domain.User;
+import com.goaway.contexts.roleplay.api.dto.ReportContentRequest;
 import com.goaway.contexts.roleplay.api.dto.RoleplayChatRequest;
 import com.goaway.contexts.roleplay.api.dto.RoleplayPersonaDTO;
 import com.goaway.contexts.roleplay.application.RoleplayService;
+import com.goaway.contexts.roleplay.domain.ContentReport;
+import com.goaway.contexts.roleplay.infrastructure.persistence.ContentReportRepository;
 import com.goaway.platform.security.CurrentUserService;
 import com.goaway.platform.security.GuestSecuritySupport;
+import com.goaway.shared.dto.MessageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,13 +30,16 @@ public class RoleplayController {
     private final CurrentUserService currentUserService;
     private final GuestSessionService guestSessionService;
     private final GuestSecuritySupport guestSecuritySupport;
+    private final ContentReportRepository contentReportRepository;
 
     public RoleplayController(RoleplayService roleplayService, CurrentUserService currentUserService,
-                              GuestSessionService guestSessionService, GuestSecuritySupport guestSecuritySupport) {
+                              GuestSessionService guestSessionService, GuestSecuritySupport guestSecuritySupport,
+                              ContentReportRepository contentReportRepository) {
         this.roleplayService = roleplayService;
         this.currentUserService = currentUserService;
         this.guestSessionService = guestSessionService;
         this.guestSecuritySupport = guestSecuritySupport;
+        this.contentReportRepository = contentReportRepository;
     }
 
     @GetMapping("/personas")
@@ -56,5 +63,16 @@ public class RoleplayController {
             currentUserService.requireRealUserId();
         }
         return roleplayService.streamReply(request);
+    }
+
+    /**
+     * 举报 AI 生成的不当内容（对线回复 / 毒舌）。游客与登录用户均可举报，开发者后续跟进处理。
+     */
+    @PostMapping("/report")
+    public ResponseEntity<MessageResponse> report(@Valid @RequestBody ReportContentRequest request) {
+        Long userId = currentUserService.getCurrentUser().map(User::getId).orElse(null);
+        String source = request.getSource() == null || request.getSource().isBlank() ? "roleplay" : request.getSource();
+        contentReportRepository.save(new ContentReport(userId, source, request.getContent(), request.getReason()));
+        return ResponseEntity.ok(new MessageResponse("已收到举报，我们会尽快处理"));
     }
 }
