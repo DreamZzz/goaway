@@ -52,6 +52,9 @@ public class GoawayBackendApplication {
                 registry.addViewController("/").setViewName("forward:/web/index.html");
                 registry.addViewController("/v2").setViewName("forward:/v2/index.html");
                 registry.addViewController("/v2/").setViewName("forward:/v2/index.html");
+                // App Store 必需：隐私政策与支持页可公开访问
+                registry.addViewController("/privacy").setViewName("forward:/web/privacy.html");
+                registry.addViewController("/support").setViewName("forward:/web/support.html");
             }
         };
     }

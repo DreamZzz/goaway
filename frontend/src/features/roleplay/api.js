@@ -13,7 +13,7 @@ export const roleplayAPI = {
  * @param messages 历史消息 [{role:'user'|'assistant', content}]（含本轮用户最新消息）
  * @returns {() => void} 取消函数
  */
-export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onError, customPersona } = {}) => {
+export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onError, onAuthRequired, customPersona } = {}) => {
   let cancelled = false;
   const xhr = new XMLHttpRequest();
   let seenLength = 0;
@@ -58,18 +58,24 @@ export const streamRoleplayReply = (persona, messages, { onDelta, onDone, onErro
   xhr.onload = () => {
     if (cancelled) return;
     onChunk();
-    if (xhr.status < 200 || xhr.status >= 300) {
-      onError && onError(xhr.status === 401 ? '请先登录' : '对方没有回应');
+    // 401(游客上下文失效) / 403(游客试用耗尽) → 引导登录；其余非 2xx 当作普通错误
+    if (xhr.status === 401 || xhr.status === 403) {
+      if (onAuthRequired) onAuthRequired(xhr.status);
+      else onError && onError('请先登录');
+    } else if (xhr.status < 200 || xhr.status >= 300) {
+      onError && onError('对方没有回应');
     }
   };
   xhr.onerror = () => { if (!cancelled) onError && onError('网络异常'); };
 
   (async () => {
-    const { token } = await getStoredAuthContext();
+    const { token, guestInstallationId } = await getStoredAuthContext();
     if (cancelled) return;
     xhr.open('POST', `${API_BASE_URL}/roleplay/chat/stream`);
     xhr.setRequestHeader('Content-Type', 'application/json');
     if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    // 游客额度校验需要设备标识（裸 XHR 不走 axios 拦截器，需手动带上）
+    if (guestInstallationId) xhr.setRequestHeader('X-Guest-Installation-Id', guestInstallationId);
     xhr.send(JSON.stringify({ persona, messages, customPersona }));
   })();
 

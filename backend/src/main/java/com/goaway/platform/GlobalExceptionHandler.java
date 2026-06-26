@@ -1,5 +1,6 @@
 package com.goaway.platform;
 
+import com.goaway.platform.security.GuestAccessException;
 import com.goaway.shared.dto.MessageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -73,6 +74,14 @@ public class GlobalExceptionHandler {
             org.springframework.web.server.ResponseStatusException ex) {
         return ResponseEntity.status(ex.getStatusCode())
                 .body(new MessageResponse(ex.getReason() != null ? ex.getReason() : "请求被拒绝"));
+    }
+
+    /**
+     * 游客额度/上下文异常（如对线试用次数耗尽）——返回其携带的状态码与剩余次数，引导登录。
+     */
+    @ExceptionHandler(GuestAccessException.class)
+    public ResponseEntity<MessageResponse> handleGuestAccess(GuestAccessException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(new MessageResponse(ex.getMessage()));
     }
 
     /**

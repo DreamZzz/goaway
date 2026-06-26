@@ -1,13 +1,19 @@
 package com.goaway.contexts.roleplay.api;
 
+import com.goaway.contexts.account.application.GuestSessionService;
+import com.goaway.contexts.account.domain.User;
 import com.goaway.contexts.roleplay.api.dto.RoleplayChatRequest;
 import com.goaway.contexts.roleplay.api.dto.RoleplayPersonaDTO;
 import com.goaway.contexts.roleplay.application.RoleplayService;
 import com.goaway.platform.security.CurrentUserService;
+import com.goaway.platform.security.GuestSecuritySupport;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -18,10 +24,15 @@ public class RoleplayController {
 
     private final RoleplayService roleplayService;
     private final CurrentUserService currentUserService;
+    private final GuestSessionService guestSessionService;
+    private final GuestSecuritySupport guestSecuritySupport;
 
-    public RoleplayController(RoleplayService roleplayService, CurrentUserService currentUserService) {
+    public RoleplayController(RoleplayService roleplayService, CurrentUserService currentUserService,
+                              GuestSessionService guestSessionService, GuestSecuritySupport guestSecuritySupport) {
         this.roleplayService = roleplayService;
         this.currentUserService = currentUserService;
+        this.guestSessionService = guestSessionService;
+        this.guestSecuritySupport = guestSecuritySupport;
     }
 
     @GetMapping("/personas")
@@ -33,8 +44,17 @@ public class RoleplayController {
     }
 
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter chatStream(@Valid @RequestBody RoleplayChatRequest request) {
-        currentUserService.requireRealUserId();
+    public SseEmitter chatStream(@Valid @RequestBody RoleplayChatRequest request, HttpServletRequest http) {
+        // 游客可试用：消耗一次游客额度，耗尽抛 GUEST_TRIAL_EXHAUSTED(403) 引导登录；真实用户不限次。
+        if (currentUserService.isGuest()) {
+            Long guestUserId = currentUserService.getCurrentUser().map(User::getId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "请登录后使用该功能"));
+            String installationId = http.getHeader(GuestSecuritySupport.GUEST_INSTALLATION_HEADER);
+            String clientIp = guestSecuritySupport.resolveClientIp(http);
+            guestSessionService.consumeInspirationTrial(guestUserId, installationId, clientIp, "roleplay_chat");
+        } else {
+            currentUserService.requireRealUserId();
+        }
         return roleplayService.streamReply(request);
     }
 }

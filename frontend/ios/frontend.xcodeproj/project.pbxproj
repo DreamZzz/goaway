@@ -13,12 +13,7 @@
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8AB3C6B92E0A8C4400D0A111 /* APIContractModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB3C6B82E0A8C4400D0A111 /* APIContractModels.swift */; };
-		A1B2C3D4E5F60718293A4B5D /* MealVoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* MealVoiceRecorder.swift */; };
-		A1B2C3D4E5F60718293A4B5F /* MealVoiceRecorderBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5E /* MealVoiceRecorderBridge.m */; };
 		B6A10C7D2F9A4D5E8C301001 /* ShoppingListShareBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = B6A10C7D2F9A4D5E8C301000 /* ShoppingListShareBridge.m */; };
-		C7A10D1E2F3A4B5C6D7E8F91 /* MealSpeechSynthesizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A10D1E2F3A4B5C6D7E8F90 /* MealSpeechSynthesizer.swift */; };
-		C7A10D1E2F3A4B5C6D7E8F93 /* MealSpeechSynthesizerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C7A10D1E2F3A4B5C6D7E8F92 /* MealSpeechSynthesizerBridge.m */; };
-		D4B7A2C91F3E4D5C8B6A7002 /* MealSpeechPlaybackSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B7A2C91F3E4D5C8B6A7001 /* MealSpeechPlaybackSession.swift */; };
 		E2A1B3C4D5E6F70819203002 /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */; };
 		E2A1B3C4D5E6F70819203004 /* LocalNotificationManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */; };
 		E2A1B3C4D5E6F70819203006 /* RemotePushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A1B3C4D5E6F70819203005 /* RemotePushManager.swift */; };
@@ -36,13 +31,8 @@
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = frontend/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = frontend/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8AB3C6B82E0A8C4400D0A111 /* APIContractModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIContractModels.swift; path = frontend/Generated/APIContractModels.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5C /* MealVoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MealVoiceRecorder.swift; path = frontend/MealVoiceRecorder.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F60718293A4B5E /* MealVoiceRecorderBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MealVoiceRecorderBridge.m; path = frontend/MealVoiceRecorderBridge.m; sourceTree = "<group>"; };
 		B6A10C7D2F9A4D5E8C301000 /* ShoppingListShareBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ShoppingListShareBridge.m; path = frontend/ShoppingListShareBridge.m; sourceTree = "<group>"; };
 		C49BEE22FCB93739676E4C0D /* libPods-frontend.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-frontend.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C7A10D1E2F3A4B5C6D7E8F90 /* MealSpeechSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MealSpeechSynthesizer.swift; path = frontend/MealSpeechSynthesizer.swift; sourceTree = "<group>"; };
-		C7A10D1E2F3A4B5C6D7E8F92 /* MealSpeechSynthesizerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MealSpeechSynthesizerBridge.m; path = frontend/MealSpeechSynthesizerBridge.m; sourceTree = "<group>"; };
-		D4B7A2C91F3E4D5C8B6A7001 /* MealSpeechPlaybackSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MealSpeechPlaybackSession.swift; path = frontend/MealSpeechPlaybackSession.swift; sourceTree = "<group>"; };
 		E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalNotificationManager.swift; path = frontend/LocalNotificationManager.swift; sourceTree = "<group>"; };
 		E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LocalNotificationManagerBridge.m; path = frontend/LocalNotificationManagerBridge.m; sourceTree = "<group>"; };
 		E2A1B3C4D5E6F70819203005 /* RemotePushManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RemotePushManager.swift; path = frontend/RemotePushManager.swift; sourceTree = "<group>"; };
@@ -71,11 +61,6 @@
 			children = (
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
-				A1B2C3D4E5F60718293A4B5C /* MealVoiceRecorder.swift */,
-				A1B2C3D4E5F60718293A4B5E /* MealVoiceRecorderBridge.m */,
-				D4B7A2C91F3E4D5C8B6A7001 /* MealSpeechPlaybackSession.swift */,
-				C7A10D1E2F3A4B5C6D7E8F90 /* MealSpeechSynthesizer.swift */,
-				C7A10D1E2F3A4B5C6D7E8F92 /* MealSpeechSynthesizerBridge.m */,
 				B6A10C7D2F9A4D5E8C301000 /* ShoppingListShareBridge.m */,
 				E2A1B3C4D5E6F70819203001 /* LocalNotificationManager.swift */,
 				E2A1B3C4D5E6F70819203003 /* LocalNotificationManagerBridge.m */,
@@ -288,11 +273,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
-				A1B2C3D4E5F60718293A4B5D /* MealVoiceRecorder.swift in Sources */,
-				A1B2C3D4E5F60718293A4B5F /* MealVoiceRecorderBridge.m in Sources */,
-				D4B7A2C91F3E4D5C8B6A7002 /* MealSpeechPlaybackSession.swift in Sources */,
-				C7A10D1E2F3A4B5C6D7E8F91 /* MealSpeechSynthesizer.swift in Sources */,
-				C7A10D1E2F3A4B5C6D7E8F93 /* MealSpeechSynthesizerBridge.m in Sources */,
 				B6A10C7D2F9A4D5E8C301001 /* ShoppingListShareBridge.m in Sources */,
 				E2A1B3C4D5E6F70819203002 /* LocalNotificationManager.swift in Sources */,
 				E2A1B3C4D5E6F70819203004 /* LocalNotificationManagerBridge.m in Sources */,
@@ -315,7 +295,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = frontend/frontend.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K6FK4L8DC5;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
@@ -325,7 +305,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.5;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -349,7 +329,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = frontend/frontend.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K6FK4L8DC5;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				INFOPLIST_FILE = frontend/Info.plist;
@@ -358,7 +338,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.5;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

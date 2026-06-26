@@ -102,6 +102,9 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/error").permitAll()
+                // 公开静态站点 + App Store 必需的隐私/支持页（"/" 转发到 /web/index.html 也依赖放行 /web/**）
+                .requestMatchers(HttpMethod.GET, "/web/**", "/privacy", "/support").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/web/**", "/privacy", "/support").permitAll()
                 .requestMatchers(HttpMethod.GET, "/v2", "/v2/", "/v2/**").permitAll()
                 .requestMatchers(HttpMethod.HEAD, "/v2", "/v2/", "/v2/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()

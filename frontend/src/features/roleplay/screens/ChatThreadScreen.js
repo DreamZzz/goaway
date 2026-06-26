@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAuth } from '../../../app/providers/AuthContext';
 import { roleplayAPI, streamRoleplayReply } from '../api';
 import { readOnboardingProfile, buildHatedPersona } from '../../onboarding/storage';
 import { readThread, appendMessage, markRead, HATED_CODE } from '../imStore';
@@ -29,7 +28,6 @@ const FALLBACK_HATED = {
 
 const ChatThreadScreen = ({ navigation, route }) => {
   const insets = useSafeAreaInsets();
-  const { isAuthenticated } = useAuth();
   const { refreshUnread } = useUnread();
   const code = route.params?.code;
 
@@ -74,16 +72,18 @@ const ChatThreadScreen = ({ navigation, route }) => {
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
   }, []);
 
+  const promptLogin = (title) => {
+    setStreaming(false);
+    setMessages((prev) => prev.filter((m) => m.id !== 'streaming'));
+    Alert.alert(title, '游客可试用若干次，登录后即可继续畅聊。', [
+      { text: '再看看', style: 'cancel' },
+      { text: '去登录', onPress: () => navigation.navigate('Login') },
+    ]);
+  };
+
   const send = async () => {
     const text = input.trim();
     if (!text || streaming || !persona) return;
-    if (!isAuthenticated) {
-      Alert.alert('登录后开喷', '和 AI 对线需要登录后使用。', [
-        { text: '取消', style: 'cancel' },
-        { text: '去登录', onPress: () => navigation.navigate('Login') },
-      ]);
-      return;
-    }
 
     const userMsg = await appendMessage(code, { role: 'user', content: text });
     const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
@@ -121,6 +121,7 @@ const ChatThreadScreen = ({ navigation, route }) => {
         setMessages((prev) => prev.map((m) =>
           m.id === 'streaming' ? { ...m, content: `（${msg || '对方没有回应'}）` } : m));
       },
+      onAuthRequired: () => promptLogin('试用次数已用完'),
     });
   };
 
